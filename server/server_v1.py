@@ -130,7 +130,7 @@ def playlist(playlistId=''):
 			artistNode = tds[3].a
 			songDict['artist'] = {}
 			songDict['artist']['id'] = last('id=', artistNode['href'] if artistNode is not None else '')
-			songDict['artist']['name'] = getText(tds[3])
+			songDict['artist']['name'] = getText(artistNode)
 			albumaNode = tds[4].a
 			songDict['album'] = {}
 			songDict['album']['id'] = last('id=', albumaNode['href'] if albumaNode is not None else '')
@@ -147,6 +147,59 @@ def playlists():
 	payload = {'s': s, 'type': '1000', 'offset': offset, 'total': 'true', 'limit': limit}
 	r = requests.post(url, data=payload, headers=HEADERS)
 	return jsonify(**r.json())
+
+
+@app.route('/v1/songs/<songId>')
+def song(songId=''):
+	url = 'http://music.163.com/song?id=%s' % songId
+	soup = BeautifulSoup(requests.get(url, headers=HEADERS).text)
+	data = {}
+	data['id'] = songId
+	data['name'] = getText(soup.find('em', class_='f-ff2'))
+	artistAlbumNodes = soup.find_all('a', class_='s-fc7')
+	artistNode = artistAlbumNodes[0] if len(artistAlbumNodes) >= 1 else None
+	data['artist'] = {}
+	data['artist']['id'] = last('id=', artistNode['href'] if artistNode is not None else '')
+	data['artist']['name'] = getText(artistNode)
+	albumNode = artistAlbumNodes[1] if len(artistAlbumNodes) >= 2 else None
+	data['album'] = {}
+	data['album']['id'] = last('id=', albumNode['href'] if albumNode is not None else '')
+	data['album']['name'] = getText(albumNode)
+	data['lyrics'] = list(filter(bool, re.split('[\n]+', getText(soup.find('div', class_='bd-open')))))[:-1]
+	return jsonify(**data)
+
+
+@app.route('/v1/songs')
+def songs():
+	s, = parse_request('s')
+	offset, limit = parse_offset_limit();
+	url = 'http://music.163.com/api/search/get/web?csrf_token='
+	payload = {'s': s, 'type': '1', 'offset': offset, 'total': 'true', 'limit': limit}
+	r = requests.post(url, data=payload, headers=HEADERS)
+	return jsonify(**r.json())
+
+
+@app.route('/v1/toplist')
+def toplist():
+	url = 'http://music.163.com/discover/toplist'
+	soup = BeautifulSoup(requests.get(url, headers=HEADERS).text)
+	data = {}
+	data['name'] = getText(soup.find('h2', class_='f-ff2'))
+	data['songs'] = []
+	for songNode in soup.find('table', class_='m-table').find_all('tr'):
+		songDict = {}
+		tds = songNode.find_all('td')
+		if len(tds) >= 4:
+			idNameNode = tds[1].find('div', class_='ttc').a
+			songDict['id'] = last('id=', idNameNode['href'] if idNameNode is not None else '')
+			songDict['name'] = getText(idNameNode)
+			songDict['time'] = getText(tds[2])
+			artistNode = tds[3].a
+			songDict['artist'] = {}
+			songDict['artist']['id'] = last('id=', artistNode['href'] if artistNode is not None else '')
+			songDict['artist']['name'] = getText(artistNode)
+			data['songs'].append(songDict)
+	return jsonify(**data)
 
 
 def parse_request(*params):

@@ -25,11 +25,10 @@
                         <li><a href="#new_albums">new_albums</a></li>
                         <li><a href="#playlist">playlist</a></li>
                         <li><a href="#playlists">playlists</a></li>
+                        <li><a href="#song">song</a></li>
+                        <li><a href="#songs">songs</a></li>
+                        <li><a href="#toplist">toplist</a></li>
                         <li><hr></li>
-                        <li><a style="color: black;">song</a></li>
-                        <li><a style="color: black;">songs</a></li>
-                        <li><a style="color: black;">toplist</a></li>
-                        <li><a style="color: black;">toplists</a></li>
                         <li><a style="color: black;">user</a></li>
                         <li><a style="color: black;">users</a></li>
                     </ul>
@@ -307,6 +306,112 @@
                         <h4 class="child-header">Examples</h4>
                         <ul>
                             <li><a target="_blank" href="http://{{ domain }}/{{ version }}/playlists?s=咖啡馆">http://{{ domain }}/{{ version }}/playlists?s=咖啡馆</a></li>
+                        </ul>
+                        <br><br>
+                    </section>
+                    <section id="song" class="anchor">
+                        <h1 class="page-header">Song</h1>
+                        <p>Details of a song includes lyrics.</p>
+                        <h4 class="child-header">Resource URL</h4>
+                        <p>http://{{ domain }}/{{ version }}/songs/{songId}</p>
+                        <h4 class="child-header">Resource Information</h4>
+                        <table class="table table-hover">
+                            <tbody>
+                                <tr>
+                                    <td width="400">Request method</td>
+                                    <td><b>GET</b></td>
+                                </tr>
+                                <tr>
+                                    <td width="400">Response formats</td>
+                                    <td>JSON</td>
+                                </tr>
+                                <tr>
+                                    <td>Requires authentication?</td>
+                                    <td>No</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <h4 class="child-header">Parameters</h4>
+                        <table class="table table-hover">
+                            <tbody>
+                                <tr>
+                                    <td width="400">songId</td>
+                                    <td>Song ID</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <h4 class="child-header">Examples</h4>
+                        <ul>
+                            <li><a target="_blank" href="http://{{ domain }}/{{ version }}/songs/21178392">http://{{ domain }}/{{ version }}/songs/21178392</a></li>
+                        </ul>
+                        <br><br>
+                    </section>
+                    <section id="songs" class="anchor">
+                        <h1 class="page-header">Songs</h1>
+                        <p>Returns a collection of songs.</p>
+                        <h4 class="child-header">Resource URL</h4>
+                        <p>http://{{ domain }}/{{ version }}/songs</p>
+                        <h4 class="child-header">Resource Information</h4>
+                        <table class="table table-hover">
+                            <tbody>
+                                <tr>
+                                    <td width="400">Request method</td>
+                                    <td><b>GET</b></td>
+                                </tr>
+                                <tr>
+                                    <td width="400">Response formats</td>
+                                    <td>JSON</td>
+                                </tr>
+                                <tr>
+                                    <td>Requires authentication?</td>
+                                    <td>No</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <h4 class="child-header">Parameters</h4>
+                        <table class="table table-hover">
+                            <tbody>
+                                <tr>
+                                    <td width="400">s</td>
+                                    <td>Query with a key word.</td>
+                                </tr>
+                                <tr>
+                                    <td width="400">offset & limit</td>
+                                    <td>Default: offset = {{ offset }}, limit = {{ limit }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <h4 class="child-header">Examples</h4>
+                        <ul>
+                            <li><a target="_blank" href="http://{{ domain }}/{{ version }}/songs?s=work">http://{{ domain }}/{{ version }}/songs?s=work</a></li>
+                        </ul>
+                        <br><br>
+                    </section>
+                    <section id="toplist" class="anchor">
+                        <h1 class="page-header">Toplist</h1>
+                        <p>Top list of today.</p>
+                        <h4 class="child-header">Resource URL</h4>
+                        <p>http://{{ domain }}/{{ version }}/toplist</p>
+                        <h4 class="child-header">Resource Information</h4>
+                        <table class="table table-hover">
+                            <tbody>
+                                <tr>
+                                    <td width="400">Request method</td>
+                                    <td><b>GET</b></td>
+                                </tr>
+                                <tr>
+                                    <td width="400">Response formats</td>
+                                    <td>JSON</td>
+                                </tr>
+                                <tr>
+                                    <td>Requires authentication?</td>
+                                    <td>No</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <h4 class="child-header">Examples</h4>
+                        <ul>
+                            <li><a target="_blank" href="http://{{ domain }}/{{ version }}/toplist">http://{{ domain }}/{{ version }}/toplist</a></li>
                         </ul>
                         <br><br>
                     </section>
