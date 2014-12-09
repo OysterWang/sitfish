@@ -10,37 +10,48 @@ from flask import request
 from flask import redirect
 from flask import render_template
 
+from flask.ext.mail import Mail
+from flask.ext.mail import Message
+
 from bs4 import BeautifulSoup
 
 
 app = Flask(__name__)
+
+app.config['MAIL_SERVER'] = 'smtp.qq.com'
+app.config['MAIL_USERNAME'] = 'saberwork@qq.com'
+app.config['MAIL_PASSWORD'] = 'Ball001'
+app.config['MAIL_PORT'] = '465'
+app.config['MAIL_USE_SSL'] = True
+mail = Mail(app)
+
+app.config['DOMAIN'] = 'localhost:5000'
+app.config['BRAND'] = 'CodingHonor'
+app.config['HOST'] = '0.0.0.0'
+app.config['PORT'] = 5000
+
 app.config['JSON_AS_ASCII'] = False
-
-BRAND = 'CodingHonor'
-DOMAIN = 'localhost:5000'
-HOST = '0.0.0.0'
-PORT = 5000
-
-OFFSET = 0
-LIMIT = 100
-
-HEADERS = {'Referer': 'http://music.163.com'}
+app.config['HEADERS'] = {'Referer': 'http://music.163.com'}
+app.config['OFFSET'] = 0
+app.config['LIMIT'] = 100
 
 
 @app.route('/')
 def root():
+	# send('hello', '<a href="http://api.codinghonor.com/">test</a>', 'buaastorm@gmail.com')
 	return redirect('/v1')
 
 
 @app.route('/v1')
 def index():
-	return render_template('api_v1.html', version='v1', domain=DOMAIN, brand=BRAND, offset=OFFSET, limit=LIMIT)
+	# send_activation()
+	return render_template('v1.html', version='v1', domain=app.config['DOMAIN'], brand=app.config['BRAND'], offset=app.config['OFFSET'], limit=app.config['LIMIT'])
 
 
 @app.route('/v1/albums/<albumId>')
 def album(albumId=''):
 	url = 'http://music.163.com/album?id=%s' % albumId
-	soup = BeautifulSoup(requests.get(url, headers=HEADERS).text)
+	soup = BeautifulSoup(requests.get(url, headers=app.config['HEADERS']).text)
 	data = {}
 	data['id'] = albumId
 	data['name'] = getText(soup.find('h2', class_='f-ff2'))
@@ -67,14 +78,14 @@ def albums():
 	offset, limit = parse_offset_limit();
 	url = 'http://music.163.com/api/search/get/web?csrf_token='
 	payload = {'s': s, 'type': '10', 'offset': offset, 'total': 'true', 'limit': limit}
-	r = requests.post(url, data=payload, headers=HEADERS)
+	r = requests.post(url, data=payload, headers=app.config['HEADERS'])
 	return jsonify(**r.json())
 
 
 @app.route('/v1/artists/<artistId>')
 def artist(artistId=''):
 	url = 'http://music.163.com/artist?id=%s' % artistId
-	soup = BeautifulSoup(requests.get(url, headers=HEADERS).text)
+	soup = BeautifulSoup(requests.get(url, headers=app.config['HEADERS']).text)
 	data = {}
 	data['id'] = artistId
 	data['name'] = getText(soup.find('h2', id='artist-name'))
@@ -99,7 +110,7 @@ def artists():
 	offset, limit = parse_offset_limit();
 	url = 'http://music.163.com/api/search/get/web?csrf_token='
 	payload = {'s': s, 'type': '100', 'offset': offset, 'total': 'true', 'limit': limit}
-	r = requests.post(url, data=payload, headers=HEADERS)
+	r = requests.post(url, data=payload, headers=app.config['HEADERS'])
 	return jsonify(**r.json())
 
 
@@ -107,14 +118,14 @@ def artists():
 def newAlbums(area='ALL'):
 	offset, limit = parse_offset_limit();
 	url = 'http://music.163.com/api/album/new?area=%s&offset=%d&total=true&limit=%d&csrf_token=' % (area, offset, limit)
-	r = requests.get(url, headers=HEADERS)
+	r = requests.get(url, headers=app.config['HEADERS'])
 	return jsonify(**r.json())
 
 
 @app.route('/v1/playlists/<playlistId>')
 def playlist(playlistId=''):
 	url = 'http://music.163.com/playlist?id=%s' % playlistId
-	soup = BeautifulSoup(requests.get(url, headers=HEADERS).text)
+	soup = BeautifulSoup(requests.get(url, headers=app.config['HEADERS']).text)
 	data = {}
 	data['id'] = playlistId
 	data['name'] = getText(soup.find('h2', class_='f-ff2'))
@@ -145,14 +156,14 @@ def playlists():
 	offset, limit = parse_offset_limit();
 	url = 'http://music.163.com/api/search/get/web?csrf_token='
 	payload = {'s': s, 'type': '1000', 'offset': offset, 'total': 'true', 'limit': limit}
-	r = requests.post(url, data=payload, headers=HEADERS)
+	r = requests.post(url, data=payload, headers=app.config['HEADERS'])
 	return jsonify(**r.json())
 
 
 @app.route('/v1/songs/<songId>')
 def song(songId=''):
 	url = 'http://music.163.com/song?id=%s' % songId
-	soup = BeautifulSoup(requests.get(url, headers=HEADERS).text)
+	soup = BeautifulSoup(requests.get(url, headers=app.config['HEADERS']).text)
 	data = {}
 	data['id'] = songId
 	data['name'] = getText(soup.find('em', class_='f-ff2'))
@@ -175,14 +186,14 @@ def songs():
 	offset, limit = parse_offset_limit();
 	url = 'http://music.163.com/api/search/get/web?csrf_token='
 	payload = {'s': s, 'type': '1', 'offset': offset, 'total': 'true', 'limit': limit}
-	r = requests.post(url, data=payload, headers=HEADERS)
+	r = requests.post(url, data=payload, headers=app.config['HEADERS'])
 	return jsonify(**r.json())
 
 
 @app.route('/v1/toplist')
 def toplist():
 	url = 'http://music.163.com/discover/toplist'
-	soup = BeautifulSoup(requests.get(url, headers=HEADERS).text)
+	soup = BeautifulSoup(requests.get(url, headers=app.config['HEADERS']).text)
 	data = {}
 	data['name'] = getText(soup.find('h2', class_='f-ff2'))
 	data['songs'] = []
@@ -202,6 +213,16 @@ def toplist():
 	return jsonify(**data)
 
 
+@app.route('/v1/user', methods=['POST'])
+def user():
+    pass
+
+
+@app.route('/v1/users/<id>')
+def users(id=''):
+    pass
+
+
 def parse_request(*params):
 	ret = []
 	for p in params:
@@ -215,11 +236,11 @@ def parse_offset_limit(*params):
 	try:
 		ret[0] = int(ret[0])
 	except ValueError:
-		ret[0] = OFFSET
+		ret[0] = app.config['OFFSET']
 	try:
 		ret[1] = int(ret[1])
 	except ValueError:
-		ret[1] = LIMIT
+		ret[1] = app.config['LIMIT']
 	return ret
 
 
@@ -231,5 +252,14 @@ def last(sp, s):
 	return re.split(sp, s if s is not None else '')[-1].strip()
 
 
+def send_activation(html, recipient):
+	msg = Message('%s Activation' % app.config['BRAND'], sender=(app.config['BRAND'], app.config['MAIL_USERNAME']))
+	msg.html = html
+	msg.add_recipient(recipient)
+	mail.send(msg)
+
+
+
 if __name__ == '__main__':
-	app.run(host=HOST, port=PORT, debug=True)
+	app.run(host=app.config['HOST'], port=app.config['PORT'], debug=True)
+

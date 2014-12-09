@@ -1,3 +1,5 @@
-Flask==0.10.1
+flask==0.10.1
 requests==2.4.3
+flask-mail=0.9.1
+mongoengine==0.8.7
 beautifulsoup4==4.3.2
