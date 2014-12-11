@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html>
     <head>
-    <meta charset="utf-8">
-    <title>{{ brand }} - API</title>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+        <base href="http://{{ domain }}" />
+        <title>{{ brand }} - API</title>
         <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.1/css/bootstrap.min.css">
         <link rel="stylesheet" href="{{url_for('static', filename='css/v1.css')}}">
     </head>
@@ -10,7 +11,7 @@
         <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
             <div class="container-fluid">
                 <div class="navbar-header">
-                    <a class="navbar-brand" href="http://{{ domain }}">{{ brand }} API {{ version }}</a>
+                    <a class="navbar-brand" href="/">{{ brand }} API {{ version }}</a>
                 </div>
             </div>
         </nav>
@@ -18,64 +19,21 @@
             <div class="row">
                 <div class="col-sm-3 col-md-2 sidebar" id="scroll">
                     <ul class="nav nav-sidebar affix" id="nav">
-                        <li class="active"><a href="#album">album</a></li>
-                        <li><a href="#albums">albums</a></li>
-                        <li><a href="#artist">artist</a></li>
-                        <li><a href="#artists">artists</a></li>
-                        <li><a href="#new_albums">new_albums</a></li>
-                        <li><a href="#playlist">playlist</a></li>
-                        <li><a href="#playlists">playlists</a></li>
-                        <li><a href="#song">song</a></li>
+                        <li class="active"><a href="#search">search</a></li>
                         <li><a href="#songs">songs</a></li>
-                        <li><a href="#toplist">toplist</a></li>
-                        <li><hr></li>
-                        <li><a style="color: black;">user</a></li>
-                        <li><a style="color: black;">users</a></li>
+                        <li><a href="#albums">albums</a></li>
+                        <li><a href="#artists">artists</a></li>
+                        <li><a href="#playlists">playlists</a></li>
+                        <li><a href="#lyrics">lyrics</a></li>
+                        <li><a href="#users">users</a></li>
                     </ul>
                 </div>
                 <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-                    <section id="album" class="anchor">
-                        <h1 class="page-header">Album</h1>
-                        <p>Returns a specified album.</p>
+                    <section id="search" class="anchor">
+                        <h1 class="page-header">Search</h1>
+                        <p>Search songs, albums, artists, playlists, lyrics and users.</p>
                         <h4 class="child-header">Resource URL</h4>
-                        <p>http://{{ domain }}/{{ version }}/albums/{albumId}</p>
-                        <h4 class="child-header">Resource Information</h4>
-                        <table class="table table-hover">
-                            <tbody>
-                                <tr>
-                                    <td width="400">Request method</td>
-                                    <td><b>GET</b></td>
-                                </tr>
-                                <tr>
-                                    <td width="400">Response formats</td>
-                                    <td>JSON</td>
-                                </tr>
-                                <tr>
-                                    <td>Requires authentication?</td>
-                                    <td>No</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <h4 class="child-header">Parameters</h4>
-                        <table class="table table-hover">
-                            <tbody>
-                                <tr>
-                                    <td width="400">albumId</td>
-                                    <td>The id of this album.</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <h4 class="child-header">Examples</h4>
-                        <ul>
-                            <li><a target="_blank" href="http://{{ domain }}/{{ version }}/albums/37165">http://{{ domain }}/{{ version }}/albums/37165</a></li>
-                        </ul>
-                        <br><br>
-                    </section>
-                    <section id="albums" class="anchor">
-                        <h1 class="page-header">Albums</h1>
-                        <p>Returns a collection of albums.</p>
-                        <h4 class="child-header">Resource URL</h4>
-                        <p>http://{{ domain }}/{{ version }}/albums</p>
+                        <p>http://{{ domain }}/{{ version }}/search</p>
                         <h4 class="child-header">Resource Information</h4>
                         <table class="table table-hover">
                             <tbody>
@@ -98,259 +56,38 @@
                             <tbody>
                                 <tr>
                                     <td width="400">s</td>
-                                    <td>Query with a key word.</td>
+                                    <td>The query content.</td>
                                 </tr>
                                 <tr>
-                                    <td width="400">offset & limit</td>
-                                    <td>Default: offset = {{ offset }}, limit = {{ limit }}</td>
+                                    <td width="400">t</td>
+                                    <td>song = 1, album = 10, artist = 100, playlist = 1000, lyric = 1006, user = 9</td>
+                                </tr>
+                                <tr>
+                                    <td width="400">offset</td>
+                                    <td>default = {{ offset }}</td>
+                                </tr>
+                                <tr>
+                                    <td width="400">limit</td>
+                                    <td>default = {{ limit }}</td>
                                 </tr>
                             </tbody>
                         </table>
                         <h4 class="child-header">Examples</h4>
                         <ul>
-                            <li><a target="_blank" href="http://{{ domain }}/{{ version }}/albums?s=罗大佑">http://{{ domain }}/{{ version }}/albums?s=罗大佑</a></li>
-                        </ul>
-                        <br><br>
-                    </section>
-                    <section id="artist" class="anchor">
-                        <h1 class="page-header">Artist</h1>
-                        <p>Get an artist from the library.</p>
-                        <h4 class="child-header">Resource URL</h4>
-                        <p>http://{{ domain }}/{{ version }}/artists/{artistId}</p>
-                        <h4 class="child-header">Resource Information</h4>
-                        <table class="table table-hover">
-                            <tbody>
-                                <tr>
-                                    <td width="400">Request method</td>
-                                    <td><b>GET</b></td>
-                                </tr>
-                                <tr>
-                                    <td width="400">Response formats</td>
-                                    <td>JSON</td>
-                                </tr>
-                                <tr>
-                                    <td>Requires authentication?</td>
-                                    <td>No</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <h4 class="child-header">Parameters</h4>
-                        <table class="table table-hover">
-                            <tbody>
-                                <tr>
-                                    <td width="400">artistId</td>
-                                    <td>The id of this artist.</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <h4 class="child-header">Examples</h4>
-                        <ul>
-                            <li><a target="_blank" href="http://{{ domain }}/{{ version }}/artists/3686">http://{{ domain }}/{{ version }}/artists/3686</a></li>
-                        </ul>
-                        <br><br>
-                    </section>
-                    <section id="artists" class="anchor">
-                        <h1 class="page-header">Artists</h1>
-                        <p>Returns a collection of artists.</p>
-                        <h4 class="child-header">Resource URL</h4>
-                        <p>http://{{ domain }}/{{ version }}/artists</p>
-                        <h4 class="child-header">Resource Information</h4>
-                        <table class="table table-hover">
-                            <tbody>
-                                <tr>
-                                    <td width="400">Request method</td>
-                                    <td><b>GET</b></td>
-                                </tr>
-                                <tr>
-                                    <td width="400">Response formats</td>
-                                    <td>JSON</td>
-                                </tr>
-                                <tr>
-                                    <td>Requires authentication?</td>
-                                    <td>No</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <h4 class="child-header">Parameters</h4>
-                        <table class="table table-hover">
-                            <tbody>
-                                <tr>
-                                    <td width="400">s</td>
-                                    <td>Query with a key word.</td>
-                                </tr>
-                                <tr>
-                                    <td width="400">offset & limit</td>
-                                    <td>Default: offset = {{ offset }}, limit = {{ limit }}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <h4 class="child-header">Examples</h4>
-                        <ul>
-                            <li><a target="_blank" href="http://{{ domain }}/{{ version }}/artists?s=罗大佑">http://{{ domain }}/{{ version }}/artists?s=罗大佑</a></li>
-                        </ul>
-                        <br><br>
-                    </section>
-                    <section id="new_albums" class="anchor">
-                        <h1 class="page-header">New Albums</h1>
-                        <p>Get the new albums from the market category by area.</p>
-                        <h4 class="child-header">Resource URL</h4>
-                        <p>http://{{ domain }}/{{ version }}/new/albums/{area}</p>
-                        <h4 class="child-header">Resource Information</h4>
-                        <table class="table table-hover">
-                            <tbody>
-                                <tr>
-                                    <td width="400">Request method</td>
-                                    <td><b>GET</b></td>
-                                </tr>
-                                <tr>
-                                    <td width="400">Response formats</td>
-                                    <td>JSON</td>
-                                </tr>
-                                <tr>
-                                    <td>Requires authentication?</td>
-                                    <td>No</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <h4 class="child-header">Parameters</h4>
-                        <table class="table table-hover">
-                            <tbody>
-                                <tr>
-                                    <td width="400">area</td>
-                                    <td>Category by different areas. They are: ALL, ZH, EA, KR and JP.</td>
-                                </tr>
-                                <tr>
-                                    <td width="400">offset & limit</td>
-                                    <td>Default: offset = {{ offset }}, limit = {{ limit }}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <h4 class="child-header">Examples</h4>
-                        <ul>
-                            <li><a target="_blank" href="http://{{ domain }}/{{ version }}/new/albums/JP">http://{{ domain }}/{{ version }}/new/albums/JP</a></li>
-                        </ul>
-                        <br><br>
-                    </section>
-                    <section id="playlist" class="anchor">
-                        <h1 class="page-header">Playlist</h1>
-                        <p>Get a playlist from the library.</p>
-                        <h4 class="child-header">Resource URL</h4>
-                        <p>http://{{ domain }}/{{ version }}/playlists/{playlistId}</p>
-                        <h4 class="child-header">Resource Information</h4>
-                        <table class="table table-hover">
-                            <tbody>
-                                <tr>
-                                    <td width="400">Request method</td>
-                                    <td><b>GET</b></td>
-                                </tr>
-                                <tr>
-                                    <td width="400">Response formats</td>
-                                    <td>JSON</td>
-                                </tr>
-                                <tr>
-                                    <td>Requires authentication?</td>
-                                    <td>No</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <h4 class="child-header">Parameters</h4>
-                        <table class="table table-hover">
-                            <tbody>
-                                <tr>
-                                    <td width="400">playlistId</td>
-                                    <td>The id of this playlist.</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <h4 class="child-header">Examples</h4>
-                        <ul>
-                            <li><a target="_blank" href="http://{{ domain }}/{{ version }}/playlists/2225921">http://{{ domain }}/{{ version }}/playlists/2225921</a></li>
-                        </ul>
-                        <br><br>
-                    </section>
-                    <section id="playlists" class="anchor">
-                        <h1 class="page-header">Playlists</h1>
-                        <p>Returns a collection of playlists.</p>
-                        <h4 class="child-header">Resource URL</h4>
-                        <p>http://{{ domain }}/{{ version }}/playlists</p>
-                        <h4 class="child-header">Resource Information</h4>
-                        <table class="table table-hover">
-                            <tbody>
-                                <tr>
-                                    <td width="400">Request method</td>
-                                    <td><b>GET</b></td>
-                                </tr>
-                                <tr>
-                                    <td width="400">Response formats</td>
-                                    <td>JSON</td>
-                                </tr>
-                                <tr>
-                                    <td>Requires authentication?</td>
-                                    <td>No</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <h4 class="child-header">Parameters</h4>
-                        <table class="table table-hover">
-                            <tbody>
-                                <tr>
-                                    <td width="400">s</td>
-                                    <td>Query with a key word.</td>
-                                </tr>
-                                <tr>
-                                    <td width="400">offset & limit</td>
-                                    <td>Default: offset = {{ offset }}, limit = {{ limit }}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <h4 class="child-header">Examples</h4>
-                        <ul>
-                            <li><a target="_blank" href="http://{{ domain }}/{{ version }}/playlists?s=咖啡馆">http://{{ domain }}/{{ version }}/playlists?s=咖啡馆</a></li>
-                        </ul>
-                        <br><br>
-                    </section>
-                    <section id="song" class="anchor">
-                        <h1 class="page-header">Song</h1>
-                        <p>Details of a song includes lyrics.</p>
-                        <h4 class="child-header">Resource URL</h4>
-                        <p>http://{{ domain }}/{{ version }}/songs/{songId}</p>
-                        <h4 class="child-header">Resource Information</h4>
-                        <table class="table table-hover">
-                            <tbody>
-                                <tr>
-                                    <td width="400">Request method</td>
-                                    <td><b>GET</b></td>
-                                </tr>
-                                <tr>
-                                    <td width="400">Response formats</td>
-                                    <td>JSON</td>
-                                </tr>
-                                <tr>
-                                    <td>Requires authentication?</td>
-                                    <td>No</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <h4 class="child-header">Parameters</h4>
-                        <table class="table table-hover">
-                            <tbody>
-                                <tr>
-                                    <td width="400">songId</td>
-                                    <td>Song ID</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <h4 class="child-header">Examples</h4>
-                        <ul>
-                            <li><a target="_blank" href="http://{{ domain }}/{{ version }}/songs/21178392">http://{{ domain }}/{{ version }}/songs/21178392</a></li>
+                            <li><a target="_blank" href="/{{ version }}/search?s=罗大佑&t=1">http://{{ domain }}/{{ version }}/search?s=罗大佑&t=1</a></li>
+                            <li><a target="_blank" href="/{{ version }}/search?s=罗大佑&t=10">http://{{ domain }}/{{ version }}/search?s=罗大佑&t=10</a></li>
+                            <li><a target="_blank" href="/{{ version }}/search?s=罗大佑&t=100">http://{{ domain }}/{{ version }}/search?s=罗大佑&t=100</a></li>
+                            <li><a target="_blank" href="/{{ version }}/search?s=罗大佑&t=1000">http://{{ domain }}/{{ version }}/search?s=罗大佑&t=1000</a></li>
+                            <li><a target="_blank" href="/{{ version }}/search?s=罗大佑&t=1006">http://{{ domain }}/{{ version }}/search?s=罗大佑&t=1006</a></li>
+                            <li><a target="_blank" href="/{{ version }}/search?s=chen&t=9">http://{{ domain }}/{{ version }}/search?s=chen&t=9</a></li>
                         </ul>
                         <br><br>
                     </section>
                     <section id="songs" class="anchor">
                         <h1 class="page-header">Songs</h1>
-                        <p>Returns a collection of songs.</p>
+                        <p>Return a specified song.</p>
                         <h4 class="child-header">Resource URL</h4>
-                        <p>http://{{ domain }}/{{ version }}/songs</p>
+                        <p>http://{{ domain }}/{{ version }}/songs/{id}</p>
                         <h4 class="child-header">Resource Information</h4>
                         <table class="table table-hover">
                             <tbody>
@@ -372,26 +109,22 @@
                         <table class="table table-hover">
                             <tbody>
                                 <tr>
-                                    <td width="400">s</td>
-                                    <td>Query with a key word.</td>
-                                </tr>
-                                <tr>
-                                    <td width="400">offset & limit</td>
-                                    <td>Default: offset = {{ offset }}, limit = {{ limit }}</td>
+                                    <td width="400">id</td>
+                                    <td>Song id</td>
                                 </tr>
                             </tbody>
                         </table>
                         <h4 class="child-header">Examples</h4>
                         <ul>
-                            <li><a target="_blank" href="http://{{ domain }}/{{ version }}/songs?s=work">http://{{ domain }}/{{ version }}/songs?s=work</a></li>
+                            <li><a target="_blank" href="/{{ version }}/songs/109299">http://{{ domain }}/{{ version }}/songs/109299</a></li>
                         </ul>
                         <br><br>
                     </section>
-                    <section id="toplist" class="anchor">
-                        <h1 class="page-header">Toplist</h1>
-                        <p>Top list of today.</p>
+                    <section id="albums" class="anchor">
+                        <h1 class="page-header">Albums</h1>
+                        <p>Return a specified album.</p>
                         <h4 class="child-header">Resource URL</h4>
-                        <p>http://{{ domain }}/{{ version }}/toplist</p>
+                        <p>http://{{ domain }}/{{ version }}/albums/{id}</p>
                         <h4 class="child-header">Resource Information</h4>
                         <table class="table table-hover">
                             <tbody>
@@ -409,9 +142,166 @@
                                 </tr>
                             </tbody>
                         </table>
+                        <h4 class="child-header">Parameters</h4>
+                        <table class="table table-hover">
+                            <tbody>
+                                <tr>
+                                    <td width="400">id</td>
+                                    <td>Album id</td>
+                                </tr>
+                            </tbody>
+                        </table>
                         <h4 class="child-header">Examples</h4>
                         <ul>
-                            <li><a target="_blank" href="http://{{ domain }}/{{ version }}/toplist">http://{{ domain }}/{{ version }}/toplist</a></li>
+                            <li><a target="_blank" href="/{{ version }}/albums/10818">http://{{ domain }}/{{ version }}/albums/10818</a></li>
+                        </ul>
+                        <br><br>
+                    </section>
+                    <section id="artists" class="anchor">
+                        <h1 class="page-header">Artists</h1>
+                        <p>Return a specified artist.</p>
+                        <h4 class="child-header">Resource URL</h4>
+                        <p>http://{{ domain }}/{{ version }}/artists/{id}</p>
+                        <h4 class="child-header">Resource Information</h4>
+                        <table class="table table-hover">
+                            <tbody>
+                                <tr>
+                                    <td width="400">Request method</td>
+                                    <td><b>GET</b></td>
+                                </tr>
+                                <tr>
+                                    <td width="400">Response formats</td>
+                                    <td>JSON</td>
+                                </tr>
+                                <tr>
+                                    <td>Requires authentication?</td>
+                                    <td>No</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <h4 class="child-header">Parameters</h4>
+                        <table class="table table-hover">
+                            <tbody>
+                                <tr>
+                                    <td width="400">id</td>
+                                    <td>Artist id</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <h4 class="child-header">Examples</h4>
+                        <ul>
+                            <li><a target="_blank" href="/{{ version }}/artists/3686">http://{{ domain }}/{{ version }}/artists/3686</a></li>
+                        </ul>
+                        <br><br>
+                    </section>
+                    <section id="playlists" class="anchor">
+                        <h1 class="page-header">Playlists</h1>
+                        <p>Return a specified playlist.</p>
+                        <h4 class="child-header">Resource URL</h4>
+                        <p>http://{{ domain }}/{{ version }}/playlists/{id}</p>
+                        <h4 class="child-header">Resource Information</h4>
+                        <table class="table table-hover">
+                            <tbody>
+                                <tr>
+                                    <td width="400">Request method</td>
+                                    <td><b>GET</b></td>
+                                </tr>
+                                <tr>
+                                    <td width="400">Response formats</td>
+                                    <td>JSON</td>
+                                </tr>
+                                <tr>
+                                    <td>Requires authentication?</td>
+                                    <td>No</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <h4 class="child-header">Parameters</h4>
+                        <table class="table table-hover">
+                            <tbody>
+                                <tr>
+                                    <td width="400">id</td>
+                                    <td>Playlist id</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <h4 class="child-header">Examples</h4>
+                        <ul>
+                            <li><a target="_blank" href="/{{ version }}/playlists/2294307">http://{{ domain }}/{{ version }}/playlists/2294307</a></li>
+                        </ul>
+                        <br><br>
+                    </section>
+                    <section id="lyrics" class="anchor">
+                        <h1 class="page-header">Lyrics</h1>
+                        <p>Return a specified lyric.</p>
+                        <h4 class="child-header">Resource URL</h4>
+                        <p>http://{{ domain }}/{{ version }}/lyrics/{id}</p>
+                        <h4 class="child-header">Resource Information</h4>
+                        <table class="table table-hover">
+                            <tbody>
+                                <tr>
+                                    <td width="400">Request method</td>
+                                    <td><b>GET</b></td>
+                                </tr>
+                                <tr>
+                                    <td width="400">Response formats</td>
+                                    <td>JSON</td>
+                                </tr>
+                                <tr>
+                                    <td>Requires authentication?</td>
+                                    <td>No</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <h4 class="child-header">Parameters</h4>
+                        <table class="table table-hover">
+                            <tbody>
+                                <tr>
+                                    <td width="400">id</td>
+                                    <td>Lyric id</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <h4 class="child-header">Examples</h4>
+                        <ul>
+                            <li><a target="_blank" href="/{{ version }}/lyrics/108933">http://{{ domain }}/{{ version }}/lyrics/108933</a></li>
+                        </ul>
+                        <br><br>
+                    </section>
+                    <section id="users" class="anchor">
+                        <h1 class="page-header">Users</h1>
+                        <p>Return a specified user.</p>
+                        <h4 class="child-header">Resource URL</h4>
+                        <p>http://{{ domain }}/{{ version }}/users/{id}</p>
+                        <h4 class="child-header">Resource Information</h4>
+                        <table class="table table-hover">
+                            <tbody>
+                                <tr>
+                                    <td width="400">Request method</td>
+                                    <td><b>GET</b></td>
+                                </tr>
+                                <tr>
+                                    <td width="400">Response formats</td>
+                                    <td>JSON</td>
+                                </tr>
+                                <tr>
+                                    <td>Requires authentication?</td>
+                                    <td>No</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <h4 class="child-header">Parameters</h4>
+                        <table class="table table-hover">
+                            <tbody>
+                                <tr>
+                                    <td width="400">id</td>
+                                    <td>User id</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <h4 class="child-header">Examples</h4>
+                        <ul>
+                            <li><a target="_blank" href="/{{ version }}/users/zhaolong">http://{{ domain }}/{{ version }}/users/zhaolong</a></li>
                         </ul>
                         <br><br>
                     </section>

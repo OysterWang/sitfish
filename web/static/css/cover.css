@@ -1,0 +1,97 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    background: url(../image/bg_login.jpg) no-repeat center center fixed;
+    background-size: cover;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+}
+
+h2 {
+    font-size: 60px;
+    font-family: ff-clan-web-pro-wide,sans-serif;
+    font-weight: 200;
+}
+
+p {
+    display: inline-block;
+    padding: 5 10px;
+    font-size: 15px;
+    background-color: rgba(7,7,22,.3);
+    -webkit-margin-before: 1em;
+    -webkit-margin-after: 1em;
+    -webkit-margin-start: 0px;
+    -webkit-margin-end: 0px;
+}
+
+a {
+    color: #fff;
+    font-size: 16px;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.global-header {
+    width: 100%;
+    padding: 25 0 15 0px;
+    position: absolute;
+    top: 0;
+    z-index: 5;
+    line-height: 30px;
+    color: #fff;
+    background-color: rgba(0,0,0,.2);
+    border-bottom: 1px solid #adadad;
+}
+
+.logo {
+    width: 200px;
+    float: left;
+    text-align: center;
+}
+
+.logo a {
+    font-size: 48px;
+    font-family: "Brush Script MT", cursive;
+}
+
+.pull-right {
+    float: right;
+    margin-right: 10px;
+    font-family: Verdana, Geneva, sans-serif;
+}
+
+.btn {
+    margin: 0 15px;
+    padding: 6 10px;
+    background-color: #1fbad6;
+    border-radius: 2px;
+}
+
+.headline {
+    width: 100%;
+    top: 55%;
+    position: relative;
+    text-align: center;
+    text-transform: uppercase;
+    color: #fff;
+    font-family: Verdana, Geneva, sans-serif;
+}
+
+.sign-up {
+    width: 100%;
+    margin-top: 20px;
+}
+
+.sign-up a {
+    padding: 10px 50px;
+    background-color: #1fbad6;
+}
+
+::selection {
+    background: #b3d4fc;
+    text-shadow: none;
+}
