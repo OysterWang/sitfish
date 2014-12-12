@@ -26,6 +26,7 @@
                         <li><a href="#playlists">playlists</a></li>
                         <li><a href="#lyrics">lyrics</a></li>
                         <li><a href="#users">users</a></li>
+                        <li><a href="#count">count</a></li>
                     </ul>
                 </div>
                 <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
@@ -302,6 +303,47 @@
                         <h4 class="child-header">Examples</h4>
                         <ul>
                             <li><a target="_blank" href="/{{ version }}/users/zhaolong">http://{{ domain }}/{{ version }}/users/zhaolong</a></li>
+                        </ul>
+                        <br><br>
+                    </section>
+                    <section id="count" class="anchor">
+                        <h1 class="page-header">Count</h1>
+                        <p>Query count.</p>
+                        <h4 class="child-header">Resource URL</h4>
+                        <p>http://{{ domain }}/{{ version }}/count</p>
+                        <h4 class="child-header">Resource Information</h4>
+                        <table class="table table-hover">
+                            <tbody>
+                                <tr>
+                                    <td width="400">Request method</td>
+                                    <td><b>GET</b></td>
+                                </tr>
+                                <tr>
+                                    <td width="400">Response formats</td>
+                                    <td>JSON</td>
+                                </tr>
+                                <tr>
+                                    <td>Requires authentication?</td>
+                                    <td>No</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <h4 class="child-header">Parameters</h4>
+                        <table class="table table-hover">
+                            <tbody>
+                                <tr>
+                                    <td width="400">s</td>
+                                    <td>The query content.</td>
+                                </tr>
+                                <tr>
+                                    <td width="400">t</td>
+                                    <td>uid = 0, email = 1</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <h4 class="child-header">Examples</h4>
+                        <ul>
+                            <li><a target="_blank" href="/{{ version }}/count?s=zhaolong&t=0">http://{{ domain }}/{{ version }}/count?s=zhaolong&t=0</a></li>
                         </ul>
                         <br><br>
                     </section>

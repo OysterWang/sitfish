@@ -1,8 +1,9 @@
 <html>
     <head>
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+        <base href="http://{{ domain }}" />
         <title>{{ brand }}</title>
-        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/cover.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sign_out.css') }}">
     </head>
     <body>
         <div class="global-header">
@@ -10,15 +11,15 @@
                 <a href="/">{{ brand }}</a>
             </div>
             <div class="pull-right">
-                <a href="/login">登录</a>
-                <a href="/login" class="btn">注册</a>
+                <a href="/sign-in">登录</a>
+                <a href="/sign-up" class="btn">注册</a>
             </div>
         </div>
         <div class="headline">
             <h2>此刻, 唯有你我</h2>
             <p>音乐连接彼此只与最重要的人</p>
             <div class="sign-up">
-                <a href="/login">免费注册使用</a>
+                <a href="/sign-up">免费注册使用</a>
             </div>
         </div>
         <script src="http://cdn.staticfile.org/jquery/2.1.1-rc2/jquery.min.js"></script>

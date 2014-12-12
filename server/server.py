@@ -17,6 +17,7 @@ from bs4 import BeautifulSoup
 
 from database import *
 
+
 app = Flask(__name__)
 
 app.config['DOMAIN_API'] = 'localhost:5000'
@@ -122,6 +123,19 @@ def users(id=''):
 	data = user.json() if user is not None else {'code': '404'}
 	return jsonify(**data)
 
+
+@app.route('/v1/count')
+def count():
+	s = request.args.get('s', default='')
+	t = request.args.get('t', default='0') # uid:0, email:1
+	data = {}
+	if t is '0':
+		data['count'] = User.objects(uid=s).count()
+	elif t is '1':
+		data['count'] = User.objects(email=s).count()
+	else:
+		data['code'] = '404'
+	return jsonify(**data)
 
 """
 Email relevant

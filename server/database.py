@@ -19,6 +19,7 @@ class User(Document):
     uid = StringField(primary_key=True)
     name = StringField(default='', required=True)
     email = StringField(default='', required=True, unique=True)
+    password = StringField(default='', required=True)
     her = StringField(default='')
     reg_time = DateTimeField(default=datetime.datetime.now())
     activation = BooleanField(default=False)
@@ -32,8 +33,19 @@ class User(Document):
         return {'uid': self.uid, 'name': self.name, 'email': self.email, 'her': self.her}
 
 
+class Message(Document):
+
+    source = StringField(required=True)
+    dest = StringField(required=True)
+    content = StringField(required=True)
+    time = datetime.datetime.now()
+    read = BooleanField(default=False)
+
+
 
 if __name__ == '__main__':
+    # Message(source='chenxiaohui', dest='chenjinnan', content='洛阳的项目做完了吗？').save()
+    User(uid='zhaolong', name='赵龙', email='zhaolong@gmail.com', password='goodwife').save()
     for u in User.objects():
         print(u)
 

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+        <base href="http://{{ domain }}" />
+        <title>{{ brand }} - Sign In</title>
+        <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.1/css/bootstrap.min.css">
+        <link rel="stylesheet" href="{{url_for('static', filename='css/sign_up_in.css')}}">
+    </head>
+    <body>
+    	<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+            <div class="container-fluid">
+                <div class="logo navbar-header" align="center">
+                    <a href="/">{{ brand }}</a>
+                </div>
+            </div>
+        </nav>
+    	<div class="container">
+    		<form class="form-signin" role="form">
+    			<h2 class="form-signin-heading">欢迎使用</h2>
+    			<br>
+    			<label for="email" class="sr-only">邮箱</label>
+    			<input type="email" id="email" class="form-control" placeholder="邮箱" required autofocus>
+    			<label for="password" class="sr-only">密码</label>
+    			<input type="password" id="password" class="form-control" placeholder="密码" required>
+    			<br>
+    			<button class="btn btn-info btn-lg btn-primary btn-block" type="submit">立即登录</button>
+    		</form>
+    	</div>
+        <script src="http://cdn.staticfile.org/jquery/2.1.1-rc2/jquery.min.js"></script>
+    </body>
+</html>
