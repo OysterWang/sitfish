@@ -1,18 +1,20 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import sys
+import codecs
 import random
 import string
 import datetime
+import configparser
 
 from mongoengine import *
 
-DB_NAME = 'vox'
-DB_HOST = 'ec2-54-64-100-152.ap-northeast-1.compute.amazonaws.com'
-DB_PORT = 27017
-connect(db=DB_NAME, host=DB_HOST, port=DB_PORT)
+config = configparser.ConfigParser()
+config.readfp(codecs.open("../config/config.ini", "r", "utf-8"))
 
-ACTIVATION_CODE_LEN = 10
+connect(db=config['DB']['NAME'], host=config['DB']['HOST'], port=int(config['DB']['PORT']))
+
 
 class User(Document):
 
@@ -23,7 +25,7 @@ class User(Document):
     her = StringField(default='')
     reg_time = DateTimeField(default=datetime.datetime.now())
     activation = BooleanField(default=False)
-    activation_code = StringField(default=''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(ACTIVATION_CODE_LEN)))
+    activation_code = StringField(default=''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(int(config['DB']['ACT_CODE_LEN']))))
     access_token = StringField(default='')
 
     def __str__(self):
@@ -45,7 +47,7 @@ class Message(Document):
 
 if __name__ == '__main__':
     # Message(source='chenxiaohui', dest='chenjinnan', content='洛阳的项目做完了吗？').save()
-    User(uid='zhaolong', name='赵龙', email='zhaolong@gmail.com', password='goodwife').save()
+    User(uid='zhaolong', name='赵龙', email='zhaolong@gmail.com', password='helloagain').save(force_insert=True)
     for u in User.objects():
         print(u)
 

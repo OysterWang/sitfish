@@ -2,41 +2,38 @@
 # -*- coding: utf-8 -*-
 
 import re
+import codecs
+import hashlib
 import requests
+import configparser
 
+from bs4 import BeautifulSoup
 from flask import Flask
 from flask import jsonify
 from flask import request
 from flask import redirect
 from flask import render_template
-
+from database import *
 from flask.ext.mail import Mail
 from flask.ext.mail import Message
 
-from bs4 import BeautifulSoup
-
-from database import *
-
+config = configparser.ConfigParser()
+config.readfp(codecs.open("../config/config.ini", "r", "utf-8"))
 
 app = Flask(__name__)
-
-app.config['DOMAIN_API'] = 'localhost:5000'
-app.config['BRAND'] = 'Vox'
-app.config['HOST'] = '0.0.0.0'
-app.config['PORT'] = 5000
-
-app.config['JSON_AS_ASCII'] = False
-
-app.config['MAIL_SERVER'] = 'smtp.qq.com'
-app.config['MAIL_USERNAME'] = 'saberwork@qq.com'
-app.config['MAIL_PASSWORD'] = 'Ball001'
-app.config['MAIL_PORT'] = '465'
-app.config['MAIL_USE_SSL'] = True
-mail = Mail(app)
 
 app.config['HEADERS'] = {'Referer': 'http://music.163.com'}
 app.config['OFFSET'] = 0
 app.config['LIMIT'] = 100
+app.config['JSON_AS_ASCII'] = False
+
+app.config['MAIL_SERVER'] = config['MAIL']['SERVER']
+app.config['MAIL_PORT'] = int(config['MAIL']['PORT'])
+app.config['MAIL_USE_SSL'] = True
+app.config['MAIL_USERNAME'] = config['MAIL']['USERNAME']
+app.config['MAIL_PASSWORD'] = config['MAIL']['PASSWORD']
+
+mail = Mail(app)
 
 
 """
@@ -44,13 +41,14 @@ Resource definition
 """
 
 @app.route('/')
-def domain():
+def host():
 	return redirect('/v1')
 
 
 @app.route('/v1')
 def index():
-	return render_template('v1.html', version='v1', domain=app.config['DOMAIN_API'], brand=app.config['BRAND'], offset=app.config['OFFSET'], limit=app.config['LIMIT'])
+	send_activation('Hello Vox', 'Hello, there!', 'bkmons@qq.com')
+	return render_template('v1.html', version='v1', host=config['SERVER']['HOST'], brand=config['DEFAULT']['BRAND'], offset=app.config['OFFSET'], limit=app.config['LIMIT'])
 
 
 @app.route('/v1/search')
@@ -65,7 +63,7 @@ def search():
 	offset = parse_int(request.args.get('offset', default=''), default=app.config['OFFSET'])
 	limit = parse_int(request.args.get('limit', default=''), default=app.config['LIMIT'])
 	data = {}
-	if t is '9':
+	if t == '9':
 		data = {'users': []}
 		for user in User.objects(uid__contains=s).limit(limit):
 			data['users'].append(user.json())
@@ -116,6 +114,62 @@ def lyrics(id=''):
 	return jsonify(**data)
 
 
+"""
+Account relevant
+"""
+
+@app.route('/v1/count')
+def count():
+	s = request.args.get('s', default='')
+	t = request.args.get('t', default='0') # uid:0, email:1
+	data = {'count': -1}
+	if t == '0':
+		data['count'] = User.objects(uid=s).count()
+	elif t == '1':
+		data['count'] = User.objects(email=s).count()
+	return jsonify(**data)
+
+
+@app.route('/v1/sign-up', methods=['post'])
+def sign_up():
+	data = {'ret': 0}
+	try:
+		user = User(uid=request.form['uid'], name=request.form['name'], email=request.form['email'], password=request.form['password'])
+		user.password = sha(user.password, user.activation_code)
+		user.save(force_insert=True)
+		brand = config['DEFAULT']['BRAND']
+		url = 'http://%s/activate/%s?code=%s' % (config['WEB']['HOST'], user.uid, user.activation_code)
+		html = '<p>亲爱的%s：</p><p>欢迎加入%s！</p><p>请点击下面的链接完成注册：</p><p><a href="%s" target="_blank">%s</a></p><p>如果以上链接无法点击，请将上面的地址复制到你的浏览器(如Chrome)的地址栏进入%s。</p><p>%s</p>' % (user.name, brand, url, url, brand, brand)
+		send_activation('%s账户激活' % brand, html, user.email)
+		data['ret'] = 1
+	except:
+		pass
+	return jsonify(**data)
+
+
+@app.route('/v1/activate/<uid>')
+def activate(uid=''):
+	data = {'ret': 0}
+	code = request.args.get('code', default='')
+	user = User.objects(uid=uid, activation_code=code).first()
+	if user is not None:
+		if user.activation is not True:
+			user.activation = True
+			user.save()
+		data['ret'] = 1
+	return jsonify(**data)
+
+
+@app.route('/v1/sign-in', methods=['post'])
+def sign_in():
+	pass
+
+
+@app.route('/v1/validate', methods=['post'])
+def validate():
+	pass
+
+
 # TYPE - 9
 @app.route('/v1/users/<id>')
 def users(id=''):
@@ -124,31 +178,21 @@ def users(id=''):
 	return jsonify(**data)
 
 
-@app.route('/v1/count')
-def count():
-	s = request.args.get('s', default='')
-	t = request.args.get('t', default='0') # uid:0, email:1
-	data = {}
-	if t is '0':
-		data['count'] = User.objects(uid=s).count()
-	elif t is '1':
-		data['count'] = User.objects(email=s).count()
-	else:
-		data['code'] = '404'
-	return jsonify(**data)
-
 """
-Email relevant
+Utilities
 """
 
-def send_activation(html, recipient):
-	msg = Message('%s Activation' % app.config['BRAND'], sender=(app.config['BRAND'], app.config['MAIL_USERNAME']))
-	msg.html = html
-	msg.add_recipient(recipient)
-	mail.send(msg)
+def sha(password, salt):
+	h = hashlib.new(config['DB']['SHA'])
+	h.update(('%s %s' % (password, salt)).encode('utf-8'))
+	return h.hexdigest()
+
+
+def send_activation(subject, html, recipient):
+	mail.send(Message(subject, html=html, sender=(config['DEFAULT']['BRAND'], config['MAIL']['USERNAME']), recipients=[recipient]))
 
 
 
 if __name__ == '__main__':
-	app.run(host=app.config['HOST'], port=app.config['PORT'], debug=True)
+	app.run(host='0.0.0.0', port=int(config['SERVER']['PORT']), debug=config['DEFAULT']['DEBUG'] == 'True')
 

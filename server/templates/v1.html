@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
-        <base href="http://{{ domain }}" />
+        <base href="http://{{ host }}" />
         <title>{{ brand }} - API</title>
         <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.1/css/bootstrap.min.css">
         <link rel="stylesheet" href="{{url_for('static', filename='css/v1.css')}}">
@@ -25,8 +25,12 @@
                         <li><a href="#artists">artists</a></li>
                         <li><a href="#playlists">playlists</a></li>
                         <li><a href="#lyrics">lyrics</a></li>
-                        <li><a href="#users">users</a></li>
+                        <hr>
                         <li><a href="#count">count</a></li>
+                        <li><a href="#sign-up">sign-up</a></li>
+                        <li><a href="#sign-in">sign-in</a></li>
+                        <li><a href="#validate">validate</a></li>
+                        <li><a href="#users">users</a></li>
                     </ul>
                 </div>
                 <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
@@ -34,7 +38,7 @@
                         <h1 class="page-header">Search</h1>
                         <p>Search songs, albums, artists, playlists, lyrics and users.</p>
                         <h4 class="child-header">Resource URL</h4>
-                        <p>http://{{ domain }}/{{ version }}/search</p>
+                        <p>http://{{ host }}/{{ version }}/search</p>
                         <h4 class="child-header">Resource Information</h4>
                         <table class="table table-hover">
                             <tbody>
@@ -75,12 +79,12 @@
                         </table>
                         <h4 class="child-header">Examples</h4>
                         <ul>
-                            <li><a target="_blank" href="/{{ version }}/search?s=罗大佑&t=1">http://{{ domain }}/{{ version }}/search?s=罗大佑&t=1</a></li>
-                            <li><a target="_blank" href="/{{ version }}/search?s=罗大佑&t=10">http://{{ domain }}/{{ version }}/search?s=罗大佑&t=10</a></li>
-                            <li><a target="_blank" href="/{{ version }}/search?s=罗大佑&t=100">http://{{ domain }}/{{ version }}/search?s=罗大佑&t=100</a></li>
-                            <li><a target="_blank" href="/{{ version }}/search?s=罗大佑&t=1000">http://{{ domain }}/{{ version }}/search?s=罗大佑&t=1000</a></li>
-                            <li><a target="_blank" href="/{{ version }}/search?s=罗大佑&t=1006">http://{{ domain }}/{{ version }}/search?s=罗大佑&t=1006</a></li>
-                            <li><a target="_blank" href="/{{ version }}/search?s=chen&t=9">http://{{ domain }}/{{ version }}/search?s=chen&t=9</a></li>
+                            <li><a target="_blank" href="/{{ version }}/search?s=罗大佑&t=1">http://{{ host }}/{{ version }}/search?s=罗大佑&t=1</a></li>
+                            <li><a target="_blank" href="/{{ version }}/search?s=罗大佑&t=10">http://{{ host }}/{{ version }}/search?s=罗大佑&t=10</a></li>
+                            <li><a target="_blank" href="/{{ version }}/search?s=罗大佑&t=100">http://{{ host }}/{{ version }}/search?s=罗大佑&t=100</a></li>
+                            <li><a target="_blank" href="/{{ version }}/search?s=罗大佑&t=1000">http://{{ host }}/{{ version }}/search?s=罗大佑&t=1000</a></li>
+                            <li><a target="_blank" href="/{{ version }}/search?s=罗大佑&t=1006">http://{{ host }}/{{ version }}/search?s=罗大佑&t=1006</a></li>
+                            <li><a target="_blank" href="/{{ version }}/search?s=chen&t=9">http://{{ host }}/{{ version }}/search?s=chen&t=9</a></li>
                         </ul>
                         <br><br>
                     </section>
@@ -88,7 +92,7 @@
                         <h1 class="page-header">Songs</h1>
                         <p>Return a specified song.</p>
                         <h4 class="child-header">Resource URL</h4>
-                        <p>http://{{ domain }}/{{ version }}/songs/{id}</p>
+                        <p>http://{{ host }}/{{ version }}/songs/{id}</p>
                         <h4 class="child-header">Resource Information</h4>
                         <table class="table table-hover">
                             <tbody>
@@ -117,7 +121,7 @@
                         </table>
                         <h4 class="child-header">Examples</h4>
                         <ul>
-                            <li><a target="_blank" href="/{{ version }}/songs/109299">http://{{ domain }}/{{ version }}/songs/109299</a></li>
+                            <li><a target="_blank" href="/{{ version }}/songs/109299">http://{{ host }}/{{ version }}/songs/109299</a></li>
                         </ul>
                         <br><br>
                     </section>
@@ -125,7 +129,7 @@
                         <h1 class="page-header">Albums</h1>
                         <p>Return a specified album.</p>
                         <h4 class="child-header">Resource URL</h4>
-                        <p>http://{{ domain }}/{{ version }}/albums/{id}</p>
+                        <p>http://{{ host }}/{{ version }}/albums/{id}</p>
                         <h4 class="child-header">Resource Information</h4>
                         <table class="table table-hover">
                             <tbody>
@@ -154,7 +158,7 @@
                         </table>
                         <h4 class="child-header">Examples</h4>
                         <ul>
-                            <li><a target="_blank" href="/{{ version }}/albums/10818">http://{{ domain }}/{{ version }}/albums/10818</a></li>
+                            <li><a target="_blank" href="/{{ version }}/albums/10818">http://{{ host }}/{{ version }}/albums/10818</a></li>
                         </ul>
                         <br><br>
                     </section>
@@ -162,7 +166,7 @@
                         <h1 class="page-header">Artists</h1>
                         <p>Return a specified artist.</p>
                         <h4 class="child-header">Resource URL</h4>
-                        <p>http://{{ domain }}/{{ version }}/artists/{id}</p>
+                        <p>http://{{ host }}/{{ version }}/artists/{id}</p>
                         <h4 class="child-header">Resource Information</h4>
                         <table class="table table-hover">
                             <tbody>
@@ -191,7 +195,7 @@
                         </table>
                         <h4 class="child-header">Examples</h4>
                         <ul>
-                            <li><a target="_blank" href="/{{ version }}/artists/3686">http://{{ domain }}/{{ version }}/artists/3686</a></li>
+                            <li><a target="_blank" href="/{{ version }}/artists/3686">http://{{ host }}/{{ version }}/artists/3686</a></li>
                         </ul>
                         <br><br>
                     </section>
@@ -199,7 +203,7 @@
                         <h1 class="page-header">Playlists</h1>
                         <p>Return a specified playlist.</p>
                         <h4 class="child-header">Resource URL</h4>
-                        <p>http://{{ domain }}/{{ version }}/playlists/{id}</p>
+                        <p>http://{{ host }}/{{ version }}/playlists/{id}</p>
                         <h4 class="child-header">Resource Information</h4>
                         <table class="table table-hover">
                             <tbody>
@@ -228,7 +232,7 @@
                         </table>
                         <h4 class="child-header">Examples</h4>
                         <ul>
-                            <li><a target="_blank" href="/{{ version }}/playlists/2294307">http://{{ domain }}/{{ version }}/playlists/2294307</a></li>
+                            <li><a target="_blank" href="/{{ version }}/playlists/2294307">http://{{ host }}/{{ version }}/playlists/2294307</a></li>
                         </ul>
                         <br><br>
                     </section>
@@ -236,7 +240,7 @@
                         <h1 class="page-header">Lyrics</h1>
                         <p>Return a specified lyric.</p>
                         <h4 class="child-header">Resource URL</h4>
-                        <p>http://{{ domain }}/{{ version }}/lyrics/{id}</p>
+                        <p>http://{{ host }}/{{ version }}/lyrics/{id}</p>
                         <h4 class="child-header">Resource Information</h4>
                         <table class="table table-hover">
                             <tbody>
@@ -265,44 +269,7 @@
                         </table>
                         <h4 class="child-header">Examples</h4>
                         <ul>
-                            <li><a target="_blank" href="/{{ version }}/lyrics/108933">http://{{ domain }}/{{ version }}/lyrics/108933</a></li>
-                        </ul>
-                        <br><br>
-                    </section>
-                    <section id="users" class="anchor">
-                        <h1 class="page-header">Users</h1>
-                        <p>Return a specified user.</p>
-                        <h4 class="child-header">Resource URL</h4>
-                        <p>http://{{ domain }}/{{ version }}/users/{id}</p>
-                        <h4 class="child-header">Resource Information</h4>
-                        <table class="table table-hover">
-                            <tbody>
-                                <tr>
-                                    <td width="400">Request method</td>
-                                    <td><b>GET</b></td>
-                                </tr>
-                                <tr>
-                                    <td width="400">Response formats</td>
-                                    <td>JSON</td>
-                                </tr>
-                                <tr>
-                                    <td>Requires authentication?</td>
-                                    <td>No</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <h4 class="child-header">Parameters</h4>
-                        <table class="table table-hover">
-                            <tbody>
-                                <tr>
-                                    <td width="400">id</td>
-                                    <td>User id</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <h4 class="child-header">Examples</h4>
-                        <ul>
-                            <li><a target="_blank" href="/{{ version }}/users/zhaolong">http://{{ domain }}/{{ version }}/users/zhaolong</a></li>
+                            <li><a target="_blank" href="/{{ version }}/lyrics/108933">http://{{ host }}/{{ version }}/lyrics/108933</a></li>
                         </ul>
                         <br><br>
                     </section>
@@ -310,7 +277,7 @@
                         <h1 class="page-header">Count</h1>
                         <p>Query count.</p>
                         <h4 class="child-header">Resource URL</h4>
-                        <p>http://{{ domain }}/{{ version }}/count</p>
+                        <p>http://{{ host }}/{{ version }}/count</p>
                         <h4 class="child-header">Resource Information</h4>
                         <table class="table table-hover">
                             <tbody>
@@ -343,7 +310,44 @@
                         </table>
                         <h4 class="child-header">Examples</h4>
                         <ul>
-                            <li><a target="_blank" href="/{{ version }}/count?s=zhaolong&t=0">http://{{ domain }}/{{ version }}/count?s=zhaolong&t=0</a></li>
+                            <li><a target="_blank" href="/{{ version }}/count?s=zhaolong&t=0">http://{{ host }}/{{ version }}/count?s=zhaolong&t=0</a></li>
+                        </ul>
+                        <br><br>
+                    </section>
+                    <section id="users" class="anchor">
+                        <h1 class="page-header">Users</h1>
+                        <p>Return a specified user.</p>
+                        <h4 class="child-header">Resource URL</h4>
+                        <p>http://{{ host }}/{{ version }}/users/{id}</p>
+                        <h4 class="child-header">Resource Information</h4>
+                        <table class="table table-hover">
+                            <tbody>
+                                <tr>
+                                    <td width="400">Request method</td>
+                                    <td><b>GET</b></td>
+                                </tr>
+                                <tr>
+                                    <td width="400">Response formats</td>
+                                    <td>JSON</td>
+                                </tr>
+                                <tr>
+                                    <td>Requires authentication?</td>
+                                    <td>No</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <h4 class="child-header">Parameters</h4>
+                        <table class="table table-hover">
+                            <tbody>
+                                <tr>
+                                    <td width="400">id</td>
+                                    <td>User id</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <h4 class="child-header">Examples</h4>
+                        <ul>
+                            <li><a target="_blank" href="/{{ version }}/users/zhaolong">http://{{ host }}/{{ version }}/users/zhaolong</a></li>
                         </ul>
                         <br><br>
                     </section>

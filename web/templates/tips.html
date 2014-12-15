@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+        <base href="http://{{ domain }}" />
+        <title>{{ brand }} - 提示</title>
+        <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.1/css/bootstrap.min.css">
+        <style type="text/css">
+            .logo {
+                color: white;
+                font-size: 48px;
+                font-family: 'Brush Script MT', cursive;
+                text-decoration: none;
+            }
+            .logo:hover {
+                color: white;
+                text-decoration: none;
+            }
+        </style>
+    </head>
+    <body style="background-color:#eee">
+    	<nav class="navbar navbar-inverse navbar-fixed-top glo" role="navigation" style="background-color:#454545;">
+            <div class="container-fluid">
+                <div class="navbar-header" align="center" style="float:none; padding-top:3px; padding-bottom:0px;">
+                    <a class="logo" href="/">{{ brand }}</a>
+                </div>
+            </div>
+        </nav>
+    	<div class="container" style="margin-top:200px; width:800px;">
+            <p>{{ tips }}</p>
+            <br>
+            <p><a href="/">返回首页</a></p>
+    	</div>
+    </body>
+</html>
