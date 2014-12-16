@@ -47,7 +47,6 @@ def host():
 
 @app.route('/v1')
 def index():
-	send_activation('Hello Vox', 'Hello, there!', 'bkmons@qq.com')
 	return render_template('v1.html', version='v1', host=config['SERVER']['HOST'], brand=config['DEFAULT']['BRAND'], offset=app.config['OFFSET'], limit=app.config['LIMIT'])
 
 
@@ -162,12 +161,26 @@ def activate(uid=''):
 
 @app.route('/v1/sign-in', methods=['post'])
 def sign_in():
-	pass
+	data = {'access_token': ''}
+	user = User.objects(email=request.form['email']).first()
+	if user is not None:
+		if user.password == sha(request.form['password'], user.activation_code):
+			user.access_token = sha(user.uid, datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+			user.save()
+			data['uid'] = user.uid
+			data['name'] = user.name
+			data['access_token'] = user.access_token
+	return jsonify(**data)
 
 
 @app.route('/v1/validate', methods=['post'])
 def validate():
-	pass
+	data = {'ret': 0}
+	user = User.objects(uid=request.form['uid']).first()
+	if user is not None:
+		if user.access_token == request.form['access_token']:
+			data['ret'] = 1
+	return jsonify(**data)
 
 
 # TYPE - 9
@@ -182,9 +195,9 @@ def users(id=''):
 Utilities
 """
 
-def sha(password, salt):
+def sha(*params):
 	h = hashlib.new(config['DB']['SHA'])
-	h.update(('%s %s' % (password, salt)).encode('utf-8'))
+	h.update(' '.join(params).encode('utf-8'))
 	return h.hexdigest()
 
 

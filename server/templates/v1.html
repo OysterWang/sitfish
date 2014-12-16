@@ -4,6 +4,7 @@
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
         <base href="http://{{ host }}" />
         <title>{{ brand }} - API</title>
+        <link rel="icon" href="{{url_for('static', filename='image/logo.png')}}" />
         <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.1/css/bootstrap.min.css">
         <link rel="stylesheet" href="{{url_for('static', filename='css/v1.css')}}">
     </head>
@@ -11,6 +12,7 @@
         <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
             <div class="container-fluid">
                 <div class="navbar-header">
+                    <a href="/"><img class="logo" src="{{url_for('static', filename='image/logo.png')}}"></a>
                     <a class="navbar-brand" href="/">{{ brand }} API {{ version }}</a>
                 </div>
             </div>

@@ -93,10 +93,18 @@ body {
     margin-bottom: 15px;
 }
 
-ul.nav-sidebar.affix {
+.nav-sidebar.affix->ul{
     position: relative;
 }
 
 table {
     font-size: 14px !important;
+}
+
+.logo {
+  float: left;
+  width: 32px;
+  height: 32px;
+  margin-top: 9px;
+  margin-right: 10px;
 }

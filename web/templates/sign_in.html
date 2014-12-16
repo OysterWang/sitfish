@@ -4,37 +4,27 @@
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
         <base href="http://{{ domain }}" />
         <title>{{ brand }} - 登录</title>
+        <link rel="icon" href="{{url_for('static', filename='image/logo.png')}}" />
         <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.1/css/bootstrap.min.css">
-        <style type="text/css">
-            .logo {
-                color: white;
-                font-size: 48px;
-                font-family: 'Brush Script MT', cursive;
-                text-decoration: none;
-            }
-            .logo:hover {
-                color: white;
-                text-decoration: none;
-            }
-        </style>
+        <link rel="stylesheet" href="{{url_for('static', filename='css/sign_up_in.css')}}">
     </head>
-    <body style="background-color:#eee">
-        <nav class="navbar navbar-inverse navbar-fixed-top glo" role="navigation" style="background-color:#454545;">
+    <body>
+        <nav class="navbar navbar-fixed-top" role="navigation">
             <div class="container-fluid">
-                <div class="navbar-header" align="center" style="float:none; padding-top:10px; padding-bottom:0px;">
-                    <a class="logo" href="/">{{ brand }}</a>
+                <div class="navbar-header" align="center">
+                    <a href="/">{{ brand }}</a>
                 </div>
             </div>
         </nav>
-        <div class="container" style="margin-top:200px; width:300px;">
-            <form class="form-horizontal" role="form" action="/sign-up" method="POST">
+        <div class="container">
+            <form class="form-horizontal" role="form" action="/sign-in" method="POST">
                 <div class="form-group">
-                    <input type="text" class="form-control" id="email" name="email" placeholder="邮箱">
+                    <input type="text" class="form-control" id="email" name="email" placeholder="邮箱" value="{{ email }}">
                     <small class="help-block sr-only">邮箱格式不正确</small>
                 </div>
-                <div class="form-group">
-                    <input type="password" class="form-control" id="password" name="password" placeholder="密码">
-                    <small class="help-block sr-only">邮箱或密码不正确</small>
+                <div class="form-group {% if error %} has-error {% endif %}">
+                    <input type="password" class="form-control" id="password" name="password" placeholder="密码" value="{{ password }}">
+                    <small class="help-block {% if not error %} sr-only {% endif %}">邮箱或密码不正确</small>
                 </div>
                 <br>
                 <div class="form-group">
@@ -45,7 +35,6 @@
         <script src="http://cdn.staticfile.org/jquery/2.1.1-rc2/jquery.min.js"></script>
         <script type="text/javascript">
             $(function() {
-                $('#email:first').focus();
                 listenEmail();
                 listenPassword();
             });
@@ -69,7 +58,9 @@
 
             function listenPassword() {
                 var cur = $('#password');
+                var parent = cur.parent();
                 cur.bind('input onpropertychange', function() {
+                    clear(parent);
                     check();
                 });
             }
