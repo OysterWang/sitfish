@@ -1,0 +1,33 @@
+body {
+	background-color: #eee
+}
+
+.navbar {
+	background-color:#545652;
+	margin-bottom: 100px;
+	border-radius: 0px;
+}
+
+.navbar .container {
+	padding: 8px 0px 2px 0px;
+}
+
+.navbar a {
+	color: #d5d5d5;
+	font-size: 48px;
+	font-family: ff-clan-web-pro-wide,sans-serif;
+	text-decoration: none;
+}
+
+.navbar a:hover {
+	color: white;
+	text-decoration: none;
+}
+
+.navbar-header {
+	float: none;
+}
+
+.container {
+	width: 300px;
+}

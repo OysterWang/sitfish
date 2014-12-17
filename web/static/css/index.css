@@ -1,0 +1,111 @@
+* {
+	margin: 0;
+	padding: 0;
+}
+
+html {
+	background: url(../image/bg_login.jpg) no-repeat center center fixed;
+	background-size: cover;
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+}
+
+h2 {
+	font-size: 60px;
+	font-family: ff-clan-web-pro-wide,sans-serif;
+	font-weight: 200;
+}
+
+p {
+	display: inline-block;
+	padding: 5px 10px;
+	font-size: 15px;
+	background-color: rgba(7,7,22,.3);
+	-webkit-margin-before: 1em;
+	-webkit-margin-after: 1em;
+	-webkit-margin-start: 0px;
+	-webkit-margin-end: 0px;
+}
+
+a {
+	color: #fff;
+	font-size: 16px;
+	font-weight: 500;
+	text-decoration: none;
+}
+
+.global-header {
+	top: 0;
+	color: #fff;
+	width: 100%;
+	z-index: 5;
+	padding: 15px 0px 10px 0px;
+	line-height: 55px;
+	border-bottom: 1px solid #adadad;
+	background-color: rgba(0,0,0,.2);
+}
+
+.global-header:after {
+    clear: both;
+    content: '';
+    display: block;
+}
+
+.logo {
+	float:left;
+	display:block;
+	min-height: 55px;
+}
+
+.logo img {
+	width: 55px;
+	height: 55px;
+	display: block;
+	margin-left: 30px;
+}
+
+.logo a {
+	display: block;
+	font-size: 48px;
+	margin-left: 10px;
+	font-family: ff-clan-web-pro-wide,sans-serif;
+}
+
+.pull-right {
+	float: right;
+	margin-right: 20px;
+	font-family: Verdana, Geneva, sans-serif;
+}
+
+.btn {
+	margin: 0 15px;
+	padding: 6px 10px;
+	border-radius: 2px;
+	background-color: #1fbad6;
+}
+
+.headline {
+	top: 50%;
+	color: #fff;
+	width: 100%;
+	position: absolute;
+	text-align: center;
+	font-family: Verdana, Geneva, sans-serif;
+	text-transform: uppercase;
+}
+
+.sign-up {
+	width: 100%;
+	margin-top: 20px;
+}
+
+.sign-up a {
+	padding: 10px 50px;
+	background-color: #1fbad6;
+}
+
+::selection {
+	background: #b3d4fc;
+	text-shadow: none;
+}

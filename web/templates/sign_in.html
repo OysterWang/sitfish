@@ -1,95 +1,96 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
-        <base href="http://{{ domain }}" />
-        <title>{{ brand }} - 登录</title>
-        <link rel="icon" href="{{url_for('static', filename='image/logo.png')}}" />
-        <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.1/css/bootstrap.min.css">
-        <link rel="stylesheet" href="{{url_for('static', filename='css/sign_up_in.css')}}">
-    </head>
-    <body>
-        <nav class="navbar navbar-fixed-top" role="navigation">
-            <div class="container-fluid">
-                <div class="navbar-header" align="center">
-                    <a href="/">{{ brand }}</a>
-                </div>
-            </div>
-        </nav>
-        <div class="container">
-            <form class="form-horizontal" role="form" action="/sign-in" method="POST">
-                <div class="form-group">
-                    <input type="text" class="form-control" id="email" name="email" placeholder="邮箱" value="{{ email }}">
-                    <small class="help-block sr-only">邮箱格式不正确</small>
-                </div>
-                <div class="form-group {% if error %} has-error {% endif %}">
-                    <input type="password" class="form-control" id="password" name="password" placeholder="密码" value="{{ password }}">
-                    <small class="help-block {% if not error %} sr-only {% endif %}">邮箱或密码不正确</small>
-                </div>
-                <br>
-                <div class="form-group">
-                    <button type="submit" class="btn btn-info btn-block" disabled="disabled">立即登录</button>
-                </div>
-            </form>
-        </div>
-        <script src="http://cdn.staticfile.org/jquery/2.1.1-rc2/jquery.min.js"></script>
-        <script type="text/javascript">
-            $(function() {
-                listenEmail();
-                listenPassword();
-            });
+	<head>
+		<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+		<base href="http://{{ domain }}" />
+		<title>{{ brand }} - 登录</title>
+		<link rel="icon" href="{{url_for('static', filename='image/logo.png')}}" />
+		<link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.1/css/bootstrap.min.css">
+		<link rel="stylesheet" href="{{url_for('static', filename='css/sign.css')}}">
+	</head>
+	<body>
+		<nav class="navbar" role="navigation">
+			<div class="container" align="center">
+				<div class="navbar-header">
+					<a href="/">{{ brand }}</a>
+				</div>
+			</div>
+		</nav>
+		<div class="container">
+			<form class="form-horizontal" role="form" action="/sign-in" method="POST">
+				<div class="form-group">
+					<input type="text" class="form-control" id="email" name="email" placeholder="邮箱" value="{{ email }}">
+					<small class="help-block sr-only">邮箱格式不正确</small>
+				</div>
+				<div class="form-group {% if ret <= 0 %} has-error {% endif %}">
+					<input type="password" class="form-control" id="password" name="password" placeholder="密码" value="{{ password }}">
+					<small class="help-block {% if ret != 0 %} sr-only {% endif %}">邮箱或密码不正确</small>
+					<small class="help-block {% if ret != -1 %} sr-only {% endif %}">账户仍未激活</small>
+				</div>
+				<br>
+				<div class="form-group">
+					<button type="submit" class="btn btn-info btn-block" disabled="disabled">立即登录</button>
+				</div>
+			</form>
+		</div>
+		<script src="http://cdn.staticfile.org/jquery/2.1.1-rc2/jquery.min.js"></script>
+		<script type="text/javascript">
+			$(function() {
+				listenEmail();
+				listenPassword();
+			});
 
-            function listenEmail() {
-                function isEmail(email) {
-                    var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
-                    return regex.test(email);
-                }
-                var cur = $('#email');
-                var parent = cur.parent();
-                cur.bind('change', function() {
-                    if ($.trim(cur.val()).length == 0 || isEmail(cur.val())) {
-                        clear(parent);
-                    } else {
-                        error(parent);
-                        parent.children('.help-block:eq(0)').removeClass('sr-only');
-                    }
-                });
-            }
+			function listenEmail() {
+				function isEmail(email) {
+					var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+					return regex.test(email);
+				}
+				var cur = $('#email');
+				var parent = cur.parent();
+				cur.bind('change', function() {
+					if ($.trim(cur.val()).length == 0 || isEmail(cur.val())) {
+						clear(parent);
+					} else {
+						error(parent);
+						parent.children('.help-block:eq(0)').removeClass('sr-only');
+					}
+				});
+			}
 
-            function listenPassword() {
-                var cur = $('#password');
-                var parent = cur.parent();
-                cur.bind('input onpropertychange', function() {
-                    clear(parent);
-                    check();
-                });
-            }
+			function listenPassword() {
+				var cur = $('#password');
+				var parent = cur.parent();
+				cur.bind('input onpropertychange', function() {
+					clear(parent);
+					check();
+				});
+			}
 
-            function clear(div) {
-                div.removeClass('has-feedback has-success has-error');
-                div.children('.help-block').addClass('sr-only');
-                $('button').attr('disabled', 'disabled');
-            }
+			function clear(div) {
+				div.removeClass('has-feedback has-success has-error');
+				div.children('.help-block').addClass('sr-only');
+				$('button').attr('disabled', 'disabled');
+			}
 
-            function error(div) {
-                div.removeClass('has-success').addClass('has-feedback has-error');
-                $('button').attr('disabled', 'disabled');
-            }
+			function error(div) {
+				div.removeClass('has-success').addClass('has-feedback has-error');
+				$('button').attr('disabled', 'disabled');
+			}
 
-            function check() {
-                var valid = true;
-                $('input').each(function() {
-                    if ($.trim($(this).val()).length == 0) {
-                        valid = false;
-                    }
-                });
-                valid &= $('.has-error').length == 0;
-                if (valid) {
-                    $('button').removeAttr('disabled');
-                } else {
-                    $('button').attr('disabled', 'disabled');
-                }
-            }
-        </script>
-    </body>
+			function check() {
+				var valid = true;
+				$('input').each(function() {
+					if ($.trim($(this).val()).length == 0) {
+						valid = false;
+					}
+				});
+				valid &= $('.has-error').length == 0;
+				if (valid) {
+					$('button').removeAttr('disabled');
+				} else {
+					$('button').attr('disabled', 'disabled');
+				}
+			}
+		</script>
+	</body>
 </html>

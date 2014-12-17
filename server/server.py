@@ -161,12 +161,15 @@ def activate(uid=''):
 
 @app.route('/v1/sign-in', methods=['post'])
 def sign_in():
-	data = {'access_token': ''}
+	data = {'ret': 0}
 	user = User.objects(email=request.form['email']).first()
 	if user is not None:
-		if user.password == sha(request.form['password'], user.activation_code):
+		if not user.activation:
+			data['ret'] = -1
+		elif user.password == sha(request.form['password'], user.activation_code):
 			user.access_token = sha(user.uid, datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 			user.save()
+			data['ret'] = 1
 			data['uid'] = user.uid
 			data['name'] = user.name
 			data['access_token'] = user.access_token

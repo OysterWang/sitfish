@@ -1,186 +1,186 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
-        <base href="http://{{ domain }}" />
-        <title>{{ brand }} - 注册</title>
-        <link rel="icon" href="{{url_for('static', filename='image/logo.png')}}" />
-        <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.1/css/bootstrap.min.css">
-        <link rel="stylesheet" href="{{url_for('static', filename='css/sign_up_in.css')}}">
-    </head>
-    <body>
-    	<nav class="navbar navbar-fixed-top" role="navigation">
-            <div class="container-fluid">
-                <div class="navbar-header" align="center">
-                    <a href="/">{{ brand }}</a>
-                </div>
-            </div>
-        </nav>
-    	<div class="container">
-            <form class="form-horizontal" role="form" action="/sign-up" method="POST">
-                <div class="form-group">
-                    <input type="text" class="form-control" id="uid" name="uid" placeholder="用户名">
-                    <small class="form-control-feedback glyphicon" style="right:5px;"></small>
-                    <small class="help-block sr-only">该用户名已被注册</small>
-                </div>
-                <div class="form-group">
-                    <input type="text" class="form-control" id="name" name="name" placeholder="昵称">
-                    <small class="form-control-feedback glyphicon" style="right:5px;"></small>
-                </div>
-                <div class="form-group">
-                    <input type="text" class="form-control" id="email" name="email" placeholder="邮箱">
-                    <small class="form-control-feedback glyphicon" style="right:5px;"></small>
-                    <small class="help-block sr-only">该邮箱已被注册</small>
-                    <small class="help-block sr-only">邮箱格式不正确</small>
-                </div>
-                <div class="form-group">
-                    <input type="password" class="form-control" id="password" name="password" placeholder="密码">
-                    <small class="form-control-feedback glyphicon" style="right:5px;"></small>
-                </div>
-                <div class="form-group">
-                    <input type="password" class="form-control" id="password-check" name="password-check" placeholder="密码确认">
-                    <small class="form-control-feedback glyphicon" style="right:5px;"></small>
-                    <small class="help-block sr-only">密码不一致</small>
-                </div>
-                <br>
-                <div class="form-group">
-                    <button type="submit" class="btn btn-info btn-block" disabled="disabled">完成注册</button>
-                </div>
-            </form>
-    	</div>
-        <script src="http://cdn.staticfile.org/jquery/2.1.1-rc2/jquery.min.js"></script>
-        <script type="text/javascript">
-            $(function() {
-                $('#uid:first').focus();
-                listenUid();
-                listenName();
-                listenEmail();
-                listenPassword();
-            });
+	<head>
+		<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+		<base href="http://{{ domain }}" />
+		<title>{{ brand }} - 注册</title>
+		<link rel="icon" href="{{url_for('static', filename='image/logo.png')}}" />
+		<link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.1/css/bootstrap.min.css">
+		<link rel="stylesheet" href="{{url_for('static', filename='css/sign.css')}}">
+	</head>
+	<body>
+		<nav class="navbar" role="navigation">
+			<div class="container" align="center">
+				<div class="navbar-header">
+					<a href="/">{{ brand }}</a>
+				</div>
+			</div>
+		</nav>
+		<div class="container">
+			<form class="form-horizontal" role="form" action="/sign-up" method="POST">
+				<div class="form-group">
+					<input type="text" class="form-control" id="uid" name="uid" placeholder="用户名">
+					<small class="form-control-feedback glyphicon" style="right:5px;"></small>
+					<small class="help-block sr-only">该用户名已被注册</small>
+				</div>
+				<div class="form-group">
+					<input type="text" class="form-control" id="name" name="name" placeholder="昵称">
+					<small class="form-control-feedback glyphicon" style="right:5px;"></small>
+				</div>
+				<div class="form-group">
+					<input type="text" class="form-control" id="email" name="email" placeholder="邮箱">
+					<small class="form-control-feedback glyphicon" style="right:5px;"></small>
+					<small class="help-block sr-only">该邮箱已被注册</small>
+					<small class="help-block sr-only">邮箱格式不正确</small>
+				</div>
+				<div class="form-group">
+					<input type="password" class="form-control" id="password" name="password" placeholder="密码">
+					<small class="form-control-feedback glyphicon" style="right:5px;"></small>
+				</div>
+				<div class="form-group">
+					<input type="password" class="form-control" id="password-check" name="password-check" placeholder="密码确认">
+					<small class="form-control-feedback glyphicon" style="right:5px;"></small>
+					<small class="help-block sr-only">密码不一致</small>
+				</div>
+				<br>
+				<div class="form-group">
+					<button type="submit" class="btn btn-info btn-block" disabled="disabled">完成注册</button>
+				</div>
+			</form>
+		</div>
+		<script src="http://cdn.staticfile.org/jquery/2.1.1-rc2/jquery.min.js"></script>
+		<script type="text/javascript">
+			$(function() {
+				$('#uid:first').focus();
+				listenUid();
+				listenName();
+				listenEmail();
+				listenPassword();
+			});
 
-            function listenUid() {
-                var cur = $('#uid');
-                var parent = cur.parent();
-                cur.bind('input onpropertychange', function() {
-                    if ($.trim(cur.val()).length == 0) {
-                        clear(parent);
-                    } else {
-                        $.get('/api/v1/count?s=' + cur.val() + '&t=0', function(data) {
-                            if ('count' in data) {
-                                if (data['count'] > 0) {
-                                    error(parent);
-                                    parent.children('.help-block:eq(0)').removeClass('sr-only');
-                                } else {
-                                    ok(parent);
-                                }
-                            }
-                        });
-                    }
-                });
-            }
+			function listenUid() {
+				var cur = $('#uid');
+				var parent = cur.parent();
+				cur.bind('input onpropertychange', function() {
+					if ($.trim(cur.val()).length == 0) {
+						clear(parent);
+					} else {
+						$.get('/api/v1/count?s=' + cur.val() + '&t=0', function(data) {
+							if ('count' in data) {
+								if (data['count'] > 0) {
+									error(parent);
+									parent.children('.help-block:eq(0)').removeClass('sr-only');
+								} else {
+									ok(parent);
+								}
+							}
+						});
+					}
+				});
+			}
 
-            function listenName() {
-                var cur = $('#name');
-                var parent = cur.parent();
-                cur.bind('input onpropertychange', function() {
-                    if ($.trim(cur.val()).length == 0) {
-                        clear(parent);
-                    } else {
-                        ok(parent);
-                    }
-                });
-            }
+			function listenName() {
+				var cur = $('#name');
+				var parent = cur.parent();
+				cur.bind('input onpropertychange', function() {
+					if ($.trim(cur.val()).length == 0) {
+						clear(parent);
+					} else {
+						ok(parent);
+					}
+				});
+			}
 
-            function listenEmail() {
-                var cur = $('#email');
-                var parent = cur.parent();
-                cur.bind('change', function() {
-                    if ($.trim(cur.val()).length == 0) {
-                        clear(parent);
-                    } else {
-                        function isEmail(email) {
-                            var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
-                            return regex.test(email);
-                        }
-                        if (isEmail(cur.val())) {
-                            $.get('/api/v1/count?s=' + cur.val() + '&t=1', function(data) {
-                                if (data['count'] > 0) {
-                                    error(parent);
-                                    parent.children('.help-block:eq(0)').removeClass('sr-only');
-                                    parent.children('.help-block:eq(1)').addClass('sr-only');
-                                } else if (data['count'] == 0) {
-                                    ok(parent);
-                                }
-                            });
-                        } else {
-                            error(parent);
-                            parent.children('.help-block:eq(0)').addClass('sr-only');
-                            parent.children('.help-block:eq(1)').removeClass('sr-only');
-                        }
-                    }
-                });
-            }
+			function listenEmail() {
+				var cur = $('#email');
+				var parent = cur.parent();
+				cur.bind('change', function() {
+					if ($.trim(cur.val()).length == 0) {
+						clear(parent);
+					} else {
+						function isEmail(email) {
+							var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+							return regex.test(email);
+						}
+						if (isEmail(cur.val())) {
+							$.get('/api/v1/count?s=' + cur.val() + '&t=1', function(data) {
+								if (data['count'] > 0) {
+									error(parent);
+									parent.children('.help-block:eq(0)').removeClass('sr-only');
+									parent.children('.help-block:eq(1)').addClass('sr-only');
+								} else if (data['count'] == 0) {
+									ok(parent);
+								}
+							});
+						} else {
+							error(parent);
+							parent.children('.help-block:eq(0)').addClass('sr-only');
+							parent.children('.help-block:eq(1)').removeClass('sr-only');
+						}
+					}
+				});
+			}
 
-            function listenPassword() {
-                var password = $('#password');
-                var pwdCheck = $('#password-check');
-                var pwdParent = password.parent();
-                var chkParent = pwdCheck.parent();
-                $('#password, #password-check').bind('input onpropertychange', function() {
-                    if (pwdCheck.val() == '') {
-                        clear(pwdParent);
-                        clear(chkParent);
-                    } else {
-                        if (password.val() == pwdCheck.val()) {
-                            ok(pwdParent);
-                            ok(chkParent);
-                        } else {
-                            if (password.val().indexOf(pwdCheck.val()) == 0) {
-                                clear(chkParent);
-                            } else {
-                                clear(pwdParent);
-                                error(chkParent);
-                                parent.children('.help-block:eq(0)').removeClass('sr-only');
-                            }
-                        }
-                    }
-                });
-            }
+			function listenPassword() {
+				var password = $('#password');
+				var pwdCheck = $('#password-check');
+				var pwdParent = password.parent();
+				var chkParent = pwdCheck.parent();
+				$('#password, #password-check').bind('input onpropertychange', function() {
+					if (pwdCheck.val() == '') {
+						clear(pwdParent);
+						clear(chkParent);
+					} else {
+						if (password.val() == pwdCheck.val()) {
+							ok(pwdParent);
+							ok(chkParent);
+						} else {
+							if (password.val().indexOf(pwdCheck.val()) == 0) {
+								clear(chkParent);
+							} else {
+								clear(pwdParent);
+								error(chkParent);
+								parent.children('.help-block:eq(0)').removeClass('sr-only');
+							}
+						}
+					}
+				});
+			}
 
-            function clear(div) {
-                div.removeClass('has-feedback has-success has-error');
-                div.children('.glyphicon').removeClass('glyphicon-ok glyphicon-remove');
-                div.children('.help-block').addClass('sr-only');
-                $('button').attr('disabled', 'disabled');
-            }
+			function clear(div) {
+				div.removeClass('has-feedback has-success has-error');
+				div.children('.glyphicon').removeClass('glyphicon-ok glyphicon-remove');
+				div.children('.help-block').addClass('sr-only');
+				$('button').attr('disabled', 'disabled');
+			}
 
-            function ok(div) {
-                div.removeClass('has-error').addClass('has-feedback has-success');
-                div.children('.glyphicon').removeClass('glyphicon-remove').addClass('glyphicon-ok');
-                div.children('.help-block').addClass('sr-only');
-                check();
-            }
+			function ok(div) {
+				div.removeClass('has-error').addClass('has-feedback has-success');
+				div.children('.glyphicon').removeClass('glyphicon-remove').addClass('glyphicon-ok');
+				div.children('.help-block').addClass('sr-only');
+				check();
+			}
 
-            function error(div) {
-                div.removeClass('has-success').addClass('has-feedback has-error');
-                div.children('.glyphicon').removeClass('glyphicon-ok').addClass('glyphicon-remove');
-                $('button').attr('disabled', 'disabled');
-            }
+			function error(div) {
+				div.removeClass('has-success').addClass('has-feedback has-error');
+				div.children('.glyphicon').removeClass('glyphicon-ok').addClass('glyphicon-remove');
+				$('button').attr('disabled', 'disabled');
+			}
 
-            function check() {
-                var valid = true;
-                $('input').each(function() {
-                    if ($.trim($(this).val()).length == 0) {
-                        valid = false;
-                    }
-                });
-                valid &= $('.has-success').length == 5;
-                if (valid) {
-                    $('button').removeAttr('disabled');
-                } else {
-                    $('button').attr('disabled', 'disabled');
-                }
-            }
-        </script>
-    </body>
+			function check() {
+				var valid = true;
+				$('input').each(function() {
+					if ($.trim($(this).val()).length == 0) {
+						valid = false;
+					}
+				});
+				valid &= $('.has-success').length == 5;
+				if (valid) {
+					$('button').removeAttr('disabled');
+				} else {
+					$('button').attr('disabled', 'disabled');
+				}
+			}
+		</script>
+	</body>
 </html>

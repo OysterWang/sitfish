@@ -26,9 +26,9 @@ app.secret_key = os.urandom(24)
 @app.route('/')
 def index():
 	if validate():
-		return render_template('index.html', uid=session['uid'], name=session['name'], **params)
+		return render_template('base.html', header='header.html', main='search.html', player='player.html', uid=session['uid'], name=session['name'], **params)
 	else:
-		return render_template('sign_out.html', **params)
+		return render_template('index.html', **params)
 
 
 @app.route('/sign-up', methods=['GET', 'POST'])
@@ -59,18 +59,18 @@ def activate(uid=''):
 @app.route('/sign-in', methods=['GET', 'POST'])
 def sign_in():
 	if request.method == 'GET':
-		return render_template('sign_in.html', error=False, email='', password='', **params)
+		return render_template('sign_in.html', ret=1, email='', password='', **params)
 	else:
 		url = 'http://%s/v1/sign-in' % config['SERVER']['HOST']
 		payload = {'email': request.form['email'], 'password': request.form['password']}
 		data = requests.post(url, data=payload).json()
-		if data['access_token'] == '':
-			return render_template('sign_in.html', error=True, email=payload['email'], password=payload['password'], **params)
-		else:
+		if data['ret'] == 1:
 			session['uid'] = data['uid']
 			session['name'] = data['name']
 			session['access_token'] = data['access_token']
 			return redirect('/')
+		else:
+			return render_template('sign_in.html', ret=data['ret'], email=payload['email'], password=payload['password'], **params)
 
 
 @app.route('/sign-out')
