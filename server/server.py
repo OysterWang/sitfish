@@ -117,15 +117,17 @@ def lyrics(id=''):
 Account relevant
 """
 
-@app.route('/v1/count')
+@app.route('/v1/exist')
 def count():
 	s = request.args.get('s', default='')
 	t = request.args.get('t', default='0') # uid:0, email:1
-	data = {'count': -1}
+	data = {'exist': 0}
 	if t == '0':
-		data['count'] = User.objects(uid=s).count()
+		if User.objects(uid=s).count() > 0:
+			data['exist'] = 1
 	elif t == '1':
-		data['count'] = User.objects(email=s).count()
+		if User.objects(email=s).count() > 0:
+			data['exist'] = 1
 	return jsonify(**data)
 
 

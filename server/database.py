@@ -32,7 +32,7 @@ class User(Document):
 		return '<%s, %s, %s>' % (self.uid, self.name, self.email)
 
 	def json(self):
-		return {'uid': self.uid, 'name': self.name, 'email': self.email, 'her': self.her}
+		return { 'uid': self.uid, 'name': self.name, 'email': self.email, 'her': self.her, 'reg_time': self.reg_time }
 
 
 class Message(Document):

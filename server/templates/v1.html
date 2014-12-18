@@ -19,7 +19,7 @@
 		<div class="container-fluid">
 			<div class="row">
 				<div class="col-sm-3 col-md-2 sidebar" id="scroll">
-					<ul class="nav nav-sidebar affix" id="nav">
+					<ul class="nav nav-sidebar" id="nav">
 						<li class="active"><a href="#search">search</a></li>
 						<li><a href="#songs">songs</a></li>
 						<li><a href="#albums">albums</a></li>
@@ -27,8 +27,9 @@
 						<li><a href="#playlists">playlists</a></li>
 						<li><a href="#lyrics">lyrics</a></li>
 						<hr>
-						<li><a href="#count">count</a></li>
+						<li><a href="#exist">exist</a></li>
 						<li><a href="#sign-up">sign-up</a></li>
+						<li><a href="#activate">activate</a></li>
 						<li><a href="#sign-in">sign-in</a></li>
 						<li><a href="#validate">validate</a></li>
 						<li><a href="#users">users</a></li>
@@ -48,7 +49,7 @@
 									<td><b>GET</b></td>
 								</tr>
 								<tr>
-									<td width="400">Response formats</td>
+									<td>Response formats</td>
 									<td>JSON</td>
 								</tr>
 								<tr>
@@ -66,7 +67,40 @@
 								</tr>
 								<tr>
 									<td width="400">t</td>
-									<td>song = 1, album = 10, artist = 100, playlist = 1000, lyric = 1006, user = 9</td>
+									<td>
+										<table>
+											<tr>
+												<td>1</td>
+												<td width="15"></td>
+												<td>song</td>
+											</tr>
+											<tr>
+												<td>10</td>
+												<td width="15"></td>
+												<td>album</td>
+											</tr>
+											<tr>
+												<td>100</td>
+												<td width="15"></td>
+												<td>artist</td>
+											</tr>
+											<tr>
+												<td>1000</td>
+												<td width="15"></td>
+												<td>playlist</td>
+											</tr>
+											<tr>
+												<td>1006</td>
+												<td width="15"></td>
+												<td>lyric</td>
+											</tr>
+											<tr>
+												<td>9</td>
+												<td width="15"></td>
+												<td>user</td>
+											</tr>
+										</table>
+									</td>
 								</tr>
 								<tr>
 									<td width="400">offset</td>
@@ -102,7 +136,7 @@
 									<td><b>GET</b></td>
 								</tr>
 								<tr>
-									<td width="400">Response formats</td>
+									<td>Response formats</td>
 									<td>JSON</td>
 								</tr>
 								<tr>
@@ -139,7 +173,7 @@
 									<td><b>GET</b></td>
 								</tr>
 								<tr>
-									<td width="400">Response formats</td>
+									<td>Response formats</td>
 									<td>JSON</td>
 								</tr>
 								<tr>
@@ -176,7 +210,7 @@
 									<td><b>GET</b></td>
 								</tr>
 								<tr>
-									<td width="400">Response formats</td>
+									<td>Response formats</td>
 									<td>JSON</td>
 								</tr>
 								<tr>
@@ -213,7 +247,7 @@
 									<td><b>GET</b></td>
 								</tr>
 								<tr>
-									<td width="400">Response formats</td>
+									<td>Response formats</td>
 									<td>JSON</td>
 								</tr>
 								<tr>
@@ -250,7 +284,7 @@
 									<td><b>GET</b></td>
 								</tr>
 								<tr>
-									<td width="400">Response formats</td>
+									<td>Response formats</td>
 									<td>JSON</td>
 								</tr>
 								<tr>
@@ -274,11 +308,11 @@
 						</ul>
 						<br><br>
 					</section>
-					<section id="count" class="anchor">
-						<h1 class="page-header">Count</h1>
-						<p>Query count.</p>
+					<section id="exist" class="anchor">
+						<h1 class="page-header">Exist</h1>
+						<p>Check user exist or not.</p>
 						<h4 class="child-header">Resource URL</h4>
-						<p>http://{{ host }}/{{ version }}/count</p>
+						<p>http://{{ host }}/{{ version }}/exist</p>
 						<h4 class="child-header">Resource Information</h4>
 						<table class="table table-hover">
 							<tbody>
@@ -287,7 +321,7 @@
 									<td><b>GET</b></td>
 								</tr>
 								<tr>
-									<td width="400">Response formats</td>
+									<td>Response formats</td>
 									<td>JSON</td>
 								</tr>
 								<tr>
@@ -305,14 +339,314 @@
 								</tr>
 								<tr>
 									<td width="400">t</td>
-									<td>uid = 0, email = 1</td>
+									<td>
+										<table>
+											<tr>
+												<td>0</td>
+												<td width="15"></td>
+												<td>uid</td>
+											</tr>
+											<tr>
+												<td>1</td>
+												<td width="15"></td>
+												<td>email</td>
+											</tr>
+										</table>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<h4 class="child-header">Return</h4>
+						<table class="table table-hover">
+							<tbody>
+								<tr>
+									<td width="400">exist</td>
+									<td>
+										<table>
+											<tr>
+												<td>0</td>
+												<td width="15"></td>
+												<td>not exist</td>
+											</tr>
+											<tr>
+												<td>1</td>
+												<td width="15"></td>
+												<td>exist</td>
+											</tr>
+										</table>
+									</td>
 								</tr>
 							</tbody>
 						</table>
 						<h4 class="child-header">Examples</h4>
 						<ul>
-							<li><a target="_blank" href="/{{ version }}/count?s=zhaolong&t=0">http://{{ host }}/{{ version }}/count?s=zhaolong&t=0</a></li>
+							<li><a target="_blank" href="/{{ version }}/exist?s=zhaolong&t=0">http://{{ host }}/{{ version }}/exist?s=zhaolong&t=0</a></li>
 						</ul>
+						<br><br>
+					</section>
+					<section id="sign-up" class="anchor">
+						<h1 class="page-header">Sign up</h1>
+						<p>New user sign up.</p>
+						<h4 class="child-header">Resource URL</h4>
+						<p>http://{{ host }}/{{ version }}/sign-up</p>
+						<h4 class="child-header">Resource Information</h4>
+						<table class="table table-hover">
+							<tbody>
+								<tr>
+									<td width="400">Request method</td>
+									<td><b>POST</b></td>
+								</tr>
+								<tr>
+									<td>Response formats</td>
+									<td>JSON</td>
+								</tr>
+								<tr>
+									<td>Requires authentication?</td>
+									<td>No</td>
+								</tr>
+							</tbody>
+						</table>
+						<h4 class="child-header">Parameters</h4>
+						<table class="table table-hover">
+							<tbody>
+								<tr>
+									<td width="400">uid</td>
+									<td>User id</td>
+								</tr>
+								<tr>
+									<td>name</td>
+									<td>User name.</td>
+								</tr>
+								<tr>
+									<td>email</td>
+									<td>User email</td>
+								</tr>
+								<tr>
+									<td>password</td>
+									<td>User password</td>
+								</tr>
+							</tbody>
+						</table>
+						<h4 class="child-header">Return</h4>
+						<table class="table table-hover">
+							<tbody>
+								<tr>
+									<td width="400">ret</td>
+									<td>
+										<table>
+											<tr>
+												<td>0</td>
+												<td width="15"></td>
+												<td>fail</td>
+											</tr>
+											<tr>
+												<td>1</td>
+												<td width="15"></td>
+												<td>success</td>
+											</tr>
+										</table>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<br><br>
+					</section>
+					<section id="activate" class="anchor">
+						<h1 class="page-header">Activate</h1>
+						<p>User activate</p>
+						<h4 class="child-header">Resource URL</h4>
+						<p>http://{{ host }}/{{ version }}/activate/{uid}</p>
+						<h4 class="child-header">Resource Information</h4>
+						<table class="table table-hover">
+							<tbody>
+								<tr>
+									<td width="400">Request method</td>
+									<td><b>GET</b></td>
+								</tr>
+								<tr>
+									<td>Response formats</td>
+									<td>JSON</td>
+								</tr>
+								<tr>
+									<td>Requires authentication?</td>
+									<td>No</td>
+								</tr>
+							</tbody>
+						</table>
+						<h4 class="child-header">Parameters</h4>
+						<table class="table table-hover">
+							<tbody>
+								<tr>
+									<td width="400">uid</td>
+									<td>User id</td>
+								</tr>
+								<tr>
+									<td>code</td>
+									<td>Activation code</td>
+								</tr>
+							</tbody>
+						</table>
+						<h4 class="child-header">Return</h4>
+						<table class="table table-hover">
+							<tbody>
+								<tr>
+									<td width="400">ret</td>
+									<td>
+										<table>
+											<tr>
+												<td>0</td>
+												<td width="15"></td>
+												<td>fail</td>
+											</tr>
+											<tr>
+												<td>1</td>
+												<td width="15"></td>
+												<td>success</td>
+											</tr>
+										</table>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<h4 class="child-header">Examples</h4>
+						<ul>
+							<li><a target="_blank" href="/{{ version }}/activate/zhaolong?code=S2M5MRDV5L7SWPHCQ84RBQ3SLI5R2LJ4">http://{{ host }}/{{ version }}/activate/zhaolong?code=S2M5MRDV5L7SWPHCQ84RBQ3SLI5R2LJ4</a></li>
+						</ul>
+						<br><br>
+					</section>
+					<section id="sign-in" class="anchor">
+						<h1 class="page-header">Sign in</h1>
+						<p>User sign in.</p>
+						<h4 class="child-header">Resource URL</h4>
+						<p>http://{{ host }}/{{ version }}/sign-in</p>
+						<h4 class="child-header">Resource Information</h4>
+						<table class="table table-hover">
+							<tbody>
+								<tr>
+									<td width="400">Request method</td>
+									<td><b>POST</b></td>
+								</tr>
+								<tr>
+									<td>Response formats</td>
+									<td>JSON</td>
+								</tr>
+								<tr>
+									<td>Requires authentication?</td>
+									<td>No</td>
+								</tr>
+							</tbody>
+						</table>
+						<h4 class="child-header">Parameters</h4>
+						<table class="table table-hover">
+							<tbody>
+								<tr>
+									<td width="400">email</td>
+									<td>User email</td>
+								</tr>
+								<tr>
+									<td>password</td>
+									<td>User password</td>
+								</tr>
+							</tbody>
+						</table>
+						<h4 class="child-header">Return</h4>
+						<table class="table table-hover">
+							<tbody>
+								<tr>
+									<td width="400">ret</td>
+									<td>
+										<table>
+											<tr>
+												<td>-1</td>
+												<td width="15"></td>
+												<td>not activated</td>
+											</tr>
+											<tr>
+												<td>0</td>
+												<td width="15"></td>
+												<td>email or password is not correct</td>
+											</tr>
+											<tr>
+												<td>1</td>
+												<td width="15"></td>
+												<td>success</td>
+											</tr>
+										</table>
+									</td>
+								</tr>
+								<tr>
+									<td>uid</td>
+									<td>User id</td>
+								</tr>
+								<tr>
+									<td>name</td>
+									<td>User name</td>
+								</tr>
+								<tr>
+									<td>access_token</td>
+									<td>Token to update user info</td>
+								</tr>
+							</tbody>
+						</table>
+						<br><br>
+					</section>
+					<section id="validate" class="anchor">
+						<h1 class="page-header">Validate</h1>
+						<p>User validation</p>
+						<h4 class="child-header">Resource URL</h4>
+						<p>http://{{ host }}/{{ version }}/validate</p>
+						<h4 class="child-header">Resource Information</h4>
+						<table class="table table-hover">
+							<tbody>
+								<tr>
+									<td width="400">Request method</td>
+									<td><b>POST</b></td>
+								</tr>
+								<tr>
+									<td>Response formats</td>
+									<td>JSON</td>
+								</tr>
+								<tr>
+									<td>Requires authentication?</td>
+									<td>No</td>
+								</tr>
+							</tbody>
+						</table>
+						<h4 class="child-header">Parameters</h4>
+						<table class="table table-hover">
+							<tbody>
+								<tr>
+									<td width="400">uid</td>
+									<td>User id</td>
+								</tr>
+								<tr>
+									<td>access_token</td>
+									<td>Access token for this user</td>
+								</tr>
+							</tbody>
+						</table>
+						<h4 class="child-header">Return</h4>
+						<table class="table table-hover">
+							<tbody>
+								<tr>
+									<td width="400">ret</td>
+									<td>
+										<table>
+											<tr>
+												<td>0</td>
+												<td width="15"></td>
+												<td>fail</td>
+											</tr>
+											<tr>
+												<td>1</td>
+												<td width="15"></td>
+												<td>success</td>
+											</tr>
+										</table>
+									</td>
+								</tr>
+							</tbody>
+						</table>
 						<br><br>
 					</section>
 					<section id="users" class="anchor">
@@ -328,7 +662,7 @@
 									<td><b>GET</b></td>
 								</tr>
 								<tr>
-									<td width="400">Response formats</td>
+									<td>Response formats</td>
 									<td>JSON</td>
 								</tr>
 								<tr>
