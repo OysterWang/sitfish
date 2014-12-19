@@ -1,0 +1,38 @@
+<nav class="navbar" role="navigation">
+	<div class="container">
+		<div class="navbar-header">
+			<a class="navbar-brand" href="/" data-pjax="#main" style="height:auto !important; padding: 6px 0px 6px 0px;">
+				<img alt="Brand" src="{{url_for('static', filename='image/logo.png')}}" width="48" height="48">
+			</a>
+			<a class="navbar-brand" href="/" data-pjax="#main" style="margin-left:-10px; font-size:36px; padding:20px;">{{ brand }}</a>
+		</div>
+		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+			<ul class="nav navbar-nav nav-main">
+				<li class="active"><a href="/toplist" data-pjax="#main">排行榜</a></li>
+				<li><a href="/playlist" data-pjax="#main">歌单</a></li>
+				<li><a href="/albumnew" data-pjax="#main">新碟上架</a></li>
+			</ul>
+			<ul class="nav navbar-nav navbar-right">
+				<li class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ name }}的账号<span class="caret"></span></a>
+					<ul class="dropdown-menu dropdown-menu-custom" role="menu">
+						<li><a href="/users/{{ uid }}"><span class="glyphicon glyphicon-user"></span>我的{{ brand }}</a></li>
+						<li><a href="/sign-out"><span class="glyphicon glyphicon-log-out"></span>退出</a></li>
+					</ul>
+				</li>
+			</ul>
+			<form class="navbar-form navbar-right" role="search">
+				<div class="input-group" style="margin-top:5px;">
+					<input type="text" class="form-control" placeholder="单曲/歌手/专辑/歌单/用户" width="50px">
+					<div class="input-group-btn">
+						<button type="submit" class="btn btn-info">
+							<span class="glyphicon glyphicon-search"></span>
+						</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</nav>
+<nav class="navbar navbar-custom">
+</nav>

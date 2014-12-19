@@ -17,32 +17,57 @@ from flask import render_template
 config = configparser.ConfigParser()
 config.readfp(codecs.open("../config/config.ini", "r", "utf-8"))
 
-params = {'domain': config['WEB']['HOST'], 'brand': config['DEFAULT']['BRAND']}
+base_params = {'domain': config['WEB']['HOST'], 'brand': config['DEFAULT']['BRAND']}
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
 
 
+"""
+Foundation
+"""
+
 @app.route('/')
 def index():
-	if validate():
-		return render_template('base.html', header='header.html', main='search.html', player='player.html', uid=session['uid'], name=session['name'], **params)
-	else:
-		return render_template('index.html', **params)
+	url = 'http://%s/v1/toplists/3779629' % config['SERVER']['HOST']
+	data = requests.get(url).json()
+	return pjax('toplist.html', id='3779629', songs=data['songs'])
 
+
+@app.route('/toplist')
+def toplist():
+	id = request.args.get('id', default='3779629')
+	url = 'http://%s/v1/toplists/%s' % (config['SERVER']['HOST'], id)
+	data = requests.get(url).json()
+	return pjax('toplist.html', id=id, songs=data['songs'])
+
+
+@app.route('/playlist')
+def playlist():
+	return pjax('playlist.html')
+
+
+@app.route('/albumnew')
+def albumnew():
+	return pjax('albumnew.html')
+
+
+"""
+User management
+"""
 
 @app.route('/sign-up', methods=['GET', 'POST'])
 def sign_up():
 	if request.method == 'GET':
-		return render_template('sign_up.html', **params)
+		return render_template('sign_up.html', **base_params)
 	else:
 		url = 'http://%s/v1/sign-up' % config['SERVER']['HOST']
 		payload = {'uid': request.form['uid'], 'name': request.form['name'], 'email': request.form['email'], 'password': request.form['password']}
 		data = requests.post(url, data=payload).json()
 		if data['ret'] == 1:
-			return render_template('tips.html', tips='%s，恭喜，注册成功！我们已向%s发送了一封邮件，请尽快登录并激活当前账户。' % (payload['name'], payload['email']), **params)
+			return render_template('tips.html', tips='%s，恭喜，注册成功！我们已向%s发送了一封邮件，请尽快登录并激活当前账户。' % (payload['name'], payload['email']), **base_params)
 		else:
-			return render_template('tips.html', tips='%s，抱歉，注册失败，请稍候再次尝试。' % payload['name'], **params)
+			return render_template('tips.html', tips='%s，抱歉，注册失败，请稍候再次尝试。' % payload['name'], **base_params)
 
 
 @app.route('/activate/<uid>')
@@ -51,15 +76,15 @@ def activate(uid=''):
 	data = requests.get(url).json()
 	print(data)
 	if data['ret'] == 1:
-		return render_template('tips.html', tips='激活成功！', **params)
+		return render_template('tips.html', tips='激活成功！', **base_params)
 	else:
-		return render_template('tips.html', tips='激活失败……', **params)
+		return render_template('tips.html', tips='激活失败……', **base_params)
 
 
 @app.route('/sign-in', methods=['GET', 'POST'])
 def sign_in():
 	if request.method == 'GET':
-		return render_template('sign_in.html', ret=1, email='', password='', **params)
+		return render_template('sign_in.html', ret=1, email='', password='', **base_params)
 	else:
 		url = 'http://%s/v1/sign-in' % config['SERVER']['HOST']
 		payload = {'email': request.form['email'], 'password': request.form['password']}
@@ -70,7 +95,7 @@ def sign_in():
 			session['access_token'] = data['access_token']
 			return redirect('/')
 		else:
-			return render_template('sign_in.html', ret=data['ret'], email=payload['email'], password=payload['password'], **params)
+			return render_template('sign_in.html', ret=data['ret'], email=payload['email'], password=payload['password'], **base_params)
 
 
 @app.route('/sign-out')
@@ -86,6 +111,21 @@ def api(path=''):
 	return jsonify(**data)
 
 
+"""
+Utilities
+"""
+
+def pjax(template, **params):
+	if validate():
+		base_params['uid'] = session['uid']
+		base_params['name'] = session['name']
+		if 'X-PJAX' in request.headers:
+			return render_template(template, **params)
+		return render_template("base.html", template=template, **dict(base_params, **params))
+	else:
+		return render_template('index.html', **base_params)
+
+
 def validate():
 	if 'uid' in session and 'access_token' in session:
 		url = 'http://%s/v1/validate' % config['SERVER']['HOST']
@@ -93,6 +133,7 @@ def validate():
 		data = requests.post(url, data=payload).json()
 		return data['ret'] == 1
 	return False
+
 
 
 if __name__ == '__main__':

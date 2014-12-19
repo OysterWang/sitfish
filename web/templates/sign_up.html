@@ -65,14 +65,12 @@
 					if ($.trim(cur.val()).length == 0) {
 						clear(parent);
 					} else {
-						$.get('/api/v1/count?s=' + cur.val() + '&t=0', function(data) {
-							if ('count' in data) {
-								if (data['count'] > 0) {
-									error(parent);
-									parent.children('.help-block:eq(0)').removeClass('sr-only');
-								} else {
-									ok(parent);
-								}
+						$.get('/api/v1/exist?s=' + cur.val() + '&t=0', function(data) {
+							if (data['exist'] == 1) {
+								error(parent);
+								parent.children('.help-block:eq(0)').removeClass('sr-only');
+							} else {
+								ok(parent);
 							}
 						});
 					}
@@ -103,12 +101,12 @@
 							return regex.test(email);
 						}
 						if (isEmail(cur.val())) {
-							$.get('/api/v1/count?s=' + cur.val() + '&t=1', function(data) {
-								if (data['count'] > 0) {
+							$.get('/api/v1/exist?s=' + cur.val() + '&t=1', function(data) {
+								if (data['exist'] == 1) {
 									error(parent);
 									parent.children('.help-block:eq(0)').removeClass('sr-only');
 									parent.children('.help-block:eq(1)').addClass('sr-only');
-								} else if (data['count'] == 0) {
+								} else {
 									ok(parent);
 								}
 							});

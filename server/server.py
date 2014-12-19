@@ -113,6 +113,29 @@ def lyrics(id=''):
 	return jsonify(**data)
 
 
+@app.route('/v1/toplists/<id>')
+def toplists(id=''):
+	data = {'songs': []}
+	url = 'http://music.163.com/discover/toplist?id=%s' % id
+	soup = BeautifulSoup(requests.get(url).content)
+	table = soup.find('tbody', id='tracklist')
+	if table is not None:
+		for tr in table.find_all('tr'):
+			songDict = {'id': '', 'name': '', 'time': '', 'artist': {'id': '', 'name': ''}}
+			tds = tr.find_all('td')
+			if len(tds) >= 4:
+				songNode = tds[1].find('div', class_='ttc').find('a')
+				if songNode is not None:
+					songDict['id'] = re.split('id=', songNode['href'])[-1]
+					songDict['name'] = songNode.text
+				songDict['time'] = tds[2].text
+				artistNode = tds[3].find('a')
+				if artistNode is not None:
+					songDict['artist'] = {'id': re.split('id=', artistNode['href'])[-1], 'name': artistNode.text}
+			data['songs'].append(songDict)
+	return jsonify(**data)
+
+
 """
 Account relevant
 """
