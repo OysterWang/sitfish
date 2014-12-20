@@ -8,6 +8,9 @@
 		<link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.1/css/bootstrap.min.css">
 		<link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-glyphicons.css') }}">
 		<link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+		<!-- SoundManager2 -->
+		<link rel="stylesheet" href="{{ url_for('static', filename='sm/css/bar-ui.css') }}">
+		<link rel="stylesheet" href="{{ url_for('static', filename='sm/css/demo.css') }}">
 	</head>
 	<body>
 		<hearder>
@@ -17,16 +20,25 @@
 			{% include template %}
 		</div>
 		<hr style="margin-top:0px; margin-bottom:5px; border-top:1px solid #d3d3d3">
-		<footer class="container footer" style="padding:0px 0px 0px 0px; margin-bottom: 100px;">
+		<footer class="container footer" style="padding:0px 0px 0px 0px; margin-bottom: 80px;">
 			<h5>© 2014 - 2015 sitfish.com, all rights reserved 北京{{ brand }}科技有限公司</h5>
 		</footer>
+		{% include "player.html" %}
 		<script src="//cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
 		<script src="//cdn.bootcss.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
-		<script src="{{ url_for('static', filename='js/jquery.pjax.js') }}"></script>
+		<script src="{{ url_for('static', filename='script/jquery.pjax.js') }}"></script>
+
+		<!-- SoundManager2 -->
+		<script src="{{ url_for('static', filename='sm/script/soundmanager2.js') }}"></script>
+		<script src="{{ url_for('static', filename='sm/script/bar-ui.js') }}"></script>
+		<script src="{{ url_for('static', filename='sm/script/demo.js') }}"></script>
+
+		<!-- onload -->
 		<script type="text/javascript">
 			$(function() {
 				$('a[data-pjax]').pjax();
 				listenNavClick();
+				smStart();
 			});
 
 			function listenNavClick() {
