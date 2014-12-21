@@ -36,22 +36,29 @@
 		<!-- onload -->
 		<script type="text/javascript">
 			$(function() {
-				$('a[data-pjax]').pjax();
-				listenNavClick();
+				refreshNav();
+				listenPjax();
 				smStart();
 			});
 
-			function listenNavClick() {
-				$('.navbar a[data-pjax="#main"]').bind('click', function() {
-					var click = $(this).attr('href');
-					$('.nav-main>li').each(function() {
-						var href = $(this).children('a:first').attr('href');
-						if (href == click || (href == '/toplist' && click == '/')) {
-							$(this).addClass('active');
-						} else {
-							$(this).removeClass('active');
-						}
-					});
+			function refreshNav() {
+				cur = $(location).attr('pathname');
+				$('.nav-main>li').each(function() {
+					var href = $(this).children('a:first').attr('href');
+					if (href == cur || (href == '/toplist' && cur == '/')) {
+						$(this).addClass('active');
+					} else {
+						$(this).removeClass('active');
+					}
+				});
+			}
+
+			function listenPjax() {
+				$.pjax.defaults.timeout = false
+				$('a[data-pjax]').pjax();
+				$(document).on('pjax:complete', function() {
+					refreshNav();
+					$('a[data-pjax]').pjax();
 				});
 			}
 		</script>

@@ -1,8 +1,7 @@
-#!/usr/bin/env python
+﻿#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 import os
-import sys
 import codecs
 import requests
 import configparser
@@ -21,6 +20,7 @@ base_params = {'domain': config['WEB']['HOST'], 'brand': config['DEFAULT']['BRAN
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
+app.config['JSON_AS_ASCII'] = False
 
 
 """
@@ -120,8 +120,9 @@ def pjax(template, **params):
 		base_params['uid'] = session['uid']
 		base_params['name'] = session['name']
 		if 'X-PJAX' in request.headers:
-			return render_template(template, **params)
-		return render_template("base.html", template=template, **dict(base_params, **params))
+			return render_template(template, **dict(base_params, **params))
+		else:
+			return render_template("base.html", template=template, **dict(base_params, **params))
 	else:
 		return render_template('index.html', **base_params)
 

@@ -74,9 +74,10 @@ def search():
 
 
 # TYPE - 1
-@app.route('/v1/songs/<id>')
-def songs(id=''):
-	url = 'http://music.163.com/api/song/detail?ids=[%s]' % id
+@app.route('/v1/songs')
+def songs():
+	ids = request.args.get('ids', default='[]')
+	url = 'http://music.163.com/api/song/detail?ids=%s' % ids
 	data = requests.get(url, headers=app.config['HEADERS']).json()
 	return jsonify(**data)
 
@@ -120,19 +121,9 @@ def toplists(id=''):
 	soup = BeautifulSoup(requests.get(url).content)
 	table = soup.find('tbody', id='tracklist')
 	if table is not None:
-		for tr in table.find_all('tr'):
-			songDict = {'id': '', 'name': '', 'time': '', 'artist': {'id': '', 'name': ''}}
-			tds = tr.find_all('td')
-			if len(tds) >= 4:
-				songNode = tds[1].find('div', class_='ttc').find('a')
-				if songNode is not None:
-					songDict['id'] = re.split('id=', songNode['href'])[-1]
-					songDict['name'] = songNode.text
-				songDict['time'] = tds[2].text
-				artistNode = tds[3].find('a')
-				if artistNode is not None:
-					songDict['artist'] = {'id': re.split('id=', artistNode['href'])[-1], 'name': artistNode.text}
-			data['songs'].append(songDict)
+		ids = list(set(re.findall(r'/song\?id=(\d+)', str(table))))
+		url = 'http://music.163.com/api/song/detail?ids=[%s]' % ','.join(ids)
+		data = requests.get(url, headers=app.config['HEADERS']).json()
 	return jsonify(**data)
 
 

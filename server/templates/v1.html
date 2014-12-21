@@ -128,7 +128,7 @@
 						<h1 class="page-header">Songs</h1>
 						<p>Return a specified song.</p>
 						<h4 class="child-header">Resource URL</h4>
-						<p>http://{{ host }}/{{ version }}/songs/{id}</p>
+						<p>http://{{ host }}/{{ version }}/songs</p>
 						<h4 class="child-header">Resource Information</h4>
 						<table class="table table-hover">
 							<tbody>
@@ -150,14 +150,14 @@
 						<table class="table table-hover">
 							<tbody>
 								<tr>
-									<td width="400">id</td>
-									<td>Song id</td>
+									<td width="400">ids</td>
+									<td>Song id list, split with comma.</td>
 								</tr>
 							</tbody>
 						</table>
 						<h4 class="child-header">Examples</h4>
 						<ul>
-							<li><a target="_blank" href="/{{ version }}/songs/109299">http://{{ host }}/{{ version }}/songs/109299</a></li>
+							<li><a target="_blank" href="/{{ version }}/songs?ids=[29713754,109299]">http://{{ host }}/{{ version }}/songs?ids=[29713754,109299]</a></li>
 						</ul>
 						<br><br>
 					</section>
