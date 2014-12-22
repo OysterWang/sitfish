@@ -26,6 +26,7 @@
 		{% include "player.html" %}
 		<script src="//cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
 		<script src="//cdn.bootcss.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+		<script src="{{ url_for('static', filename='script/jquery.cookie.js') }}"></script>
 		<script src="{{ url_for('static', filename='script/jquery.pjax.js') }}"></script>
 
 		<!-- SoundManager2 -->
@@ -37,7 +38,14 @@
 		<script type="text/javascript">
 			$(function() {
 				refreshNav();
-				listenPjax();
+				loadSongs();
+
+				pjaxListener();
+				addAllListener();
+				addSongListener();
+				removeSongListener();
+				clearSongListener();
+
 				smStart();
 			});
 
@@ -53,13 +61,60 @@
 				});
 			}
 
-			function listenPjax() {
+			function loadSongs() {
+				$('.sm2-playlist-bd').empty();
+				if (typeof $.cookie('songs') === 'undefined'){
+					$.cookie('songs', JSON.stringify([]));
+				} else {
+					var songs = JSON.parse($.cookie('songs'));
+					for (var i = 0; i < songs.length; ++i) {
+						var song = songs[i];
+						$('.sm2-playlist-bd').append('<li><a href="' + song['source'] + '" img="' + song['img'] + '">' + song['name'] + ' - ' + song['artist-name'] + '</a></li>');
+					}
+				}
+				countSongs();
+			}
+
+			function pjaxListener() {
 				$.pjax.defaults.timeout = false
 				$('a[data-pjax]').pjax();
 				$(document).on('pjax:complete', function() {
-					refreshNav();
 					$('a[data-pjax]').pjax();
+					refreshNav();
 				});
+			}
+
+			function addAllListener() {
+
+			}
+
+			function addSongListener() {
+				$('.add-song').click(function() {
+					var song = {
+						'id': $(this).attr('song-id'),
+						'name': $(this).attr('song-name'),
+						'source': $(this).attr('song-source'),
+						'img': $(this).attr('song-img'),
+						'artist-id': $(this).attr('song-artist-id'),
+						'artist-name': $(this).attr('song-artist-name')
+					};
+					songs = JSON.parse($.cookie('songs'));
+					songs.push(song);
+					$.cookie('songs', JSON.stringify(songs));
+					loadSongs();
+				});
+			}
+
+			function removeSongListener() {
+
+			}
+
+			function clearSongListener() {
+
+			}
+
+			function countSongs() {
+				$('#song-num').html($('.sm2-playlist-bd').children().length);
 			}
 		</script>
 	</body>

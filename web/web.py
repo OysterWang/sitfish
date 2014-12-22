@@ -29,14 +29,14 @@ Foundation
 
 @app.route('/')
 def index():
-	url = 'http://%s/v1/toplists/3779629' % config['SERVER']['HOST']
+	url = 'http://%s/v1/toplists/3778678' % config['SERVER']['HOST']
 	data = requests.get(url).json()
-	return pjax('toplist.html', id='3779629', songs=data['songs'])
+	return pjax('toplist.html', id='3778678', songs=data['songs'])
 
 
 @app.route('/toplist')
 def toplist():
-	id = request.args.get('id', default='3779629')
+	id = request.args.get('id', default='3778678')
 	url = 'http://%s/v1/toplists/%s' % (config['SERVER']['HOST'], id)
 	data = requests.get(url).json()
 	return pjax('toplist.html', id=id, songs=data['songs'])

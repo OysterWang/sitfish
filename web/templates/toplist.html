@@ -4,18 +4,6 @@
 		<p><b>{{ brand }}音乐榜</b></p>
 		<br>
 		<ul class="nav nav-sidebar" id="nav">
-			<li class="active">
-				<div class="row">
-					<div class="col-sm-3">
-						<img src="{{url_for('static', filename='image/toplist/3779629.jpg')}}" width="40">
-					</div>
-					<div class="col-sm-9" style="padding-left:5px;">
-						<span><a href="/toplist?id=3779629" data-pjax="#main">{{ brand }}新歌榜</a></span><br>
-						<small>每天更新</small>
-					</div>
-				</div>
-			</li>
-			<br>
 			<li>
 				<div class="row">
 					<div class="col-sm-3">
@@ -23,6 +11,18 @@
 					</div>
 					<div class="col-sm-9" style="padding-left:5px;">
 						<span><a href="/toplist?id=3778678" data-pjax="#main">{{ brand }}热歌榜</a></span><br>
+						<small>每天更新</small>
+					</div>
+				</div>
+			</li>
+			<br>
+			<li class="active">
+				<div class="row">
+					<div class="col-sm-3">
+						<img src="{{url_for('static', filename='image/toplist/3779629.jpg')}}" width="40">
+					</div>
+					<div class="col-sm-9" style="padding-left:5px;">
+						<span><a href="/toplist?id=3779629" data-pjax="#main">{{ brand }}新歌榜</a></span><br>
 						<small>每天更新</small>
 					</div>
 				</div>
@@ -96,10 +96,22 @@
 			<tbody>
 			{% for song in songs %}
 				<tr>
+					{% set time = '%02d:%02d' % (song['bMusic']['playTime'] // 60000, (song['bMusic']['playTime'] % 60000) // 1000) %}
 					<td>{{ loop.index }}</td>
-					<td><a href="#"><span class="glyphicon glyphicon-play-circle" aria-hidden="true"></span></a></td>
+					<td>
+						<a href="#">
+							<span class="glyphicon glyphicon-play-circle add-song" aria-hidden="true"
+								song-id={{ song['id'] }}
+								song-name={{ song['name'] }}
+								song-source={{ song['mp3Url'] }}
+								song-img={{ song['album']['picUrl'] }}
+								song-artist-id={{ song['artists'][0]['id'] }}
+								song-artist-name={{ song['artists'][0]['name'] }}>
+							</span>
+						</a>
+					</td>
 					<td><a href="/song?id={{ song['id'] }}">{{ song['name'] }}</a></td>
-					<td>{{ song['audition']['playTime'] }}</td>
+					<td>{{ time }}</td>
 					<td><a href="/artist?id={{ song['artists'][0]['id'] }}">{{ song['artists'][0]['name'] }}</a></td>
 				</tr>
 			{% endfor %}

@@ -121,7 +121,8 @@ def toplists(id=''):
 	soup = BeautifulSoup(requests.get(url).content)
 	table = soup.find('tbody', id='tracklist')
 	if table is not None:
-		ids = list(set(re.findall(r'/song\?id=(\d+)', str(table))))
+		ids = re.findall(r'/song\?id=(\d+)', str(table))
+		ids = sorted(set(ids),key=ids.index)
 		url = 'http://music.163.com/api/song/detail?ids=[%s]' % ','.join(ids)
 		data = requests.get(url, headers=app.config['HEADERS']).json()
 	return jsonify(**data)
