@@ -9,6 +9,7 @@ import datetime
 import configparser
 
 from mongoengine import *
+from pprint import pprint
 
 config = configparser.ConfigParser()
 config.readfp(codecs.open("../config/config.ini", "r", "utf-8"))
@@ -16,23 +17,81 @@ config.readfp(codecs.open("../config/config.ini", "r", "utf-8"))
 connect(db=config['DB']['NAME'], host=config['DB']['HOST'], port=int(config['DB']['PORT']))
 
 
+class Song(EmbeddedDocument):
+
+	sid = StringField(default='')
+	name = StringField(default='')
+	source = StringField(default='')
+	img = StringField(default='')
+	artist_id = StringField(default='')
+	artist_name = StringField(default='')
+
+	def json(self):
+		json = {
+			'sid': self.sid,
+			'name': self.name,
+			'source': self.source,
+			'img': self.img,
+			'artist_id': self.artist_id,
+			'artist_name': self.artist_name
+		}
+		return json
+
+
+class Player(Document):
+
+	playing = BooleanField(default=False)
+	current = EmbeddedDocumentField('Song', default=Song())
+	playlist = ListField(EmbeddedDocumentField('Song'))
+
+	def json(self):
+		json = {
+			'playing': self.playing,
+			'current': self.current.json(),
+			'playlist': [song.json() for song in self.playlist]
+		}
+		return json
+
+
 class User(Document):
 
-	uid = StringField(primary_key=True)
+	uid = StringField(default='', required=True, unique=True)
 	name = StringField(default='', required=True)
 	email = StringField(default='', required=True, unique=True)
 	password = StringField(default='', required=True)
-	her = StringField(default='')
 	reg_time = DateTimeField(default=datetime.datetime.now())
 	activation = BooleanField(default=False)
 	activation_code = StringField(default=''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(int(config['DB']['ACT_CODE_LEN']))))
 	access_token = StringField(default='')
+	friend = ReferenceField('User')
+	player = ReferenceField('Player')
 
-	def __str__(self):
-		return '<%s, %s, %s>' % (self.uid, self.name, self.email)
+	def create(uid='', name='', email='', password=''):
+		player = Player()
+		player.save()
+		user = User(uid=uid, name=name, email=email, password=password, player=player)
+		return user
 
-	def json(self):
-		return { 'uid': self.uid, 'name': self.name, 'email': self.email, 'her': self.her, 'reg_time': self.reg_time }
+	def public_json(self):
+		json = {
+			'uid': self.uid,
+			'name': self.name,
+			'reg_time': self.reg_time.strftime('%Y-%m-%d %H:%M:%S')
+		}
+		return json
+
+	def private_json(self):
+		json = {
+			'uid': self.uid,
+			'name': self.name,
+			'email': self.email,
+			'reg_time': self.reg_time.strftime('%Y-%m-%d %H:%M:%S'),
+			'access_token': self.access_token,
+			'friend_id': self.friend.uid if self.friend is not None else '',
+			'friend_name': self.friend.name if self.friend is not None else '',
+			'player': self.player.json()
+		}
+		return json
 
 
 class Message(Document):
@@ -46,8 +105,6 @@ class Message(Document):
 
 
 if __name__ == '__main__':
-	# Message(source='chenxiaohui', dest='chenjinnan', content='洛阳的项目做完了吗？').save()
-	User(uid='zhaolong', name='赵龙', email='zhaolong@gmail.com', password='helloagain').save(force_insert=True)
-	for u in User.objects():
-		print(u)
+	player = User.objects(uid='zhaolong').first().player
+	pprint(player.json())
 

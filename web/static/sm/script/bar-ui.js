@@ -34,7 +34,7 @@
         players.push(new Player(nodes[i]));
       }
     }
-  
+
   });
 
   utils = {
@@ -582,7 +582,7 @@
 	          }
 
 	        }
-	
+
           } else {
 
             data.selectedIndex = null;
@@ -687,7 +687,7 @@
 
 	      item = getItem();
 
-      
+
 	      if (item) {
 	        url = item.getElementsByTagName('a')[0].href;
 	      }
@@ -787,15 +787,15 @@
 	        var progressMaxLeft = 100,
 	            left,
 	            width;
-	
+
 	        left = Math.min(progressMaxLeft, Math.max(0, (progressMaxLeft * (this.position / this.durationEstimate)))) + '%';
 	        width = Math.min(100, Math.max(0, (100 * this.position / this.durationEstimate))) + '%';
-	
+
 	        if (this.duration) {
 
   	          dom.progress.style.left = left;
 	          dom.progressBar.style.width = width;
-              
+
 	          // TODO: only write changes
 	          dom.time.innerHTML = getTime(this.position, true);
 
@@ -835,6 +835,9 @@
 
 	        if (ok) {
 
+	        	// Long Zhao
+	        	$('#song-img').attr('src', $('#player-playlist').find('li[class=selected]').find('a[img]').attr('img'));
+
 	          dom.duration.innerHTML = getTime(this.duration, true);
 
 	        } else if (this._iO && this._iO.onerror) {
@@ -871,7 +874,7 @@
 	        }
 
 	        // load next, possibly with delay.
-            
+
             if (navigator.userAgent.match(/mobile/i)) {
               // mobile will likely block the next play() call if there is a setTimeout() - so don't use one here.
 	          actions.next();

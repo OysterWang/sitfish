@@ -23,7 +23,14 @@
 		<footer class="container footer" style="padding:0px 0px 0px 0px; margin-bottom: 80px;">
 			<h5>© 2014 - 2015 sitfish.com, all rights reserved 北京{{ brand }}科技有限公司</h5>
 		</footer>
-		{% include "player.html" %}
+		<nav class="navbar navbar-fixed-bottom" style="min-height:45px;">
+			<div class="container" style="padding:0; height:45px;">
+				{% include "player.html" %}
+			</div>
+		</nav>
+		<form>
+
+		</form>
 		<script src="//cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
 		<script src="//cdn.bootcss.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
 		<script src="{{ url_for('static', filename='script/jquery.cookie.js') }}"></script>
@@ -32,21 +39,23 @@
 		<!-- SoundManager2 -->
 		<script src="{{ url_for('static', filename='sm/script/soundmanager2.js') }}"></script>
 		<script src="{{ url_for('static', filename='sm/script/bar-ui.js') }}"></script>
-		<script src="{{ url_for('static', filename='sm/script/demo.js') }}"></script>
 
 		<!-- onload -->
 		<script type="text/javascript">
 			$(function() {
 				refreshNav();
-				loadSongs();
+				refreshSongs();
 
 				pjaxListener();
-				addAllListener();
-				addSongListener();
-				removeSongListener();
-				clearSongListener();
 
-				smStart();
+				playlistAddListener();
+				playlistReplaceListener();
+				playlistDeleteListener();
+				playlistClearListener();
+
+				playerPlayListener();
+				playerPauseListener();
+				playerSkipListener();
 			});
 
 			function refreshNav() {
@@ -61,18 +70,28 @@
 				});
 			}
 
-			function loadSongs() {
-				$('.sm2-playlist-bd').empty();
-				if (typeof $.cookie('songs') === 'undefined'){
-					$.cookie('songs', JSON.stringify([]));
-				} else {
-					var songs = JSON.parse($.cookie('songs'));
-					for (var i = 0; i < songs.length; ++i) {
-						var song = songs[i];
-						$('.sm2-playlist-bd').append('<li><a href="' + song['source'] + '" img="' + song['img'] + '">' + song['name'] + ' - ' + song['artist-name'] + '</a></li>');
+			function refreshSongs() {
+				$.get('/api/v1/players/{{ uid }}', function(data) {
+					loadSongs(data);
+				});
+			}
+
+			function loadSongs(data) {
+				if (data['ret'] == 1) {
+					$('#player-playlist').empty();
+					var playlist = data['player']['playlist']
+					for (var i = 0; i < playlist.length; ++i) {
+						var song = playlist[i]
+						if (i == 0) {
+							$('#song-img').attr('src', song['img']);
+							$('div.sm2-playlist-target').html('<ul class="sm2-playlist-bd"><li>' + song['name'] + ' - ' + song['artist_name'] + '</li></ul>');
+							$('#player-playlist').append('<li class="selected"><a href="' + song['source'] + '" img="' + song['img'] + '">' + song['name'] + ' - ' + song['artist_name'] + '</a></li>');
+						} else {
+							$('#player-playlist').append('<li><a href="' + song['source'] + '" img="' + song['img'] + '">' + song['name'] + ' - ' + song['artist_name'] + '</a></li>');
+						}
 					}
+					$('#song-num').html($('#player-playlist').children().length);
 				}
-				countSongs();
 			}
 
 			function pjaxListener() {
@@ -84,37 +103,48 @@
 				});
 			}
 
-			function addAllListener() {
-
-			}
-
-			function addSongListener() {
+			function playlistAddListener() {
 				$('.add-song').click(function() {
-					var song = {
-						'id': $(this).attr('song-id'),
-						'name': $(this).attr('song-name'),
-						'source': $(this).attr('song-source'),
-						'img': $(this).attr('song-img'),
-						'artist-id': $(this).attr('song-artist-id'),
-						'artist-name': $(this).attr('song-artist-name')
+					data = {
+						'uid': '{{ uid }}',
+						'access_token': '{{ access_token }}',
+						'songs': JSON.stringify([{
+							'sid': $(this).attr('song-id'),
+							'name': $(this).attr('song-name'),
+							'source': $(this).attr('song-source'),
+							'img': $(this).attr('song-img'),
+							'artist_id': $(this).attr('song-artist-id'),
+							'artist_name': $(this).attr('song-artist-name')
+						}])
 					};
-					songs = JSON.parse($.cookie('songs'));
-					songs.push(song);
-					$.cookie('songs', JSON.stringify(songs));
-					loadSongs();
+					$.post('/api/v1/player/playlist/add', data, function(data) {
+						loadSongs(data);
+					});
 				});
 			}
 
-			function removeSongListener() {
-
+			function playlistReplaceListener() {
+				// TODO
 			}
 
-			function clearSongListener() {
-
+			function playlistDeleteListener() {
+				// TODO
 			}
 
-			function countSongs() {
-				$('#song-num').html($('.sm2-playlist-bd').children().length);
+			function playlistClearListener() {
+				// TODO
+			}
+
+			function playerPlayListener() {
+				// TODO
+			}
+
+			function playerPauseListener() {
+				// TODO
+			}
+
+			function playerSkipListener() {
+				// TODO
 			}
 		</script>
 	</body>

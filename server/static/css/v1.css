@@ -108,3 +108,8 @@ table {
   margin-top: 9px;
   margin-right: 10px;
 }
+
+#nav>li>a {
+  padding-top: 5px;
+  padding-bottom: 5px;
+}

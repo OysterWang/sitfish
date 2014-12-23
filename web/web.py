@@ -13,6 +13,8 @@ from flask import session
 from flask import redirect
 from flask import render_template
 
+from pprint import pprint
+
 config = configparser.ConfigParser()
 config.readfp(codecs.open("../config/config.ini", "r", "utf-8"))
 
@@ -52,6 +54,14 @@ def albumnew():
 	return pjax('albumnew.html')
 
 
+@app.route('/player', methods=['GET', 'POST'])
+def player_songs():
+	if request.method == 'GET':
+		pass
+	else:
+		pass
+
+
 """
 User management
 """
@@ -74,7 +84,6 @@ def sign_up():
 def activate(uid=''):
 	url = 'http://%s/v1/activate/%s?code=%s' % (config['SERVER']['HOST'], uid, request.args.get('code', default=''))
 	data = requests.get(url).json()
-	print(data)
 	if data['ret'] == 1:
 		return render_template('tips.html', tips='激活成功！', **base_params)
 	else:
@@ -90,9 +99,8 @@ def sign_in():
 		payload = {'email': request.form['email'], 'password': request.form['password']}
 		data = requests.post(url, data=payload).json()
 		if data['ret'] == 1:
-			session['uid'] = data['uid']
-			session['name'] = data['name']
-			session['access_token'] = data['access_token']
+			session['uid'] = data['user']['uid']
+			session['access_token'] = data['user']['access_token']
 			return redirect('/')
 		else:
 			return render_template('sign_in.html', ret=data['ret'], email=payload['email'], password=payload['password'], **base_params)
@@ -104,11 +112,16 @@ def sign_out():
 	return redirect('/')
 
 
-@app.route('/api/<path:path>')
+@app.route('/api/<path:path>', methods=['get', 'post'])
 def api(path=''):
-	url = 'http://%s/%s?%s' % (config['SERVER']['HOST'], path, '&'.join(['%s=%s' % (key, request.args[key]) for key in request.args]))
-	data = requests.get(url).json()
-	return jsonify(**data)
+	if request.method == 'GET':
+		url = 'http://%s/%s?%s' % (config['SERVER']['HOST'], path, '&'.join(['%s=%s' % (key, request.args[key]) for key in request.args]))
+		data = requests.get(url).json()
+		return jsonify(**data)
+	else:
+		url = 'http://%s/%s?%s' % (config['SERVER']['HOST'], path, '&'.join(['%s=%s' % (key, request.args[key]) for key in request.args]))
+		data = requests.post(url, data=request.form).json()
+		return jsonify(**data)
 
 
 """
@@ -116,9 +129,9 @@ Utilities
 """
 
 def pjax(template, **params):
-	if validate():
-		base_params['uid'] = session['uid']
-		base_params['name'] = session['name']
+	data = validate()
+	if data is not None and data['ret'] == 1:
+		params.update(data['user'])
 		if 'X-PJAX' in request.headers:
 			return render_template(template, **dict(base_params, **params))
 		else:
@@ -131,9 +144,8 @@ def validate():
 	if 'uid' in session and 'access_token' in session:
 		url = 'http://%s/v1/validate' % config['SERVER']['HOST']
 		payload = {'uid': session['uid'], 'access_token': session['access_token']}
-		data = requests.post(url, data=payload).json()
-		return data['ret'] == 1
-	return False
+		return requests.post(url, data=payload).json()
+	return None
 
 
 

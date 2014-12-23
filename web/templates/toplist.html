@@ -3,7 +3,7 @@
 		<br><br>
 		<p><b>{{ brand }}音乐榜</b></p>
 		<br>
-		<ul class="nav nav-sidebar" id="nav">
+		<ul class="nav nav-sidebar" id="nav" style="padding-left:5px;">
 			<li>
 				<div class="row">
 					<div class="col-sm-3">
@@ -74,7 +74,7 @@
 			</div>
 			<div class="col-sm-9" style="padding-left:5px;">
 				<h2>{{ brand }}新歌榜</h2>
-				<small>从这里，发现你的所爱</small><br><br>
+				<small>音乐，一生所爱。</small><br><br>
 				<button type="submit" class="btn btn-info"><span class="glyphicon glyphicon-play-circle" aria-hidden="true"></span> 播放</button>
 				<button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-star-empty" aria-hidden="true"></span> 收藏</button>
 				<button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-share" aria-hidden="true"></span> 分享</button>
@@ -99,7 +99,7 @@
 					{% set time = '%02d:%02d' % (song['bMusic']['playTime'] // 60000, (song['bMusic']['playTime'] % 60000) // 1000) %}
 					<td>{{ loop.index }}</td>
 					<td>
-						<a href="#">
+						<a href="javascript:void(0);">
 							<span class="glyphicon glyphicon-play-circle add-song" aria-hidden="true"
 								song-id={{ song['id'] }}
 								song-name={{ song['name'] }}

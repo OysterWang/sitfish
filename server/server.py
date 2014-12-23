@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import re
+import json
 import codecs
 import hashlib
 import requests
@@ -14,8 +15,11 @@ from flask import request
 from flask import redirect
 from flask import render_template
 from database import *
+from functools import wraps
 from flask.ext.mail import Mail
 from flask.ext.mail import Message
+
+from pprint import pprint
 
 config = configparser.ConfigParser()
 config.readfp(codecs.open("../config/config.ini", "r", "utf-8"))
@@ -37,20 +41,24 @@ mail = Mail(app)
 
 
 """
-Resource definition
+API website related
 """
 
-@app.route('/')
+@app.route('/', methods=['get'])
 def host():
 	return redirect('/v1')
 
 
-@app.route('/v1')
+@app.route('/v1', methods=['get'])
 def index():
 	return render_template('v1.html', version='v1', host=config['SERVER']['HOST'], brand=config['DEFAULT']['BRAND'], offset=app.config['OFFSET'], limit=app.config['LIMIT'])
 
 
-@app.route('/v1/search')
+"""
+Resource related
+"""
+
+@app.route('/v1/search', methods=['get'])
 def search():
 	def parse_int(s, default=0):
 		try:
@@ -62,10 +70,10 @@ def search():
 	offset = parse_int(request.args.get('offset', default=''), default=app.config['OFFSET'])
 	limit = parse_int(request.args.get('limit', default=''), default=app.config['LIMIT'])
 	data = {}
-	if t == '9':
+	if t == '0':
 		data = {'users': []}
 		for user in User.objects(uid__contains=s).limit(limit):
-			data['users'].append(user.json())
+			data['users'].append(user.public_json())
 	else:
 		url = 'http://music.163.com/api/search/pc'
 		payload = {'s': s, 'type': t, 'offset': offset, 'total': 'true', 'limit': limit}
@@ -73,8 +81,19 @@ def search():
 	return jsonify(**data)
 
 
+# TYPE - 0
+@app.route('/v1/users/<id>', methods=['get'])
+def users(id=''):
+	data = {'ret': 0}
+	user = User.objects(uid=id).first()
+	if user is not None:
+		data['ret'] = 1
+		data['user'] = user.public_json()
+	return jsonify(**data)
+
+
 # TYPE - 1
-@app.route('/v1/songs')
+@app.route('/v1/songs', methods=['get'])
 def songs():
 	ids = request.args.get('ids', default='[]')
 	url = 'http://music.163.com/api/song/detail?ids=%s' % ids
@@ -83,7 +102,7 @@ def songs():
 
 
 # TYPE - 10
-@app.route('/v1/albums/<id>')
+@app.route('/v1/albums/<id>', methods=['get'])
 def albums(id=''):
 	url = 'http://music.163.com/api/album/%s' % id
 	data = requests.get(url, headers=app.config['HEADERS']).json()
@@ -91,7 +110,7 @@ def albums(id=''):
 
 
 # TYPE - 100
-@app.route('/v1/artists/<id>')
+@app.route('/v1/artists/<id>', methods=['get'])
 def artists(id=''):
 	url = 'http://music.163.com/api/artist/albums/%s?limit=%d' % (id, app.config['LIMIT'])
 	data = requests.get(url, headers=app.config['HEADERS']).json()
@@ -99,7 +118,7 @@ def artists(id=''):
 
 
 # TYPE - 1000
-@app.route('/v1/playlists/<id>')
+@app.route('/v1/playlists/<id>', methods=['get'])
 def playlists(id=''):
 	url = 'http://music.163.com/api/playlist/detail?id=%s' % id
 	data = requests.get(url, headers=app.config['HEADERS']).json()
@@ -107,14 +126,14 @@ def playlists(id=''):
 
 
 # TYPE - 1006
-@app.route('/v1/lyrics/<id>')
+@app.route('/v1/lyrics/<id>', methods=['get'])
 def lyrics(id=''):
 	url = 'http://music.163.com/api/song/lyric?id=%s&lv=-1&kv=-1&tv=-1' % id
 	data = requests.get(url, headers=app.config['HEADERS']).json()
 	return jsonify(**data)
 
 
-@app.route('/v1/toplists/<id>')
+@app.route('/v1/toplists/<id>', methods=['get'])
 def toplists(id=''):
 	data = {'songs': []}
 	url = 'http://music.163.com/discover/toplist?id=%s' % id
@@ -129,10 +148,10 @@ def toplists(id=''):
 
 
 """
-Account relevant
+Account related
 """
 
-@app.route('/v1/exist')
+@app.route('/v1/exist', methods=['get'])
 def count():
 	s = request.args.get('s', default='')
 	t = request.args.get('t', default='0') # uid:0, email:1
@@ -150,7 +169,7 @@ def count():
 def sign_up():
 	data = {'ret': 0}
 	try:
-		user = User(uid=request.form['uid'], name=request.form['name'], email=request.form['email'], password=request.form['password'])
+		user = User.create(uid=request.form['uid'], name=request.form['name'], email=request.form['email'], password=request.form['password'])
 		user.password = sha(user.password, user.activation_code)
 		user.save(force_insert=True)
 		brand = config['DEFAULT']['BRAND']
@@ -163,7 +182,7 @@ def sign_up():
 	return jsonify(**data)
 
 
-@app.route('/v1/activate/<uid>')
+@app.route('/v1/activate/<uid>', methods=['get'])
 def activate(uid=''):
 	data = {'ret': 0}
 	code = request.args.get('code', default='')
@@ -187,9 +206,7 @@ def sign_in():
 			user.access_token = sha(user.uid, datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 			user.save()
 			data['ret'] = 1
-			data['uid'] = user.uid
-			data['name'] = user.name
-			data['access_token'] = user.access_token
+			data['user'] = user.private_json()
 	return jsonify(**data)
 
 
@@ -200,15 +217,68 @@ def validate():
 	if user is not None:
 		if user.access_token == request.form['access_token']:
 			data['ret'] = 1
+			data['user'] = user.private_json()
 	return jsonify(**data)
 
 
-# TYPE - 9
-@app.route('/v1/users/<id>')
-def users(id=''):
+"""
+Player related
+"""
+
+@app.route('/v1/players/<id>', methods=['get'])
+def players(id=''):
+	data = {'ret': 0}
 	user = User.objects(uid=id).first()
-	data = user.json() if user is not None else {'code': '404'}
+	if user is not None:
+		data['ret'] = 1
+		data['player'] = user.player.json()
 	return jsonify(**data)
+
+
+@app.route('/v1/player/playlist/add', methods=['post'])
+def playlist_add():
+	data = {'ret': 0}
+	user = User.objects(uid=request.form['uid']).first()
+	if user is not None:
+		if user.access_token == request.form['access_token']:
+			data['ret'] = 1
+			sids = set([song['sid'] for song in user.player.playlist])
+			for song in json.loads(request.form['songs']):
+				if song['sid'] not in sids:
+					obj = Song(sid=song['sid'], name=song['name'], source=song['source'], img=song['img'], artist_id=song['artist_id'], artist_name=song['artist_name'])
+					user.player.update(add_to_set__playlist=[obj, ])
+			data['player'] = User.objects(uid=request.form['uid']).first().player.json();
+	return jsonify(**data)
+
+
+@app.route('/v1/player/playlist/replace', methods=['post'])
+def playlist_replace():
+	return 'TODO'
+
+
+@app.route('/v1/player/playlist/delete', methods=['post'])
+def playlist_delete():
+	return 'TODO'
+
+
+@app.route('/v1/player/playlist/clear', methods=['post'])
+def playlist_clear():
+	return 'TODO'
+
+
+@app.route('/v1/player/play', methods=['post'])
+def player_play():
+	return 'TODO'
+
+
+@app.route('/v1/player/pause', methods=['post'])
+def player_pause():
+	return 'TODO'
+
+
+@app.route('/v1/player/skip', methods=['post'])
+def player_skip():
+	return 'TODO'
 
 
 """
