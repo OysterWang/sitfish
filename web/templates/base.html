@@ -43,20 +43,32 @@
 		<!-- onload -->
 		<script type="text/javascript">
 			$(function() {
-				refreshNav();
-				refreshSongs();
-
 				pjaxListener();
-
-				playlistAddListener();
-				playlistReplaceListener();
-				playlistDeleteListener();
-				playlistClearListener();
+				refreshAll();
 
 				playerPlayListener();
 				playerPauseListener();
 				playerSkipListener();
 			});
+
+			function pjaxListener() {
+				$.pjax.defaults.timeout = false
+				$('a[data-pjax]').pjax();
+				$(document).on('pjax:complete', function() {
+					$('a[data-pjax]').pjax();
+					refreshAll();
+				});
+			}
+
+			function refreshAll() {
+				refreshNav();
+				refreshSongs();
+
+				playlistAddListener();
+				playlistReplaceListener();
+				playlistDeleteListener();
+				playlistClearListener();
+			}
 
 			function refreshNav() {
 				cur = $(location).attr('pathname');
@@ -81,26 +93,18 @@
 					$('#player-playlist').empty();
 					var playlist = data['player']['playlist']
 					for (var i = 0; i < playlist.length; ++i) {
-						var song = playlist[i]
+						var song = playlist[i];
+						var time = millisecondsToTime(song['time']);
 						if (i == 0) {
 							$('#song-img').attr('src', song['img']);
 							$('div.sm2-playlist-target').html('<ul class="sm2-playlist-bd"><li>' + song['name'] + ' - ' + song['artist_name'] + '</li></ul>');
-							$('#player-playlist').append('<li class="selected"><a href="' + song['source'] + '" img="' + song['img'] + '">' + song['name'] + ' - ' + song['artist_name'] + '</a></li>');
+							$('#player-playlist').append('<li class="selected"><a href="' + song['source'] + '" img="' + song['img'] + '"><table width="100%"><tr><td>' + song['name'] + '</td><td width="120px">' + song['artist_name'] + '</td><td width="80px">' + time + '</td></tr></table></a></li>');
 						} else {
-							$('#player-playlist').append('<li><a href="' + song['source'] + '" img="' + song['img'] + '">' + song['name'] + ' - ' + song['artist_name'] + '</a></li>');
+							$('#player-playlist').append('<li><a href="' + song['source'] + '" img="' + song['img'] + '"><table width="100%"><tr><td>' + song['name'] + '</td><td width="120px">' + song['artist_name'] + '</td><td width="80px">' + time + '</td></tr></table></a></li>');
 						}
 					}
 					$('#song-num').html($('#player-playlist').children().length);
 				}
-			}
-
-			function pjaxListener() {
-				$.pjax.defaults.timeout = false
-				$('a[data-pjax]').pjax();
-				$(document).on('pjax:complete', function() {
-					$('a[data-pjax]').pjax();
-					refreshNav();
-				});
 			}
 
 			function playlistAddListener() {
@@ -113,6 +117,7 @@
 							'name': $(this).attr('song-name'),
 							'source': $(this).attr('song-source'),
 							'img': $(this).attr('song-img'),
+							'time': $(this).attr('song-time'),
 							'artist_id': $(this).attr('song-artist-id'),
 							'artist_name': $(this).attr('song-artist-name')
 						}])
@@ -124,7 +129,28 @@
 			}
 
 			function playlistReplaceListener() {
-				// TODO
+				$('.add-all').click(function() {
+					songs = [];
+					$('.add-song').each(function() {
+						songs.push({
+							'sid': $(this).attr('song-id'),
+							'name': $(this).attr('song-name'),
+							'source': $(this).attr('song-source'),
+							'img': $(this).attr('song-img'),
+							'time': $(this).attr('song-time'),
+							'artist_id': $(this).attr('song-artist-id'),
+							'artist_name': $(this).attr('song-artist-name')
+						});
+					});
+					data = {
+						'uid': '{{ uid }}',
+						'access_token': '{{ access_token }}',
+						'songs': JSON.stringify(songs)
+					};
+					$.post('/api/v1/player/playlist/replace', data, function(data) {
+						loadSongs(data);
+					});
+				});
 			}
 
 			function playlistDeleteListener() {
@@ -145,6 +171,15 @@
 
 			function playerSkipListener() {
 				// TODO
+			}
+
+			function millisecondsToTime(milli) {
+				function addZero(n) {
+					return (n < 10 ? '0' : '') + n;
+				}
+				var seconds = Math.floor((milli / 1000) % 60);
+				var minutes = Math.floor((milli / 60000) % 60);
+				return addZero(minutes) + ":" + addZero(seconds);
 			}
 		</script>
 	</body>

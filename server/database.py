@@ -23,6 +23,7 @@ class Song(EmbeddedDocument):
 	name = StringField(default='')
 	source = StringField(default='')
 	img = StringField(default='')
+	time = LongField(default=0)
 	artist_id = StringField(default='')
 	artist_name = StringField(default='')
 
@@ -32,6 +33,7 @@ class Song(EmbeddedDocument):
 			'name': self.name,
 			'source': self.source,
 			'img': self.img,
+			'time': self.time,
 			'artist_id': self.artist_id,
 			'artist_name': self.artist_name
 		}

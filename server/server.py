@@ -245,15 +245,25 @@ def playlist_add():
 			sids = set([song['sid'] for song in user.player.playlist])
 			for song in json.loads(request.form['songs']):
 				if song['sid'] not in sids:
-					obj = Song(sid=song['sid'], name=song['name'], source=song['source'], img=song['img'], artist_id=song['artist_id'], artist_name=song['artist_name'])
-					user.player.update(add_to_set__playlist=[obj, ])
+					obj = Song(sid=song['sid'], name=song['name'], source=song['source'], img=song['img'], time=song['time'], artist_id=song['artist_id'], artist_name=song['artist_name'])
+					user.player.update(push__playlist=obj)
 			data['player'] = User.objects(uid=request.form['uid']).first().player.json();
 	return jsonify(**data)
 
 
 @app.route('/v1/player/playlist/replace', methods=['post'])
 def playlist_replace():
-	return 'TODO'
+	data = {'ret': 0}
+	user = User.objects(uid=request.form['uid']).first()
+	if user is not None:
+		if user.access_token == request.form['access_token']:
+			data['ret'] = 1
+			user.player.update(set__playlist=[])
+			for song in json.loads(request.form['songs']):
+				obj = Song(sid=song['sid'], name=song['name'], source=song['source'], img=song['img'], time=song['time'], artist_id=song['artist_id'], artist_name=song['artist_name'])
+				user.player.update(push__playlist=obj)
+			data['player'] = User.objects(uid=request.form['uid']).first().player.json();
+	return jsonify(**data)
 
 
 @app.route('/v1/player/playlist/delete', methods=['post'])
