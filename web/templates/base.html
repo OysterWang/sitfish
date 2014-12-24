@@ -35,6 +35,7 @@
 		<script src="//cdn.bootcss.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
 		<script src="{{ url_for('static', filename='script/jquery.cookie.js') }}"></script>
 		<script src="{{ url_for('static', filename='script/jquery.pjax.js') }}"></script>
+		<script src="{{ url_for('static', filename='script/handlebars-v2.0.0.js') }}"></script>
 
 		<!-- SoundManager2 -->
 		<script src="{{ url_for('static', filename='sm/script/soundmanager2.js') }}"></script>
@@ -43,9 +44,12 @@
 		<!-- onload -->
 		<script type="text/javascript">
 			$(function() {
+				Handlebars.registerHelper("formatTime", millisecondsToTime);
+
 				pjaxListener();
 				refreshAll();
 
+				playlistClearListener();
 				playerPlayListener();
 				playerPauseListener();
 				playerSkipListener();
@@ -66,8 +70,6 @@
 
 				playlistAddListener();
 				playlistReplaceListener();
-				playlistDeleteListener();
-				playlistClearListener();
 			}
 
 			function refreshNav() {
@@ -90,20 +92,18 @@
 
 			function loadSongs(data) {
 				if (data['ret'] == 1) {
-					$('#player-playlist').empty();
-					var playlist = data['player']['playlist']
-					for (var i = 0; i < playlist.length; ++i) {
-						var song = playlist[i];
-						var time = millisecondsToTime(song['time']);
-						if (i == 0) {
-							$('#song-img').attr('src', song['img']);
-							$('div.sm2-playlist-target').html('<ul class="sm2-playlist-bd"><li>' + song['name'] + ' - ' + song['artist_name'] + '</li></ul>');
-							$('#player-playlist').append('<li class="selected"><a href="' + song['source'] + '" img="' + song['img'] + '"><table width="100%"><tr><td>' + song['name'] + '</td><td width="120px">' + song['artist_name'] + '</td><td width="80px">' + time + '</td></tr></table></a></li>');
-						} else {
-							$('#player-playlist').append('<li><a href="' + song['source'] + '" img="' + song['img'] + '"><table width="100%"><tr><td>' + song['name'] + '</td><td width="120px">' + song['artist_name'] + '</td><td width="80px">' + time + '</td></tr></table></a></li>');
-						}
+					var playlist = data['player']['playlist'];
+					if (playlist.length > 0) {
+						var template = Handlebars.compile($("#player-playlist-template").html());
+						$('#player-playlist').html(template({'playlist': playlist}));
+						$('#song-img').attr('src', playlist[0]['img']);
+						$('div.sm2-playlist-target').html('<ul class="sm2-playlist-bd"><li>' + playlist[0]['name'] + ' - ' + playlist[0]['artist_name'] + '</li></ul>');
+						$('#player-playlist>li:first').addClass('selected');
+					} else {
+						$('#player-playlist').html('<li><a href="javascript:void(0);"></a></li>');
 					}
-					$('#song-num').html($('#player-playlist').children().length);
+					$('#song-num').html(playlist.length);
+					playlistDeleteListener();
 				}
 			}
 
@@ -154,11 +154,28 @@
 			}
 
 			function playlistDeleteListener() {
-				// TODO
+				$('.delete-song').click(function() {
+					data = {
+						'uid': '{{ uid }}',
+						'access_token': '{{ access_token }}',
+						'sids': JSON.stringify([$(this).attr('song-id')])
+					};
+					$.post('/api/v1/player/playlist/delete', data, function(data) {
+						loadSongs(data);
+					});
+				});
 			}
 
 			function playlistClearListener() {
-				// TODO
+				$('.clear-song').click(function() {
+					data = {
+						'uid': '{{ uid }}',
+						'access_token': '{{ access_token }}'
+					};
+					$.post('/api/v1/player/playlist/clear', data, function(data) {
+						loadSongs(data);
+					});
+				});
 			}
 
 			function playerPlayListener() {

@@ -63,7 +63,10 @@
 		<div class="sm2-playlist-wrapper">
 			<div class="row">
 				<div class="col-sm-7">
-					<p style="padding:10px 0px 10px 10px;"><b>播放列表</b></p>
+					<p style="padding:10px 0px 10px 10px;">
+						<b>播放列表</b>
+						<span class="clear-song" style="float:right; margin-right:25px;"><a href="javascript:void(0);"><small>清空</small></a></span>
+					</p>
 				</div>
 				<div class="col-sm-5">
 					<p style="padding:10px 0px 10px 0px;"><b>匆匆那年</b></p>
@@ -73,9 +76,27 @@
 				<div class="col-sm-7">
 					<ul id="player-playlist" class="sm2-playlist-bd">
 						<li>
-							<a href="#"></a>
+							<a href="javascript:void(0);"></a>
 						</li>
 					</ul>
+					{% raw %}
+					<script id="player-playlist-template" type="text/x-handlebars-template">
+						{{#each playlist}}
+						<li style="position:relative;">
+							<a href="{{source}}" img="{{img}}" style="padding-right:30px;">
+								<table width="100%">
+									<tr>
+										<td>{{name}}</td>
+										<td width="120">{{artist_name}}</td>
+										<td width="60">{{formatTime time}}</td>
+									</tr>
+								</table>
+							</a>
+							<span song-id="{{sid}}" class="glyphicon glyphicon-trash delete-song" aria-hidden="true" style="position:absolute; top:8px; right:15px;"></span>
+						</li>
+						{{/each}}
+					</script>
+					{% endraw %}
 				</div>
 				<div class="col-sm-5">
 					<p>歌词</p>

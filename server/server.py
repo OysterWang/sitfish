@@ -268,12 +268,27 @@ def playlist_replace():
 
 @app.route('/v1/player/playlist/delete', methods=['post'])
 def playlist_delete():
-	return 'TODO'
+	data = {'ret': 0}
+	user = User.objects(uid=request.form['uid']).first()
+	if user is not None:
+		if user.access_token == request.form['access_token']:
+			data['ret'] = 1
+			for sid in json.loads(request.form['sids']):
+				user.player.update(pull__playlist={'sid': sid})
+			data['player'] = User.objects(uid=request.form['uid']).first().player.json();
+	return jsonify(**data)
 
 
 @app.route('/v1/player/playlist/clear', methods=['post'])
 def playlist_clear():
-	return 'TODO'
+	data = {'ret': 0}
+	user = User.objects(uid=request.form['uid']).first()
+	if user is not None:
+		if user.access_token == request.form['access_token']:
+			data['ret'] = 1
+			user.player.update(set__playlist=[])
+			data['player'] = User.objects(uid=request.form['uid']).first().player.json();
+	return jsonify(**data)
 
 
 @app.route('/v1/player/play', methods=['post'])
