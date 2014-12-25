@@ -55,9 +55,9 @@ class Player(Document):
 		return json
 
 
-class User(Document):
+class People(Document):
 
-	uid = StringField(default='', required=True, unique=True)
+	pid = StringField(default='', required=True, unique=True)
 	name = StringField(default='', required=True)
 	email = StringField(default='', required=True, unique=True)
 	password = StringField(default='', required=True)
@@ -65,18 +65,18 @@ class User(Document):
 	activation = BooleanField(default=False)
 	activation_code = StringField(default=''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(int(config['DB']['ACT_CODE_LEN']))))
 	access_token = StringField(default='')
-	friend = ReferenceField('User')
+	friend = ReferenceField('People')
 	player = ReferenceField('Player')
 
-	def create(uid='', name='', email='', password=''):
+	def create(pid='', name='', email='', password=''):
 		player = Player()
 		player.save()
-		user = User(uid=uid, name=name, email=email, password=password, player=player)
-		return user
+		people = People(pid=pid, name=name, email=email, password=password, player=player)
+		return people
 
 	def public_json(self):
 		json = {
-			'uid': self.uid,
+			'pid': self.pid,
 			'name': self.name,
 			'reg_time': self.reg_time.strftime('%Y-%m-%d %H:%M:%S')
 		}
@@ -84,12 +84,12 @@ class User(Document):
 
 	def private_json(self):
 		json = {
-			'uid': self.uid,
+			'pid': self.pid,
 			'name': self.name,
 			'email': self.email,
 			'reg_time': self.reg_time.strftime('%Y-%m-%d %H:%M:%S'),
 			'access_token': self.access_token,
-			'friend_id': self.friend.uid if self.friend is not None else '',
+			'friend_id': self.friend.id if self.friend is not None else '',
 			'friend_name': self.friend.name if self.friend is not None else '',
 			'player': self.player.json()
 		}
@@ -107,6 +107,5 @@ class Message(Document):
 
 
 if __name__ == '__main__':
-	player = User.objects(uid='zhaolong').first().player
-	pprint(player.json())
+	pass
 

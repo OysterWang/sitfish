@@ -28,30 +28,24 @@ app.config['JSON_AS_ASCII'] = False
 """
 Foundation
 """
-
-@app.route('/')
-def index():
-	url = 'http://%s/v1/toplists/3778678' % config['SERVER']['HOST']
-	data = requests.get(url).json()
-	return pjax('toplist.html', id='3778678', songs=data['songs'])
-
-
-@app.route('/toplist')
-def toplist():
-	id = request.args.get('id', default='3778678')
-	url = 'http://%s/v1/toplists/%s' % (config['SERVER']['HOST'], id)
+@app.route('/', methods=['GET'])
+@app.route('/toplist/', methods=['GET'])
+@app.route('/toplist/<id>', methods=['GET'])
+def toplist(id='3778678'):
+	url = 'http://%s/v1/toplist/%s' % (config['SERVER']['HOST'], id)
 	data = requests.get(url).json()
 	return pjax('toplist.html', id=id, songs=data['songs'])
 
 
-@app.route('/playlist')
-def playlist():
-	return pjax('playlist.html')
-
-
-@app.route('/albumnew')
-def albumnew():
-	return pjax('albumnew.html')
+@app.route('/explore/playlist', methods=['GET'])
+@app.route('/explore/playlist/cat', methods=['GET'])
+@app.route('/explore/playlist/cat/<cat>', methods=['GET'])
+def playlist(cat='全部'):
+	offset = parse_int(request.args.get('offset', default=''), default=0)
+	limit = parse_int(request.args.get('limit', default=''), default=30)
+	url = 'http://%s/v1/explore/playlist/cat/%s?offset=%d&limit=%d' % (config['SERVER']['HOST'], cat, offset, limit)
+	data = requests.get(url).json()
+	return pjax('playlist.html', playlists=data['playlists'])
 
 
 @app.route('/player', methods=['GET', 'POST'])
@@ -63,7 +57,7 @@ def player_songs():
 
 
 """
-User management
+People management
 """
 
 @app.route('/sign-up', methods=['GET', 'POST'])
@@ -72,7 +66,7 @@ def sign_up():
 		return render_template('sign_up.html', **base_params)
 	else:
 		url = 'http://%s/v1/sign-up' % config['SERVER']['HOST']
-		payload = {'uid': request.form['uid'], 'name': request.form['name'], 'email': request.form['email'], 'password': request.form['password']}
+		payload = {'pid': request.form['pid'], 'name': request.form['name'], 'email': request.form['email'], 'password': request.form['password']}
 		data = requests.post(url, data=payload).json()
 		if data['ret'] == 1:
 			return render_template('tips.html', tips='%s，恭喜，注册成功！我们已向%s发送了一封邮件，请尽快登录并激活当前账户。' % (payload['name'], payload['email']), **base_params)
@@ -80,9 +74,9 @@ def sign_up():
 			return render_template('tips.html', tips='%s，抱歉，注册失败，请稍候再次尝试。' % payload['name'], **base_params)
 
 
-@app.route('/activate/<uid>')
-def activate(uid=''):
-	url = 'http://%s/v1/activate/%s?code=%s' % (config['SERVER']['HOST'], uid, request.args.get('code', default=''))
+@app.route('/activate/<pid>', methods=['GET'])
+def activate(pid=''):
+	url = 'http://%s/v1/activate/%s?code=%s' % (config['SERVER']['HOST'], pid, request.args.get('code', default=''))
 	data = requests.get(url).json()
 	if data['ret'] == 1:
 		return render_template('tips.html', tips='激活成功！', **base_params)
@@ -99,20 +93,20 @@ def sign_in():
 		payload = {'email': request.form['email'], 'password': request.form['password']}
 		data = requests.post(url, data=payload).json()
 		if data['ret'] == 1:
-			session['uid'] = data['user']['uid']
-			session['access_token'] = data['user']['access_token']
+			session['pid'] = data['people']['pid']
+			session['access_token'] = data['people']['access_token']
 			return redirect('/')
 		else:
 			return render_template('sign_in.html', ret=data['ret'], email=payload['email'], password=payload['password'], **base_params)
 
 
-@app.route('/sign-out')
+@app.route('/sign-out', methods=['GET'])
 def sign_out():
 	session.clear()
 	return redirect('/')
 
 
-@app.route('/api/<path:path>', methods=['get', 'post'])
+@app.route('/api/<path:path>', methods=['GET', 'POST'])
 def api(path=''):
 	if request.method == 'GET':
 		url = 'http://%s/%s?%s' % (config['SERVER']['HOST'], path, '&'.join(['%s=%s' % (key, request.args[key]) for key in request.args]))
@@ -128,10 +122,17 @@ def api(path=''):
 Utilities
 """
 
+def parse_int(s, default=0):
+	try:
+		return int(s)
+	except ValueError:
+		return default
+
+
 def pjax(template, **params):
 	data = validate()
 	if data is not None and data['ret'] == 1:
-		params.update(data['user'])
+		params.update(data['people'])
 		if 'X-PJAX' in request.headers:
 			return render_template(template, **dict(base_params, **params))
 		else:
@@ -141,9 +142,9 @@ def pjax(template, **params):
 
 
 def validate():
-	if 'uid' in session and 'access_token' in session:
+	if 'pid' in session and 'access_token' in session:
 		url = 'http://%s/v1/validate' % config['SERVER']['HOST']
-		payload = {'uid': session['uid'], 'access_token': session['access_token']}
+		payload = {'pid': session['pid'], 'access_token': session['access_token']}
 		return requests.post(url, data=payload).json()
 	return None
 

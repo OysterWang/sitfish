@@ -28,9 +28,8 @@
 				{% include "player.html" %}
 			</div>
 		</nav>
-		<form>
 
-		</form>
+		<!-- Scripts -->
 		<script src="//cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
 		<script src="//cdn.bootcss.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
 		<script src="{{ url_for('static', filename='script/jquery.cookie.js') }}"></script>
@@ -41,7 +40,7 @@
 		<script src="{{ url_for('static', filename='sm/script/soundmanager2.js') }}"></script>
 		<script src="{{ url_for('static', filename='sm/script/bar-ui.js') }}"></script>
 
-		<!-- onload -->
+		<!-- Onload -->
 		<script type="text/javascript">
 			$(function() {
 				Handlebars.registerHelper("formatTime", millisecondsToTime);
@@ -85,7 +84,7 @@
 			}
 
 			function refreshSongs() {
-				$.get('/api/v1/players/{{ uid }}', function(data) {
+				$.get('/api/v1/player/{{ pid }}', function(data) {
 					loadSongs(data);
 				});
 			}
@@ -110,7 +109,7 @@
 			function playlistAddListener() {
 				$('.add-song').click(function() {
 					data = {
-						'uid': '{{ uid }}',
+						'pid': '{{ pid }}',
 						'access_token': '{{ access_token }}',
 						'songs': JSON.stringify([{
 							'sid': $(this).attr('song-id'),
@@ -143,7 +142,7 @@
 						});
 					});
 					data = {
-						'uid': '{{ uid }}',
+						'pid': '{{ pid }}',
 						'access_token': '{{ access_token }}',
 						'songs': JSON.stringify(songs)
 					};
@@ -156,7 +155,7 @@
 			function playlistDeleteListener() {
 				$('.delete-song').click(function() {
 					data = {
-						'uid': '{{ uid }}',
+						'pid': '{{ pid }}',
 						'access_token': '{{ access_token }}',
 						'sids': JSON.stringify([$(this).attr('song-id')])
 					};
@@ -169,7 +168,7 @@
 			function playlistClearListener() {
 				$('.clear-song').click(function() {
 					data = {
-						'uid': '{{ uid }}',
+						'pid': '{{ pid }}',
 						'access_token': '{{ access_token }}'
 					};
 					$.post('/api/v1/player/playlist/clear', data, function(data) {

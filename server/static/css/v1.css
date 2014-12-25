@@ -113,3 +113,8 @@ table {
   padding-top: 5px;
   padding-bottom: 5px;
 }
+
+#nav>hr {
+  margin-top: 8px;
+  margin-bottom: 8px;
+}

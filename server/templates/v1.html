@@ -21,13 +21,15 @@
 				<div class="col-sm-3 col-md-2 sidebar" id="scroll">
 					<ul class="nav nav-sidebar" id="nav">
 						<li class="active"><a href="#search">search</a></li>
-						<li><a href="#users">users</a></li>
-						<li><a href="#songs">songs</a></li>
-						<li><a href="#albums">albums</a></li>
-						<li><a href="#artists">artists</a></li>
-						<li><a href="#playlists">playlists</a></li>
-						<li><a href="#lyrics">lyrics</a></li>
-						<li><a href="#toplists">toplists</a></li>
+						<li><a href="#people">people</a></li>
+						<li><a href="#song">song</a></li>
+						<li><a href="#album">album</a></li>
+						<li><a href="#artist">artist</a></li>
+						<li><a href="#playlist">playlist</a></li>
+						<li><a href="#lyric">lyric</a></li>
+						<li><a href="#toplist">toplist</a></li>
+						<hr>
+						<li><a href="#explore-playlist-cat">explore/playlist/cat</a></li>
 						<hr>
 						<li><a href="#exist">exist</a></li>
 						<li><a href="#sign-up">sign-up</a></li>
@@ -35,7 +37,7 @@
 						<li><a href="#sign-in">sign-in</a></li>
 						<li><a href="#validate">validate</a></li>
 						<hr>
-						<li><a href="#players">players</a></li>
+						<li><a href="#player">player</a></li>
 						<li><a href="#player-playlist-add">player/playlist/add</a></li>
 						<li><a href="#player-playlist-replace">player/playlist/replace</a></li>
 						<li><a href="#player-playlist-delete">player/playlist/delete</a></li>
@@ -48,7 +50,7 @@
 				<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
 					<section id="search" class="anchor">
 						<h1 class="page-header">Search</h1>
-						<p>Search users, songs, albums, artists, playlists and lyrics.</p>
+						<p>Search people, song, album, artist, playlist and lyric.</p>
 						<h4 class="child-header">Resource URL</h4>
 						<p>http://{{ host }}/{{ version }}/search</p>
 						<h4 class="child-header">Resource Information</h4>
@@ -76,13 +78,13 @@
 									<td>The query content.</td>
 								</tr>
 								<tr>
-									<td width="400">t</td>
+									<td>t</td>
 									<td>
 										<table>
 											<tr>
 												<td>0</td>
 												<td width="15"></td>
-												<td>user</td>
+												<td>people</td>
 											</tr>
 											<tr>
 												<td>1</td>
@@ -113,11 +115,11 @@
 									</td>
 								</tr>
 								<tr>
-									<td width="400">offset</td>
+									<td>offset</td>
 									<td>default = {{ offset }}</td>
 								</tr>
 								<tr>
-									<td width="400">limit</td>
+									<td>limit</td>
 									<td>default = {{ limit }}</td>
 								</tr>
 							</tbody>
@@ -133,11 +135,11 @@
 						</ul>
 						<br><br>
 					</section>
-					<section id="users" class="anchor">
-						<h1 class="page-header">Users</h1>
-						<p>Return a specified user.</p>
+					<section id="people" class="anchor">
+						<h1 class="page-header">People</h1>
+						<p>Return a specified people.</p>
 						<h4 class="child-header">Resource URL</h4>
-						<p>http://{{ host }}/{{ version }}/users/{id}</p>
+						<p>http://{{ host }}/{{ version }}/people/{id}</p>
 						<h4 class="child-header">Resource Information</h4>
 						<table class="table table-hover">
 							<tbody>
@@ -160,7 +162,7 @@
 							<tbody>
 								<tr>
 									<td width="400">id</td>
-									<td>User id</td>
+									<td>People id</td>
 								</tr>
 							</tbody>
 						</table>
@@ -185,22 +187,22 @@
 									</td>
 								</tr>
 								<tr>
-									<td>user</td>
-									<td>Public user object in json format</td>
+									<td>people</td>
+									<td>Public people object in json format</td>
 								</tr>
 							</tbody>
 						</table>
 						<h4 class="child-header">Examples</h4>
 						<ul>
-							<li><a target="_blank" href="/{{ version }}/users/zhaolong">http://{{ host }}/{{ version }}/users/zhaolong</a></li>
+							<li><a target="_blank" href="/{{ version }}/people/wuzang">http://{{ host }}/{{ version }}/people/wuzang</a></li>
 						</ul>
 						<br><br>
 					</section>
-					<section id="songs" class="anchor">
+					<section id="song" class="anchor">
 						<h1 class="page-header">Songs</h1>
 						<p>Return a specified song.</p>
 						<h4 class="child-header">Resource URL</h4>
-						<p>http://{{ host }}/{{ version }}/songs</p>
+						<p>http://{{ host }}/{{ version }}/song</p>
 						<h4 class="child-header">Resource Information</h4>
 						<table class="table table-hover">
 							<tbody>
@@ -229,15 +231,15 @@
 						</table>
 						<h4 class="child-header">Examples</h4>
 						<ul>
-							<li><a target="_blank" href="/{{ version }}/songs?ids=[29713754,28793502]">http://{{ host }}/{{ version }}/songs?ids=[29713754,28793502]</a></li>
+							<li><a target="_blank" href="/{{ version }}/song?ids=[29713754,28793502]">http://{{ host }}/{{ version }}/song?ids=[29713754,28793502]</a></li>
 						</ul>
 						<br><br>
 					</section>
-					<section id="albums" class="anchor">
+					<section id="album" class="anchor">
 						<h1 class="page-header">Albums</h1>
 						<p>Return a specified album.</p>
 						<h4 class="child-header">Resource URL</h4>
-						<p>http://{{ host }}/{{ version }}/albums/{id}</p>
+						<p>http://{{ host }}/{{ version }}/album/{id}</p>
 						<h4 class="child-header">Resource Information</h4>
 						<table class="table table-hover">
 							<tbody>
@@ -266,15 +268,15 @@
 						</table>
 						<h4 class="child-header">Examples</h4>
 						<ul>
-							<li><a target="_blank" href="/{{ version }}/albums/10818">http://{{ host }}/{{ version }}/albums/10818</a></li>
+							<li><a target="_blank" href="/{{ version }}/album/10818">http://{{ host }}/{{ version }}/album/10818</a></li>
 						</ul>
 						<br><br>
 					</section>
-					<section id="artists" class="anchor">
+					<section id="artist" class="anchor">
 						<h1 class="page-header">Artists</h1>
 						<p>Return a specified artist.</p>
 						<h4 class="child-header">Resource URL</h4>
-						<p>http://{{ host }}/{{ version }}/artists/{id}</p>
+						<p>http://{{ host }}/{{ version }}/artist/{id}</p>
 						<h4 class="child-header">Resource Information</h4>
 						<table class="table table-hover">
 							<tbody>
@@ -303,15 +305,15 @@
 						</table>
 						<h4 class="child-header">Examples</h4>
 						<ul>
-							<li><a target="_blank" href="/{{ version }}/artists/3686">http://{{ host }}/{{ version }}/artists/3686</a></li>
+							<li><a target="_blank" href="/{{ version }}/artist/3686">http://{{ host }}/{{ version }}/artist/3686</a></li>
 						</ul>
 						<br><br>
 					</section>
-					<section id="playlists" class="anchor">
+					<section id="playlist" class="anchor">
 						<h1 class="page-header">Playlists</h1>
 						<p>Return a specified playlist.</p>
 						<h4 class="child-header">Resource URL</h4>
-						<p>http://{{ host }}/{{ version }}/playlists/{id}</p>
+						<p>http://{{ host }}/{{ version }}/playlist/{id}</p>
 						<h4 class="child-header">Resource Information</h4>
 						<table class="table table-hover">
 							<tbody>
@@ -340,15 +342,15 @@
 						</table>
 						<h4 class="child-header">Examples</h4>
 						<ul>
-							<li><a target="_blank" href="/{{ version }}/playlists/2294307">http://{{ host }}/{{ version }}/playlists/2294307</a></li>
+							<li><a target="_blank" href="/{{ version }}/playlist/2294307">http://{{ host }}/{{ version }}/playlist/2294307</a></li>
 						</ul>
 						<br><br>
 					</section>
-					<section id="lyrics" class="anchor">
+					<section id="lyric" class="anchor">
 						<h1 class="page-header">Lyrics</h1>
 						<p>Return a specified lyric.</p>
 						<h4 class="child-header">Resource URL</h4>
-						<p>http://{{ host }}/{{ version }}/lyrics/{id}</p>
+						<p>http://{{ host }}/{{ version }}/lyric/{id}</p>
 						<h4 class="child-header">Resource Information</h4>
 						<table class="table table-hover">
 							<tbody>
@@ -377,15 +379,15 @@
 						</table>
 						<h4 class="child-header">Examples</h4>
 						<ul>
-							<li><a target="_blank" href="/{{ version }}/lyrics/108933">http://{{ host }}/{{ version }}/lyrics/108933</a></li>
+							<li><a target="_blank" href="/{{ version }}/lyric/108933">http://{{ host }}/{{ version }}/lyric/108933</a></li>
 						</ul>
 						<br><br>
 					</section>
-					<section id="toplists" class="anchor">
+					<section id="toplist" class="anchor">
 						<h1 class="page-header">Toplists</h1>
 						<p>Return a specified toplist.</p>
 						<h4 class="child-header">Resource URL</h4>
-						<p>http://{{ host }}/{{ version }}/toplists/{id}</p>
+						<p>http://{{ host }}/{{ version }}/toplist/{id}</p>
 						<h4 class="child-header">Resource Information</h4>
 						<table class="table table-hover">
 							<tbody>
@@ -414,13 +416,82 @@
 						</table>
 						<h4 class="child-header">Examples</h4>
 						<ul>
-							<li><a target="_blank" href="/{{ version }}/toplists/3778678">http://{{ host }}/{{ version }}/toplists/3778678</a></li>
+							<li><a target="_blank" href="/{{ version }}/toplist/3778678">http://{{ host }}/{{ version }}/toplist/3778678</a></li>
+						</ul>
+						<br><br>
+					</section>
+					<section id="explore-playlist-cat" class="anchor">
+						<h1 class="page-header">Explore/playlist/cat</h1>
+						<p>Explore playlist by category.</p>
+						<h4 class="child-header">Resource URL</h4>
+						<p>http://{{ host }}/{{ version }}/explore/playlist/cat/{cat}</p>
+						<h4 class="child-header">Resource Information</h4>
+						<table class="table table-hover">
+							<tbody>
+								<tr>
+									<td width="400">Request method</td>
+									<td><b>GET</b></td>
+								</tr>
+								<tr>
+									<td>Response formats</td>
+									<td>JSON</td>
+								</tr>
+								<tr>
+									<td>Requires authentication?</td>
+									<td>No</td>
+								</tr>
+							</tbody>
+						</table>
+						<h4 class="child-header">Parameters</h4>
+						<table class="table table-hover">
+							<tbody>
+								<tr>
+									<td width="400">cat</td>
+									<td>
+										<table>
+											<tr valign="top">
+												<td width="50">语种：</td>
+												<td>华语、欧美、日语、韩语、粤语、小语种</td>
+											</tr>
+											<tr valign="top">
+												<td>场景：</td>
+												<td>清晨、黄昏、夜晚、学习、工作、午休、下午茶、地铁、驾车、运动、缠绵、聚会、度假、旅行、散步、校园、酒吧</td>
+											</tr>
+											<tr valign="top">
+												<td>风格：</td>
+												<td>流行、摇滚、民谣、电子、说唱、轻音乐、爵士、乡村、R&B/Soul、古典、民族、英伦、金属、朋克、蓝调、原声、雷鬼、世界音乐、拉丁、另类/独立、动漫、New Age、古风、Bossa Nova</td>
+											</tr>
+											<tr valign="top">
+												<td>情感：</td>
+												<td>怀旧、清新、浪漫、性感、伤感、治愈、放松、悲伤、温暖、孤独、感动、兴奋、快乐、安静、思念</td>
+											</tr>
+											<tr valign="top">
+												<td>主题：</td>
+												<td>游戏、70后、80后、90后、网络歌曲、KTV、经典、翻唱、吉他、钢琴、器乐、儿童、榜单、对唱、00后</td>
+											</tr>
+										</table>
+									</td>
+								</tr>
+								<tr>
+									<td>offset</td>
+									<td>default = {{ offset }}</td>
+								</tr>
+								<tr>
+									<td>limit</td>
+									<td>default = 35</td>
+								</tr>
+							</tbody>
+						</table>
+						<h4 class="child-header">Examples</h4>
+						<ul>
+							<li><a target="_blank" href="/{{ version }}/explore/playlist/cat/民谣">http://{{ host }}/{{ version }}/explore/playlist/cat/民谣</a></li>
+							<li><a target="_blank" href="/{{ version }}/explore/playlist/cat/思念">http://{{ host }}/{{ version }}/explore/playlist/cat/思念</a></li>
 						</ul>
 						<br><br>
 					</section>
 					<section id="exist" class="anchor">
 						<h1 class="page-header">Exist</h1>
-						<p>Check user exist or not.</p>
+						<p>Check people exist or not.</p>
 						<h4 class="child-header">Resource URL</h4>
 						<p>http://{{ host }}/{{ version }}/exist</p>
 						<h4 class="child-header">Resource Information</h4>
@@ -448,17 +519,17 @@
 									<td>The query content.</td>
 								</tr>
 								<tr>
-									<td width="400">t</td>
+									<td>t</td>
 									<td>
 										<table>
 											<tr>
 												<td>0</td>
 												<td width="15"></td>
-												<td>uid</td>
+												<td>pid</td>
 											</tr>
 											<tr>
 												<td>1</td>
-												<td width="15"></td>
+												<td></td>
 												<td>email</td>
 											</tr>
 										</table>
@@ -480,7 +551,7 @@
 											</tr>
 											<tr>
 												<td>1</td>
-												<td width="15"></td>
+												<td></td>
 												<td>exist</td>
 											</tr>
 										</table>
@@ -490,13 +561,13 @@
 						</table>
 						<h4 class="child-header">Examples</h4>
 						<ul>
-							<li><a target="_blank" href="/{{ version }}/exist?s=zhaolong&t=0">http://{{ host }}/{{ version }}/exist?s=zhaolong&t=0</a></li>
+							<li><a target="_blank" href="/{{ version }}/exist?s=wuzang&t=0">http://{{ host }}/{{ version }}/exist?s=wuzang&t=0</a></li>
 						</ul>
 						<br><br>
 					</section>
 					<section id="sign-up" class="anchor">
 						<h1 class="page-header">Sign up</h1>
-						<p>New user sign up.</p>
+						<p>New people sign up.</p>
 						<h4 class="child-header">Resource URL</h4>
 						<p>http://{{ host }}/{{ version }}/sign-up</p>
 						<h4 class="child-header">Resource Information</h4>
@@ -520,20 +591,20 @@
 						<table class="table table-hover">
 							<tbody>
 								<tr>
-									<td width="400">uid</td>
-									<td>User id</td>
+									<td width="400">pid</td>
+									<td>People id</td>
 								</tr>
 								<tr>
 									<td>name</td>
-									<td>User name.</td>
+									<td>People name.</td>
 								</tr>
 								<tr>
 									<td>email</td>
-									<td>User email</td>
+									<td>People email</td>
 								</tr>
 								<tr>
 									<td>password</td>
-									<td>User password</td>
+									<td>People password</td>
 								</tr>
 							</tbody>
 						</table>
@@ -563,9 +634,9 @@
 					</section>
 					<section id="activate" class="anchor">
 						<h1 class="page-header">Activate</h1>
-						<p>User activate</p>
+						<p>People activate</p>
 						<h4 class="child-header">Resource URL</h4>
-						<p>http://{{ host }}/{{ version }}/activate/{uid}</p>
+						<p>http://{{ host }}/{{ version }}/activate/{pid}</p>
 						<h4 class="child-header">Resource Information</h4>
 						<table class="table table-hover">
 							<tbody>
@@ -587,8 +658,8 @@
 						<table class="table table-hover">
 							<tbody>
 								<tr>
-									<td width="400">uid</td>
-									<td>User id</td>
+									<td width="400">pid</td>
+									<td>People id</td>
 								</tr>
 								<tr>
 									<td>code</td>
@@ -620,13 +691,13 @@
 						</table>
 						<h4 class="child-header">Examples</h4>
 						<ul>
-							<li><a target="_blank" href="/{{ version }}/activate/zhaolong?code=S2M5MRDV5L7SWPHCQ84RBQ3SLI5R2LJ4">http://{{ host }}/{{ version }}/activate/zhaolong?code=S2M5MRDV5L7SWPHCQ84RBQ3SLI5R2LJ4</a></li>
+							<li><a target="_blank" href="/{{ version }}/activate/wuzang?code=8WGHHI1IMQA6AMH0CZMG994YA1JPC3TP">http://{{ host }}/{{ version }}/activate/wuzang?code=8WGHHI1IMQA6AMH0CZMG994YA1JPC3TP</a></li>
 						</ul>
 						<br><br>
 					</section>
 					<section id="sign-in" class="anchor">
 						<h1 class="page-header">Sign in</h1>
-						<p>User sign in.</p>
+						<p>People sign in.</p>
 						<h4 class="child-header">Resource URL</h4>
 						<p>http://{{ host }}/{{ version }}/sign-in</p>
 						<h4 class="child-header">Resource Information</h4>
@@ -651,11 +722,11 @@
 							<tbody>
 								<tr>
 									<td width="400">email</td>
-									<td>User email</td>
+									<td>People email</td>
 								</tr>
 								<tr>
 									<td>password</td>
-									<td>User password</td>
+									<td>People password</td>
 								</tr>
 							</tbody>
 						</table>
@@ -685,8 +756,8 @@
 									</td>
 								</tr>
 								<tr>
-									<td>user</td>
-									<td>Private user object in json format</td>
+									<td>people</td>
+									<td>Private people object in json format</td>
 								</tr>
 							</tbody>
 						</table>
@@ -694,7 +765,7 @@
 					</section>
 					<section id="validate" class="anchor">
 						<h1 class="page-header">Validate</h1>
-						<p>User validation</p>
+						<p>People validation</p>
 						<h4 class="child-header">Resource URL</h4>
 						<p>http://{{ host }}/{{ version }}/validate</p>
 						<h4 class="child-header">Resource Information</h4>
@@ -718,12 +789,12 @@
 						<table class="table table-hover">
 							<tbody>
 								<tr>
-									<td width="400">uid</td>
-									<td>User id</td>
+									<td width="400">pid</td>
+									<td>People id</td>
 								</tr>
 								<tr>
 									<td>access_token</td>
-									<td>User access token</td>
+									<td>People access token</td>
 								</tr>
 							</tbody>
 						</table>
@@ -748,18 +819,18 @@
 									</td>
 								</tr>
 								<tr>
-									<td>user</td>
-									<td>Private user object in json format</td>
+									<td>people</td>
+									<td>Private people object in json format</td>
 								</tr>
 							</tbody>
 						</table>
 						<br><br>
 					</section>
-					<section id="players" class="anchor">
-						<h1 class="page-header">Players</h1>
-						<p>Return a specified user's player.</p>
+					<section id="player" class="anchor">
+						<h1 class="page-header">Player</h1>
+						<p>Return a specified people's player.</p>
 						<h4 class="child-header">Resource URL</h4>
-						<p>http://{{ host }}/{{ version }}/players/{id}</p>
+						<p>http://{{ host }}/{{ version }}/player/{id}</p>
 						<h4 class="child-header">Resource Information</h4>
 						<table class="table table-hover">
 							<tbody>
@@ -781,8 +852,8 @@
 						<table class="table table-hover">
 							<tbody>
 								<tr>
-									<td width="400">uid</td>
-									<td>User id</td>
+									<td width="400">pid</td>
+									<td>People id</td>
 								</tr>
 							</tbody>
 						</table>
@@ -814,13 +885,13 @@
 						</table>
 						<h4 class="child-header">Examples</h4>
 						<ul>
-							<li><a target="_blank" href="/{{ version }}/players/zhaolong">http://{{ host }}/{{ version }}/players/zhaolong</a></li>
+							<li><a target="_blank" href="/{{ version }}/player/wuzang">http://{{ host }}/{{ version }}/player/wuzang</a></li>
 						</ul>
 						<br><br>
 					</section>
 					<section id="player-playlist-add" class="anchor">
-						<h1 class="page-header">Player playlist add</h1>
-						<p>Add songs to the user player's playlist.</p>
+						<h1 class="page-header">Player/playlist/add</h1>
+						<p>Add songs to the people player's playlist.</p>
 						<h4 class="child-header">Resource URL</h4>
 						<p>http://{{ host }}/{{ version }}/player/playlist/add</p>
 						<h4 class="child-header">Resource Information</h4>
@@ -844,12 +915,12 @@
 						<table class="table table-hover">
 							<tbody>
 								<tr>
-									<td width="400">uid</td>
-									<td>User id</td>
+									<td width="400">pid</td>
+									<td>People id</td>
 								</tr>
 								<tr>
 									<td>access_token</td>
-									<td>User access token</td>
+									<td>People access token</td>
 								</tr>
 								<tr>
 									<td>songs</td>
@@ -886,8 +957,8 @@
 						<br><br>
 					</section>
 					<section id="player-playlist-replace" class="anchor">
-						<h1 class="page-header">Player playlist replace</h1>
-						<p>Replace the current user player's playlist.</p>
+						<h1 class="page-header">Player/playlist/replace</h1>
+						<p>Replace the current people player's playlist.</p>
 						<h4 class="child-header">Resource URL</h4>
 						<p>http://{{ host }}/{{ version }}/player/playlist/replace</p>
 						<h4 class="child-header">Resource Information</h4>
@@ -911,12 +982,12 @@
 						<table class="table table-hover">
 							<tbody>
 								<tr>
-									<td width="400">uid</td>
-									<td>User id</td>
+									<td width="400">pid</td>
+									<td>People id</td>
 								</tr>
 								<tr>
 									<td>access_token</td>
-									<td>User access token</td>
+									<td>People access token</td>
 								</tr>
 								<tr>
 									<td>songs</td>
@@ -953,8 +1024,8 @@
 						<br><br>
 					</section>
 					<section id="player-playlist-delete" class="anchor">
-						<h1 class="page-header">Player playlist delete</h1>
-						<p>Delete from the user player's playlist based on song id list.</p>
+						<h1 class="page-header">Player/playlist/delete</h1>
+						<p>Delete from the people player's playlist based on song id list.</p>
 						<h4 class="child-header">Resource URL</h4>
 						<p>http://{{ host }}/{{ version }}/player/playlist/delete</p>
 						<h4 class="child-header">Resource Information</h4>
@@ -978,12 +1049,12 @@
 						<table class="table table-hover">
 							<tbody>
 								<tr>
-									<td width="400">uid</td>
-									<td>User id</td>
+									<td width="400">pid</td>
+									<td>People id</td>
 								</tr>
 								<tr>
 									<td>access_token</td>
-									<td>User access token</td>
+									<td>People access token</td>
 								</tr>
 								<tr>
 									<td>sids</td>
@@ -1020,8 +1091,8 @@
 						<br><br>
 					</section>
 					<section id="player-playlist-clear" class="anchor">
-						<h1 class="page-header">Player playlist clear</h1>
-						<p>Clear the user player's playlist.</p>
+						<h1 class="page-header">Player/playlist/clear</h1>
+						<p>Clear the people player's playlist.</p>
 						<h4 class="child-header">Resource URL</h4>
 						<p>http://{{ host }}/{{ version }}/player/playlist/clear</p>
 						<h4 class="child-header">Resource Information</h4>
@@ -1045,12 +1116,12 @@
 						<table class="table table-hover">
 							<tbody>
 								<tr>
-									<td width="400">uid</td>
-									<td>User id</td>
+									<td width="400">pid</td>
+									<td>People id</td>
 								</tr>
 								<tr>
 									<td>access_token</td>
-									<td>User access token</td>
+									<td>People access token</td>
 								</tr>
 							</tbody>
 						</table>
@@ -1083,7 +1154,7 @@
 						<br><br>
 					</section>
 					<section id="player-play" class="anchor">
-						<h1 class="page-header">Player play</h1>
+						<h1 class="page-header">Player/play</h1>
 						<p>Play the current song.</p>
 						<h4 class="child-header">Resource URL</h4>
 						<p>http://{{ host }}/{{ version }}/player/play</p>
@@ -1108,12 +1179,12 @@
 						<table class="table table-hover">
 							<tbody>
 								<tr>
-									<td width="400">uid</td>
-									<td>User id</td>
+									<td width="400">pid</td>
+									<td>People id</td>
 								</tr>
 								<tr>
 									<td>access_token</td>
-									<td>User access token</td>
+									<td>People access token</td>
 								</tr>
 							</tbody>
 						</table>
@@ -1146,7 +1217,7 @@
 						<br><br>
 					</section>
 					<section id="player-pause" class="anchor">
-						<h1 class="page-header">Player pause</h1>
+						<h1 class="page-header">Player/pause</h1>
 						<p>Pause the current song.</p>
 						<h4 class="child-header">Resource URL</h4>
 						<p>http://{{ host }}/{{ version }}/player/pause</p>
@@ -1171,12 +1242,12 @@
 						<table class="table table-hover">
 							<tbody>
 								<tr>
-									<td width="400">uid</td>
-									<td>User id</td>
+									<td width="400">pid</td>
+									<td>People id</td>
 								</tr>
 								<tr>
 									<td>access_token</td>
-									<td>User access token</td>
+									<td>People access token</td>
 								</tr>
 							</tbody>
 						</table>
@@ -1209,7 +1280,7 @@
 						<br><br>
 					</section>
 					<section id="player-skip" class="anchor">
-						<h1 class="page-header">Player skip</h1>
+						<h1 class="page-header">Player/skip</h1>
 						<p>Skip to another song.</p>
 						<h4 class="child-header">Resource URL</h4>
 						<p>http://{{ host }}/{{ version }}/player/skip</p>
@@ -1234,12 +1305,12 @@
 						<table class="table table-hover">
 							<tbody>
 								<tr>
-									<td width="400">uid</td>
-									<td>User id</td>
+									<td width="400">pid</td>
+									<td>People id</td>
 								</tr>
 								<tr>
 									<td>access_token</td>
-									<td>User access token</td>
+									<td>People access token</td>
 								</tr>
 								<tr>
 									<td width="400">song</td>

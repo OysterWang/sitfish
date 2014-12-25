@@ -19,7 +19,7 @@
 		<div class="container">
 			<form class="form-horizontal" role="form" action="/sign-up" method="POST">
 				<div class="form-group">
-					<input type="text" class="form-control" id="uid" name="uid" placeholder="用户名">
+					<input type="text" class="form-control" id="pid" name="pid" placeholder="用户名">
 					<small class="form-control-feedback glyphicon" style="right:5px;"></small>
 					<small class="help-block sr-only">该用户名已被注册</small>
 				</div>
@@ -51,15 +51,15 @@
 		<script src="http://cdn.staticfile.org/jquery/2.1.1-rc2/jquery.min.js"></script>
 		<script type="text/javascript">
 			$(function() {
-				$('#uid:first').focus();
-				listenUid();
+				$('#pid:first').focus();
+				listenPid();
 				listenName();
 				listenEmail();
 				listenPassword();
 			});
 
-			function listenUid() {
-				var cur = $('#uid');
+			function listenPid() {
+				var cur = $('#pid');
 				var parent = cur.parent();
 				cur.bind('input onpropertychange', function() {
 					if ($.trim(cur.val()).length == 0) {
