@@ -32,27 +32,41 @@ app.config['JSON_AS_ASCII'] = False
 Foundation
 """
 
+@app.route('/people/<id>', methods=['GET'])
+def people(id=''):
+	url = 'http://%s/v1/people/%s' % (config['SERVER']['HOST'], id)
+	people = requests.get(url).json()['people']
+	return pjax('people.html', people=people, ad=get_ad())
+
+
 @app.route('/song/<id>', methods=['GET'])
 def song(id=''):
 	url = 'http://%s/v1/song/%s' % (config['SERVER']['HOST'], id)
 	song = requests.get(url).json()['songs'][0]
 	url = 'http://%s/v1/lyric/%s' % (config['SERVER']['HOST'], id)
 	lyric = [re.sub('\[.*\]', '', line) for line in re.split('\n', requests.get(url).json()['lrc']['lyric'])]
-	return pjax('song.html', song=song, lyric=lyric, ad=random.randint(0, 5))
+	return pjax('song.html', song=song, lyric=lyric, ad=get_ad())
 
 
 @app.route('/album/<id>', methods=['GET'])
 def album(id=''):
 	url = 'http://%s/v1/album/%s' % (config['SERVER']['HOST'], id)
 	data = requests.get(url).json()
-	return pjax('album.html', data=data, songs=data['album']['songs'], ad=random.randint(0, 5))
+	return pjax('album.html', data=data, songs=data['album']['songs'], ad=get_ad())
+
+
+@app.route('/artist/<id>', methods=['GET'])
+def artist(id=''):
+	url = 'http://%s/v1/artist/%s' % (config['SERVER']['HOST'], id)
+	data = requests.get(url).json()
+	return pjax('artist.html', data=data, ad=get_ad())
 
 
 @app.route('/playlist/<id>', methods=['GET'])
 def playlist(id=''):
 	url = 'http://%s/v1/playlist/%s' % (config['SERVER']['HOST'], id)
 	data = requests.get(url).json()
-	return pjax('playlist.html', data=data, songs=data['result']['tracks'], ad=random.randint(0, 5))
+	return pjax('playlist.html', data=data, songs=data['result']['tracks'], ad=get_ad())
 
 
 @app.route('/', methods=['GET'])
@@ -189,6 +203,10 @@ def validate():
 		payload = {'pid': session['pid'], 'access_token': session['access_token']}
 		return requests.post(url, data=payload).json()
 	return None
+
+
+def get_ad():
+	return random.randint(0, 5)
 
 
 

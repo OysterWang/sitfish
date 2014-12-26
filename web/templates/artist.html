@@ -1,0 +1,33 @@
+<div class="row">
+	<div class="col-sm-9" style="background-color: white; border-right: 1px solid #d3d3d3;">
+		<br><br>
+		<div class="row" style="padding:0px 50px 0px 50px;">
+			<div style="position:relative; width:100%; height:300px; overflow:hidden;">
+				<img src="{{ data['artist']['picUrl'] }}" width="100%" style="display:block; border:1px solid #d3d3d3; margin-top:-110px;">
+				<div style="position:absolute; top:0; width:100%; height:300px; background:url({{ url_for('static', filename='image/ban_mask.png') }});">
+					<h2 style="position:absolute; left:20px; bottom:10px; color:white; font-size:28px;">{{ data['artist']['name'] }}</h2>
+				</div>
+			</div>
+			<br>
+			<h2 style="padding-bottom:10px; border-bottom:2px solid #CD3333;">热门专辑&nbsp;&nbsp;<small>{{data.hotAlbums|length}}个</small></h2>
+			<ul style="margin:0px 15px 0px 0px; padding:0; width:660px;">
+				{% for album in data.hotAlbums %}
+				<li style="display:inline-block; margin:0; padding:0;">
+					<div style="width:162px; height:170px; margin-bottom:30px;">
+						<a href="/album/{{album.id}}" data-pjax="#main" title="{{album.name}}"><img width="120" height="120" src="{{album['picUrl']}}" style="border:1px solid #d3d3d3;"></a>
+						<a href="/album/{{album.id}}" data-pjax="#main" title="{{album.name}}" style="display:block; margin-top:10px;">{{ album['name']|truncate(9, True) }}</a>
+						<small>{{album.publishTime|date_format_filter}}</small>
+					</div>
+				</li>
+				{% endfor %}
+			</ul>
+			{% include 'comment.html' %}
+		</div>
+	</div>
+	<div class="col-sm-3 sidebar">
+		<br><br>
+		{% include 'toplist_list.html' %}
+		<br><br><br>
+		<img width="100%" src="{{ url_for('static', filename='image/ad/%d.jpg' % ad) }}">
+	</div>
+</div>

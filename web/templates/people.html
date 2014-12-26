@@ -1,0 +1,27 @@
+<div class="row">
+	<div class="col-sm-9" style="background-color: white; border-right: 1px solid #d3d3d3;">
+		<br><br>
+		<div class="row" style="padding:0px 50px 0px 50px;">
+			<div style="position:relative; width:100%; height:300px; overflow:hidden;">
+				<img src="{{ url_for('static', filename='image/avatar.jpg') }}" width="100%" style="display:block; border:1px solid #d3d3d3;">
+				<div style="position:absolute; top:0; width:100%; height:300px; background:url({{ url_for('static', filename='image/ban_mask.png') }});">
+					<h2 style="position:absolute; left:20px; bottom:10px; color:white; font-size:28px;">{{ people.name }}</h2>
+				</div>
+			</div>
+			<br>
+			<h2 style="padding-bottom:10px; border-bottom:2px solid #CD3333;">个人信息</h2>
+			<div style="font-size:16px; line-height:24px; font-family: 'Microsoft Yahei'; margin:50px 0px 80px 0px;">
+				<p>姓名：{{ people.name }}</p>
+				<p>注册时间：{{ people.reg_time }}</p>
+				<p>永久域名：<a href="http://{{ domain }}/people/{{ people.pid }}" data-pjax="#main" style="text-decoration:underline;">http://{{ domain }}/people/{{ people.pid }}</a></p>
+			</div>
+			{% include 'comment.html' %}
+		</div>
+	</div>
+	<div class="col-sm-3 sidebar">
+		<br><br>
+		{% include 'toplist_list.html' %}
+		<br><br><br>
+		<img width="100%" src="{{ url_for('static', filename='image/ad/%d.jpg' % ad) }}">
+	</div>
+</div>
