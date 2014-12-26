@@ -3,15 +3,13 @@
 		<br><br>
 		<div class="row" style="padding:0px 50px 0px 50px;">
 			<div class="col-sm-4" style="padding-left:0px;">
-				<img src="{{ data['result']['coverImgUrl'] }}" width="200" height="200" style="border:1px solid #d3d3d3;">
+				<img src="{{ data['album']['picUrl'] }}" width="200" height="200" style="border:1px solid #d3d3d3;">
 			</div>
 			<div class="col-sm-8" style="padding-left:20px;">
-				<h2>{{ data['result']['name'] }}</h2>
-				<small>标签：</small>
-				{% for tag in data['result']['tags'] %}
-				<small>{{ tag }}</small>
-				{% endfor %}
-				<br><br>
+				<h2>{{ data['album']['name'] }}</h2>
+				<small>歌手：<a href="/artist/{{ data['album']['artists'][0]['id'] }}" data-pjax="#main" style="color:#428bca;">{{ data['album']['artists'][0]['name'] }}</a></small><br>
+				<small>发行时间：{{ data['album']['publishTime']|date_format_filter }}</small><br>
+				<small>发行公司：{{ data['album']['company'] }}</small><br><br>
 				<button type="submit" class="btn btn-info add-all"><span class="glyphicon glyphicon-play-circle" aria-hidden="true"></span> 播放</button>
 				<button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-star-empty" aria-hidden="true"></span> 收藏</button>
 				<button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-share" aria-hidden="true"></span> 分享</button>

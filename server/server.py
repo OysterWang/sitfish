@@ -88,9 +88,9 @@ def people(id=''):
 
 
 # TYPE - 1
-@app.route('/v1/song', methods=['GET'])
-def song():
-	ids = request.args.get('ids', default='[]')
+@app.route('/v1/song/<ids>', methods=['GET'])
+def song(ids=''):
+	ids = re.split(',', ids)
 	url = 'http://music.163.com/api/song/detail?ids=%s' % ids
 	data = requests.get(url, headers=app.config['HEADERS']).json()
 	return jsonify(**data)

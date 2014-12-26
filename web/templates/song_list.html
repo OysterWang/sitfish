@@ -1,0 +1,35 @@
+<h2 style="padding-bottom:10px; border-bottom:2px solid #CD3333;">歌曲列表</h2>
+<table class="table table-hover">
+	<thead>
+		<tr>
+			<th width="30"></th>
+			<th width="15"></th>
+			<th>标题</th>
+			<th width="80">时长</th>
+			<th width="150">歌手</th>
+		</tr>
+	</thead>
+	<tbody>
+	{% for song in songs %}
+		<tr>
+			<td>{{ loop.index }}</td>
+			<td>
+				<a href="javascript:void(0);">
+					<span class="glyphicon glyphicon-play-circle add-song" aria-hidden="true"
+						song-id="{{ song['id'] }}"
+						song-name="{{ song['name'] }}"
+						song-source="{{ song['mp3Url'] }}"
+						song-img="{{ song['album']['picUrl'] }}"
+						song-time="{{ song['bMusic']['playTime'] }}"
+						song-artist-id="{{ song['artists'][0]['id'] }}"
+						song-artist-name="{{ song['artists'][0]['name'] }}">
+					</span>
+				</a>
+			</td>
+			<td><a title="{{ song['name'] }}" href="/song/{{ song['id'] }}" data-pjax="#main">{{ song['name']|truncate(30, True) }}</a></td>
+			<td>{{ song['bMusic']['playTime']|time_format_filter }}</td>
+			<td><a title="{{ song['artists'][0]['name'] }}" href="/artist?id={{ song['artists'][0]['id'] }}" data-pjax="#main">{{ song['artists'][0]['name']|truncate(15, True) }}</a></td>
+		</tr>
+	{% endfor %}
+	</tbody>
+</table>

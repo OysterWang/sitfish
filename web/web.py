@@ -2,7 +2,9 @@
 # -*- coding: utf-8 -*-
 
 import os
+import re
 import codecs
+import random
 import requests
 import configparser
 
@@ -14,6 +16,7 @@ from flask import redirect
 from flask import render_template
 
 from pprint import pprint
+from datetime import datetime
 
 config = configparser.ConfigParser()
 config.readfp(codecs.open("../config/config.ini", "r", "utf-8"))
@@ -28,6 +31,30 @@ app.config['JSON_AS_ASCII'] = False
 """
 Foundation
 """
+
+@app.route('/song/<id>', methods=['GET'])
+def song(id=''):
+	url = 'http://%s/v1/song/%s' % (config['SERVER']['HOST'], id)
+	song = requests.get(url).json()['songs'][0]
+	url = 'http://%s/v1/lyric/%s' % (config['SERVER']['HOST'], id)
+	lyric = [re.sub('\[.*\]', '', line) for line in re.split('\n', requests.get(url).json()['lrc']['lyric'])]
+	return pjax('song.html', song=song, lyric=lyric, ad=random.randint(0, 5))
+
+
+@app.route('/album/<id>', methods=['GET'])
+def album(id=''):
+	url = 'http://%s/v1/album/%s' % (config['SERVER']['HOST'], id)
+	data = requests.get(url).json()
+	return pjax('album.html', data=data, songs=data['album']['songs'], ad=random.randint(0, 5))
+
+
+@app.route('/playlist/<id>', methods=['GET'])
+def playlist(id=''):
+	url = 'http://%s/v1/playlist/%s' % (config['SERVER']['HOST'], id)
+	data = requests.get(url).json()
+	return pjax('playlist.html', data=data, songs=data['result']['tracks'], ad=random.randint(0, 5))
+
+
 @app.route('/', methods=['GET'])
 @app.route('/toplist/', methods=['GET'])
 @app.route('/toplist/<id>', methods=['GET'])
@@ -40,12 +67,12 @@ def toplist(id='3778678'):
 @app.route('/explore/playlist', methods=['GET'])
 @app.route('/explore/playlist/cat', methods=['GET'])
 @app.route('/explore/playlist/cat/<cat>', methods=['GET'])
-def playlist(cat='全部'):
+def explore_playlist(cat='全部'):
 	offset = parse_int(request.args.get('offset', default=''), default=0)
 	limit = parse_int(request.args.get('limit', default=''), default=30)
 	url = 'http://%s/v1/explore/playlist/cat/%s?offset=%d&limit=%d' % (config['SERVER']['HOST'], cat, offset, limit)
 	data = requests.get(url).json()
-	return pjax('playlist.html', playlists=data['playlists'])
+	return pjax('explore_playlist.html', playlists=data['playlists'])
 
 
 @app.route('/player', methods=['GET', 'POST'])
@@ -116,6 +143,21 @@ def api(path=''):
 		url = 'http://%s/%s?%s' % (config['SERVER']['HOST'], path, '&'.join(['%s=%s' % (key, request.args[key]) for key in request.args]))
 		data = requests.post(url, data=request.form).json()
 		return jsonify(**data)
+
+
+"""
+Filters
+"""
+
+@app.template_filter('date_format_filter')
+def date_format_filter(value, format='%Y-%m-%d'):
+	return datetime.fromtimestamp(int(value) // 1000).strftime(format)
+
+
+@app.template_filter('time_format_filter')
+def time_format_filter(value, format='%H:%M'):
+	seconds = int(value) // 1000
+	return '%02d:%02d' % (seconds // 60, seconds % 60)
 
 
 """
