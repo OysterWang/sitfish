@@ -1,6 +1,9 @@
 ﻿/*jslint plusplus: true, white: true, nomen: true */
 /* global soundManager, document, console, window */
 
+var globalPlayLink;
+var globalActions;
+
 (function(window) {
 
   /**
@@ -768,7 +771,12 @@
 	    }
 
         // remove any failed character sequence, also
-	    dom.playlistTarget.innerHTML = '<ul class="sm2-playlist-bd"><li>' + item.innerHTML.replace(extras.loadFailedCharacter, '') + '</li></ul>';
+	    var tds = item.getElementsByTagName('td');
+	    if (tds.length < 3) {
+	    	dom.playlistTarget.innerHTML = '<ul class="sm2-playlist-bd"><li>' + item.innerHTML.replace(extras.loadFailedCharacter, '') + '</li></ul>';
+	    } else {
+		    dom.playlistTarget.innerHTML = '<ul class="sm2-playlist-bd"><li>' + tds[0].innerHTML + ' - ' + tds[1].innerHTML + '</li></ul>';
+	    }
 
 	    if (dom.playlistTarget.getElementsByTagName('li')[0].scrollWidth > dom.playlistTarget.offsetWidth) {
 	      // this item can use <marquee>, in fact.
@@ -1015,6 +1023,8 @@
 
 	  }
 
+	  globalPlayLink = playLink;
+
 	  function handleClick(e) {
 
 	    var evt,
@@ -1025,9 +1035,11 @@
 	        href,
 	        handled;
 
-	    evt = (e || window.event);
+	    // evt = (e || window.event);
+	    evt = e;
 
-	    target = evt.target || evt.srcElement;
+	    // target = evt.target || evt.srcElement;
+	    target = evt.target;
 
 
 	    if (target && target.nodeName) {
@@ -1376,6 +1388,8 @@
 	    }*/
 
 	  };
+
+	  globalActions = actions;
 
 	  init();
 

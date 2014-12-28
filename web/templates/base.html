@@ -21,7 +21,7 @@
 		</div>
 		<hr style="margin-top:0px; margin-bottom:5px; border-top:1px solid #d3d3d3">
 		<footer class="container footer" style="padding:0px 0px 0px 0px; margin-bottom: 80px;">
-			<h5>© 2014 - 2015 sitfish.com, all rights reserved 北京{{ brand }}科技</h5>
+			<span style="color: #999; font:12px Helvetica,Arial,sans-serif;">© 2014-2015 sitfish.com, all rights reserved &nbsp;{{ brand }}科技</span>
 		</footer>
 		<nav class="navbar navbar-fixed-bottom" style="min-height:45px;">
 			<div class="container" style="padding:0; height:45px;">
@@ -52,6 +52,8 @@
 				playerPlayListener();
 				playerPauseListener();
 				playerSkipListener();
+
+				refreshSongs();
 			});
 
 			function pjaxListener() {
@@ -65,8 +67,6 @@
 
 			function refreshAll() {
 				refreshNav();
-				refreshSongs();
-
 				playlistAddListener();
 				playlistReplaceListener();
 			}
@@ -100,6 +100,8 @@
 						$('#player-playlist>li:first').addClass('selected');
 					} else {
 						$('#player-playlist').html('<li><a href="javascript:void(0);"></a></li>');
+						$('#song-img').attr('src', '{{ url_for("static", filename="image/logo.png") }}');
+						$('div.sm2-playlist-target').html('<ul class="sm2-playlist-bd"><li></li></ul>');
 					}
 					$('#song-num').html(playlist.length);
 					playlistDeleteListener();
@@ -121,9 +123,12 @@
 							'artist_name': $(this).attr('song-artist-name')
 						}])
 					};
-					$.post('/api/v1/player/playlist/add', data, function(data) {
-						loadSongs(data);
-					});
+					$.post('/api/v1/player/playlist/add', data, (function(sid) {
+						return function(data) {
+							loadSongs(data);
+							globalPlayLink($('span[song-id=' + sid + ']').prev().get(0));
+						}
+					})($(this).attr('song-id')));
 				});
 			}
 
@@ -148,6 +153,7 @@
 					};
 					$.post('/api/v1/player/playlist/replace', data, function(data) {
 						loadSongs(data);
+						globalPlayLink($('li.selected a').get(0));
 					});
 				});
 			}
@@ -173,6 +179,11 @@
 					};
 					$.post('/api/v1/player/playlist/clear', data, function(data) {
 						loadSongs(data);
+						if ($('div.sm2-bar-ui').hasClass('playing')) {
+							var evt = $.Event('click');
+							evt.target = $('a.sm2-inline-button').get(0);
+							globalActions.play(evt);
+						}
 					});
 				});
 			}
