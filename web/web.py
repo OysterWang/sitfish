@@ -44,7 +44,10 @@ def song(id=''):
 	url = 'http://%s/v1/song/%s' % (config['SERVER']['HOST'], id)
 	song = requests.get(url).json()['songs'][0]
 	url = 'http://%s/v1/lyric/%s' % (config['SERVER']['HOST'], id)
-	lyric = [re.sub('\[.*\]', '', line) for line in re.split('\n', requests.get(url).json()['lrc']['lyric'])]
+	data = requests.get(url).json()
+	lyric = []
+	if 'lrc' in data and 'lyric' in data['lrc']:
+		lyric = [re.sub('\[.*\]', '', line) for line in re.split('\n', data['lrc']['lyric'])]
 	return pjax('song.html', song=song, lyric=lyric, ad=get_ad())
 
 

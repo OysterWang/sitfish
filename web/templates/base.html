@@ -44,16 +44,10 @@
 		<script type="text/javascript">
 			$(function() {
 				Handlebars.registerHelper("formatTime", millisecondsToTime);
-
 				pjaxListener();
 				refreshAll();
-
-				playlistClearListener();
-				playerPlayListener();
-				playerPauseListener();
-				playerSkipListener();
-
 				refreshSongs();
+				playlistClearListener();
 			});
 
 			function pjaxListener() {
@@ -67,6 +61,7 @@
 
 			function refreshAll() {
 				refreshNav();
+				playSongListener();
 				playlistAddListener();
 				playlistReplaceListener();
 			}
@@ -106,6 +101,31 @@
 					$('#song-num').html(playlist.length);
 					playlistDeleteListener();
 				}
+			}
+
+			function playSongListener() {
+				$('.play-song').click(function() {
+					var span = $(this).find('span:first');
+					data = {
+						'pid': '{{ pid }}',
+						'access_token': '{{ access_token }}',
+						'songs': JSON.stringify([{
+							'sid': span.attr('song-id'),
+							'name': span.attr('song-name'),
+							'source': span.attr('song-source'),
+							'img': span.attr('song-img'),
+							'time': span.attr('song-time'),
+							'artist_id': span.attr('song-artist-id'),
+							'artist_name': span.attr('song-artist-name')
+						}])
+					};
+					$.post('/api/v1/player/playlist/add', data, (function(sid) {
+						return function(data) {
+							loadSongs(data);
+							globalPlayLink($('span[song-id=' + sid + ']').prev().get(0));
+						}
+					})(span.attr('song-id')));
+				});
 			}
 
 			function playlistAddListener() {
@@ -165,6 +185,13 @@
 						'access_token': '{{ access_token }}',
 						'sids': JSON.stringify([$(this).attr('song-id')])
 					};
+					if ($('div.sm2-bar-ui').hasClass('playing')) {
+						if ($('li.selected span').attr('song-id') == $(this).attr('song-id')) {
+							var evt = $.Event('click');
+							evt.target = $('a.sm2-inline-button').get(0);
+							globalActions.play(evt);
+						}
+					}
 					$.post('/api/v1/player/playlist/delete', data, function(data) {
 						loadSongs(data);
 					});
@@ -177,27 +204,15 @@
 						'pid': '{{ pid }}',
 						'access_token': '{{ access_token }}'
 					};
+					if ($('div.sm2-bar-ui').hasClass('playing')) {
+						var evt = $.Event('click');
+						evt.target = $('a.sm2-inline-button').get(0);
+						globalActions.play(evt);
+					}
 					$.post('/api/v1/player/playlist/clear', data, function(data) {
 						loadSongs(data);
-						if ($('div.sm2-bar-ui').hasClass('playing')) {
-							var evt = $.Event('click');
-							evt.target = $('a.sm2-inline-button').get(0);
-							globalActions.play(evt);
-						}
 					});
 				});
-			}
-
-			function playerPlayListener() {
-				// TODO
-			}
-
-			function playerPauseListener() {
-				// TODO
-			}
-
-			function playerSkipListener() {
-				// TODO
 			}
 
 			function millisecondsToTime(milli) {

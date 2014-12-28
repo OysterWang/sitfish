@@ -5,12 +5,12 @@
 			<div class="col-sm-3" style="padding-left:0px;">
 				<img src="{{ song['album']['picUrl'] }}" width="150" height="150" style="border:1px solid #d3d3d3;">
 			</div>
-			<div class="col-sm-9" style="padding-left:20px;">
+			<div class="col-sm-9" style="padding-left:20px; min-height:400px;">
 				<h2>{{ song['name'] }}</h2>
 				<small>歌手：<a href="/artist/{{ song['artists'][0]['id'] }}" data-pjax="#main" style="color:#428bca;">{{ song['artists'][0]['name'] }}</a></small><br>
 				<small>专辑：<a href="/album/{{ song['album']['id'] }}" data-pjax="#main" style="color:#428bca;">{{ song['album']['name'] }}</a></small><br><br>
-				<button type="submit" class="btn btn-info">
-					<span class="glyphicon glyphicon-play-circle add-song" aria-hidden="true"
+				<button class="btn btn-info play-song">
+					<span class="glyphicon glyphicon-play-circle" aria-hidden="true"
 						song-id="{{ song['id'] }}"
 						song-name="{{ song['name'] }}"
 						song-source="{{ song['mp3Url'] }}"
@@ -24,9 +24,13 @@
 				<button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-share" aria-hidden="true"></span> 分享</button>
 				<button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-comment" aria-hidden="true"></span> 评论</button>
 				<br><br>
-				{% for line in lyric %}
-				<p style="font-size:14px; line-height:18px;">{{ line }}<p>
-				{% endfor %}
+				{% if lyric|length > 0 %}
+					{% for line in lyric %}
+					<p style="font-size:14px; line-height:18px;">{{ line }}<p>
+					{% endfor %}
+				{% else %}
+					<p>暂无歌词</p>
+				{% endif %}
 			</div>
 			<div style="clear:both; padding-top:20px;">
 				{% include 'comment.html' %}
