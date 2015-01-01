@@ -66,8 +66,8 @@ def search():
 	limit = parse_int(request.args.get('limit', default=''), default=app.config['LIMIT'])
 	data = {}
 	if t == '0':
-		data = {'people': []}
-		for people in People.objects(pid__contains=s).limit(limit):
+		data = {'count': People.objects(pid__contains=s).count(), 'people': []}
+		for people in People.objects(pid__contains=s).skip(offset).limit(limit):
 			data['people'].append(people.public_json())
 	else:
 		url = 'http://music.163.com/api/search/pc'
@@ -151,14 +151,18 @@ Explore related
 def explore_playlist_cat(cat='全部'):
 	offset = parse_int(request.args.get('offset', default=''), default=app.config['OFFSET'])
 	limit = parse_int(request.args.get('limit', default=''), default=35)
-	data = {'playlists': []}
+	data = {'count': 0, 'playlists': []}
 	url = 'http://music.163.com/discover/playlist/?cat=%s&offset=%d&limit=%d' % (cat, offset, limit)
 	soup = BeautifulSoup(requests.get(url).content)
+	pages = soup.findAll('a', class_='zpgi')
+	if len(pages) > 0:
+		page_num = parse_int(pages[-1].text)
+		data['count'] = limit * page_num
 	ul = soup.find('ul', id='m-pl-container')
 	if ul is not None:
 		for li in ul.findAll('li'):
 			if li.div is not None and li.div.img is not None and li.div.a is not None:
-				data['playlists'].append({'plid': re.split('id=', li.div.a['href'])[-1], 'name': li.div.a['title'], 'img': li.div.img['src']})
+				data['playlists'].append({'id': re.split('id=', li.div.a['href'])[-1], 'name': li.div.a['title'], 'coverImgUrl': re.split('\?param', li.div.img['src'])[0]})
 	return jsonify(**data)
 
 

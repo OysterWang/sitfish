@@ -12,12 +12,11 @@
 	</form>
 	<p class="font-tips">搜索"{{s}}", 找到<span style="color:#CD3333;"> {{count}} </span>首单曲.</p>
 	<ul class="nav nav-tabs">
-		<li role="presentation" {% if t == '1' %} class="active" {% endif %}><a>单曲</a></li>
-		<li role="presentation" {% if t == '10' %} class="active" {% endif %}><a>专辑</a></li>
-		<li role="presentation" {% if t == '100' %} class="active" {% endif %}><a>歌手</a></li>
-		<li role="presentation" {% if t == '1000' %} class="active" {% endif %}><a>歌单</a></li>
-		<li role="presentation" {% if t == '1006' %} class="active" {% endif %}><a>歌词</a></li>
-		<li role="presentation" {% if t == '0' %} class="active" {% endif %}><a>用户</a></li>
+		<li role="presentation" {% if t == '1' %} class="active" {% endif %}><a data-pjax="#main" href="/search?s={{s}}&t=1">单曲</a></li>
+		<li role="presentation" {% if t == '100' %} class="active" {% endif %}><a data-pjax="#main" href="/search?s={{s}}&t=100">歌手</a></li>
+		<li role="presentation" {% if t == '10' %} class="active" {% endif %}><a data-pjax="#main" href="/search?s={{s}}&t=10">专辑</a></li>
+		<li role="presentation" {% if t == '1000' %} class="active" {% endif %}><a data-pjax="#main" href="/search?s={{s}}&t=1000">歌单</a></li>
+		<li role="presentation" {% if t == '0' %} class="active" {% endif %}><a data-pjax="#main" href="/search?s={{s}}&t=0">用户</a></li>
 	</ul>
 	<br>
 	{% include search_template %}

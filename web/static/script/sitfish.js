@@ -23,7 +23,7 @@ function refreshNav() {
 	} else {
 		$('.nav-main>li:nth(0)').addClass('active');
 	}
-	$('.navbar input[name=s]').attr('value', '')
+	$('.navbar input[name=s]').val('');
 }
 
 /* Playlist in player */
@@ -45,7 +45,7 @@ function refreshSongs(data) {
 			$('#player-playlist>li:first').addClass('selected');
 		} else {
 			$('#player-playlist').html('<li><a href="javascript:void(0);"></a></li>');
-			$('#song-img').attr('src', '{{ url_for("static", filename="image/logo.png") }}');
+			$('#song-img').attr('src', $('#data-logo-img').attr('value'));
 			$('div.sm2-playlist-target').html('<ul class="sm2-playlist-bd"><li></li></ul>');
 		}
 		$('#song-num').html(playlist.length);

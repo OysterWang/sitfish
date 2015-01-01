@@ -80,6 +80,10 @@ a.navbar-brand:hover {
 	line-height: 2em;
 }
 
+.people-list>tbody>tr>td {
+	line-height: 2em;
+}
+
 .pagination>.active>a, .pagination>.active>a:focus, .pagination>.active>a:hover {
 	background-color: #CD3333;
 	border-color: #CD3333;

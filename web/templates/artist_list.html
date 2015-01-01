@@ -1,0 +1,11 @@
+<ul style="margin:0px 15px 0px 0px; padding:0; width:960px;">
+	{% for artist in artists %}
+	<li style="display:inline-block; margin:0; padding:0;">
+		<div style="width:149px; height:155px; margin-bottom:30px;">
+			<a href="/artist/{{artist.id}}" data-pjax="#main" title="{{artist.name}}"><img src="{{artist.picUrl}}?param=130y130" style="border:1px solid #d3d3d3;"></a>
+			<a href="/artist/{{artist.id}}" data-pjax="#main" title="{{artist.name}}" style="display:block; margin-top:10px;">{{ artist.name|truncate(9, True) }}</a>
+		</div>
+	</li>
+	{% endfor %}
+</ul>
+{% include 'page_num.html' %}

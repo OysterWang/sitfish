@@ -20,9 +20,9 @@
 						song-artist-name="{{ song['artists'][0]['name'] }}">
 					</span> 播放
 				</button>
-				<button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-star-empty" aria-hidden="true"></span> 收藏</button>
-				<button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-share" aria-hidden="true"></span> 分享</button>
-				<button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-comment" aria-hidden="true"></span> 评论</button>
+				<button title="收藏" type="submit" class="btn btn-default disabled"><span class="glyphicon glyphicon-star-empty" aria-hidden="true"></span> 收藏</button>
+				<button title="分享" type="submit" class="btn btn-default disabled"><span class="glyphicon glyphicon-share" aria-hidden="true"></span> 分享</button>
+				<button title="评论" type="submit" class="btn btn-default disabled"><span class="glyphicon glyphicon-comment" aria-hidden="true"></span> 评论</button>
 				<br><br>
 				{% if lyric|length > 0 %}
 					{% for line in lyric %}

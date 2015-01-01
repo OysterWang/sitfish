@@ -1,0 +1,23 @@
+{% set pageNum = (count/limit)|page_ceil_filter %}
+{% set curPage = offset//limit + 1 %}
+<div class="row" align="center">
+	<nav>
+		<ul class="pagination">
+			{% if curPage == 1 %}
+				<li class="disabled"><a data-pjax="#main" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
+			{% else %}
+				<li><a data-pjax="#main" href="/search?s={{s}}&t={{t}}&offset={{(curPage-2)*limit}}&limit={{limit}}" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
+			{% endif %}
+
+			{% for i in range(pageNum) %}
+			<li {% if curPage==i+1 %}class="active"{% endif %}><a data-pjax="#main" href="/search?s={{s}}&t={{t}}&offset={{(i)*limit}}&limit={{limit}}">{{i+1}}</a></li>
+			{% endfor %}
+
+			{% if curPage < pageNum %}
+				<li><a data-pjax="#main" href="/search?s={{s}}&t={{t}}&offset={{curPage*limit}}&limit={{limit}}" aria-label="Previous"><span aria-hidden="true">&raquo;</span></a></li>
+			{% else %}
+				<li class="disabled"><a data-pjax="#main" aria-label="Previous"><span aria-hidden="true">&raquo;</span></a></li>
+			{% endif %}
+		</ul>
+	</nav>
+</div>

@@ -1,0 +1,11 @@
+<ul style="margin:0px 15px 0px 0px; padding:0; width:960px;">
+	{% for playlist in playlists %}
+	<li style="display:inline-block; margin:0; padding:0;">
+		<div style="width:185px; height:170px; margin-bottom:30px;">
+			<a href="/playlist/{{playlist.id}}" data-pjax="#main" title="{{playlist.name}}"><img src="{{playlist.coverImgUrl}}?param=140y140" style="border:1px solid #d3d3d3;"></a>
+			<a href="/playlist/{{playlist.id}}" data-pjax="#main" title="{{playlist.name}}" style="display:block; margin-top:10px;">{{ playlist.name|truncate(9, True) }}</a>
+		</div>
+	</li>
+	{% endfor %}
+</ul>
+{% include 'page_num_explore.html' %}

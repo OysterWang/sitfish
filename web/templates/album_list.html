@@ -1,0 +1,12 @@
+<ul style="margin:0px 15px 0px 0px; padding:0; width:960px;">
+	{% for album in albums %}
+	<li style="display:inline-block; margin:0; padding:0;">
+		<div style="width:185px; height:180px; margin-bottom:30px;">
+			<a href="/album/{{album.id}}" data-pjax="#main" title="{{album.name}}"><img src="{{album.picUrl}}?param=140y140" style="border:1px solid #d3d3d3;"></a>
+			<a href="/album/{{album.id}}" data-pjax="#main" title="{{album.name}}" style="display:block; margin-top:10px;">{{ album.name|truncate(9, True) }}</a>
+			<a href="/artist/{{album.artist.id}}" data-pjax="#main" title="{{album.artist.name}}" style="display:block; margin-top:0px;"><small>{{ album.artist.name|truncate(9, True) }}</small></a>
+		</div>
+	</li>
+	{% endfor %}
+</ul>
+{% include 'page_num.html' %}

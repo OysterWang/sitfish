@@ -45,19 +45,27 @@ def search():
 	url = 'http://%s/v1/search?s=%s&t=%s&offset=%d&limit=%d' % (config['SERVER']['HOST'], params['s'], params['t'], params['offset'], params['limit'])
 	data = requests.get(url).json()
 	if params['t'] == '0':
-		pass
+		count = data['count'] if 'count' in data else 0
+		people_list = data['people'] if 'people' in data else []
+		return pjax('search.html', search_template='people_list.html', count=count, people_list=people_list, **params)
 	elif params['t'] == '1':
 		count = data['result']['songCount'] if 'result' in data and 'songCount' in data['result'] else 0
 		songs = data['result']['songs'] if 'result' in data and 'songs' in data['result'] else []
 		return pjax('search.html', search_template='song_list.html', title=False, page=True, count=count, songs=songs, **params)
 	elif params['t'] == '10':
-		pass
+		count = data['result']['albumCount'] if 'result' in data and 'albumCount' in data['result'] else 0
+		albums = data['result']['albums'] if 'result' in data and 'albums' in data['result'] else []
+		return pjax('search.html', search_template='album_list.html', count=count, albums=albums, **params)
 	elif params['t'] == '100':
-		pass
+		count = data['result']['artistCount'] if 'result' in data and 'artistCount' in data['result'] else 0
+		artists = data['result']['artists'] if 'result' in data and 'artists' in data['result'] else []
+		return pjax('search.html', search_template='artist_list.html', count=count, artists=artists, **params)
 	elif params['t'] == '1000':
-		pass
-	elif params['t'] == '1006':
-		pass
+		count = data['result']['playlistCount'] if 'result' in data and 'playlistCount' in data['result'] else 0
+		playlists = data['result']['playlists'] if 'result' in data and 'playlists' in data['result'] else []
+		return pjax('search.html', search_template='playlist_list.html', count=count, playlists=playlists, **params)
+	else:
+		return pjax('404.html')
 
 
 @app.route('/people/<id>', methods=['GET'])
@@ -116,11 +124,14 @@ def toplist(id='3779629'):
 @app.route('/explore/playlist/cat', methods=['GET'])
 @app.route('/explore/playlist/cat/<cat>', methods=['GET'])
 def explore_playlist(cat='全部'):
-	offset = parse_int(request.args.get('offset', default=''), default=0)
-	limit = parse_int(request.args.get('limit', default=''), default=30)
-	url = 'http://%s/v1/explore/playlist/cat/%s?offset=%d&limit=%d' % (config['SERVER']['HOST'], cat, offset, limit)
+	params = {
+		'cat': cat,
+		'offset': parse_int(request.args.get('offset', default=''), default=0),
+		'limit': parse_int(request.args.get('limit', default=''), default=30)
+	}
+	url = 'http://%s/v1/explore/playlist/cat/%s?offset=%d&limit=%d' % (config['SERVER']['HOST'], params['cat'], params['offset'], params['limit'])
 	data = requests.get(url).json()
-	return pjax('explore_playlist.html', playlists=data['playlists'])
+	return pjax('explore_playlist.html', count=data['count'], playlists=data['playlists'], **params)
 
 
 """
