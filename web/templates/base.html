@@ -8,7 +8,6 @@
 		<link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.1/css/bootstrap.min.css">
 		<link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-glyphicons.css') }}">
 		<link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
-		<!-- SoundManager2 -->
 		<link rel="stylesheet" href="{{ url_for('static', filename='sm/css/bar-ui.css') }}">
 		<link rel="stylesheet" href="{{ url_for('static', filename='sm/css/demo.css') }}">
 	</head>
@@ -29,200 +28,19 @@
 			</div>
 		</nav>
 
+		<!-- Data -->
+		<data id="data-pid" value="{{pid}}"></data>
+
 		<!-- Scripts -->
 		<script src="//cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
 		<script src="//cdn.bootcss.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
 		<script src="{{ url_for('static', filename='script/jquery.cookie.js') }}"></script>
 		<script src="{{ url_for('static', filename='script/jquery.pjax.js') }}"></script>
 		<script src="{{ url_for('static', filename='script/handlebars-v2.0.0.js') }}"></script>
-
 		<!-- SoundManager2 -->
 		<script src="{{ url_for('static', filename='sm/script/soundmanager2.js') }}"></script>
 		<script src="{{ url_for('static', filename='sm/script/bar-ui.js') }}"></script>
-
-		<!-- Onload -->
-		<script type="text/javascript">
-			$(function() {
-				Handlebars.registerHelper("formatTime", millisecondsToTime);
-				pjaxListener();
-				refreshAll();
-				refreshSongs();
-				playlistClearListener();
-			});
-
-			function pjaxListener() {
-				$.pjax.defaults.timeout = false
-				$('a[data-pjax]').pjax();
-				$(document).on('pjax:complete', function() {
-					$('a[data-pjax]').pjax();
-					refreshAll();
-				});
-			}
-
-			function refreshAll() {
-				refreshNav();
-				playSongListener();
-				playlistAddListener();
-				playlistReplaceListener();
-			}
-
-			function refreshNav() {
-				cur = $(location).attr('pathname');
-				$('.nav-main>li').each(function() {
-					var href = $(this).children('a:first').attr('href');
-					if (href == cur || (href == '/toplist' && cur == '/')) {
-						$(this).addClass('active');
-					} else {
-						$(this).removeClass('active');
-					}
-				});
-			}
-
-			function refreshSongs() {
-				$.get('/api/v1/player/{{ pid }}', function(data) {
-					loadSongs(data);
-				});
-			}
-
-			function loadSongs(data) {
-				if (data['ret'] == 1) {
-					var playlist = data['player']['playlist'];
-					if (playlist.length > 0) {
-						var template = Handlebars.compile($("#player-playlist-template").html());
-						$('#player-playlist').html(template({'playlist': playlist}));
-						$('#song-img').attr('src', playlist[0]['img']);
-						$('div.sm2-playlist-target').html('<ul class="sm2-playlist-bd"><li>' + playlist[0]['name'] + ' - ' + playlist[0]['artist_name'] + '</li></ul>');
-						$('#player-playlist>li:first').addClass('selected');
-					} else {
-						$('#player-playlist').html('<li><a href="javascript:void(0);"></a></li>');
-						$('#song-img').attr('src', '{{ url_for("static", filename="image/logo.png") }}');
-						$('div.sm2-playlist-target').html('<ul class="sm2-playlist-bd"><li></li></ul>');
-					}
-					$('#song-num').html(playlist.length);
-					playlistDeleteListener();
-				}
-			}
-
-			function playSongListener() {
-				$('.play-song').click(function() {
-					var span = $(this).find('span:first');
-					data = {
-						'pid': '{{ pid }}',
-						'access_token': '{{ access_token }}',
-						'songs': JSON.stringify([{
-							'sid': span.attr('song-id'),
-							'name': span.attr('song-name'),
-							'source': span.attr('song-source'),
-							'img': span.attr('song-img'),
-							'time': span.attr('song-time'),
-							'artist_id': span.attr('song-artist-id'),
-							'artist_name': span.attr('song-artist-name')
-						}])
-					};
-					$.post('/api/v1/player/playlist/add', data, (function(sid) {
-						return function(data) {
-							loadSongs(data);
-							globalPlayLink($('span[song-id=' + sid + ']').prev().get(0));
-						}
-					})(span.attr('song-id')));
-				});
-			}
-
-			function playlistAddListener() {
-				$('.add-song').click(function() {
-					data = {
-						'pid': '{{ pid }}',
-						'access_token': '{{ access_token }}',
-						'songs': JSON.stringify([{
-							'sid': $(this).attr('song-id'),
-							'name': $(this).attr('song-name'),
-							'source': $(this).attr('song-source'),
-							'img': $(this).attr('song-img'),
-							'time': $(this).attr('song-time'),
-							'artist_id': $(this).attr('song-artist-id'),
-							'artist_name': $(this).attr('song-artist-name')
-						}])
-					};
-					$.post('/api/v1/player/playlist/add', data, (function(sid) {
-						return function(data) {
-							loadSongs(data);
-							globalPlayLink($('span[song-id=' + sid + ']').prev().get(0));
-						}
-					})($(this).attr('song-id')));
-				});
-			}
-
-			function playlistReplaceListener() {
-				$('.add-all').click(function() {
-					songs = [];
-					$('.add-song').each(function() {
-						songs.push({
-							'sid': $(this).attr('song-id'),
-							'name': $(this).attr('song-name'),
-							'source': $(this).attr('song-source'),
-							'img': $(this).attr('song-img'),
-							'time': $(this).attr('song-time'),
-							'artist_id': $(this).attr('song-artist-id'),
-							'artist_name': $(this).attr('song-artist-name')
-						});
-					});
-					data = {
-						'pid': '{{ pid }}',
-						'access_token': '{{ access_token }}',
-						'songs': JSON.stringify(songs)
-					};
-					$.post('/api/v1/player/playlist/replace', data, function(data) {
-						loadSongs(data);
-						globalPlayLink($('li.selected a').get(0));
-					});
-				});
-			}
-
-			function playlistDeleteListener() {
-				$('.delete-song').click(function() {
-					data = {
-						'pid': '{{ pid }}',
-						'access_token': '{{ access_token }}',
-						'sids': JSON.stringify([$(this).attr('song-id')])
-					};
-					if ($('div.sm2-bar-ui').hasClass('playing')) {
-						if ($('li.selected span').attr('song-id') == $(this).attr('song-id')) {
-							var evt = $.Event('click');
-							evt.target = $('a.sm2-inline-button').get(0);
-							globalActions.play(evt);
-						}
-					}
-					$.post('/api/v1/player/playlist/delete', data, function(data) {
-						loadSongs(data);
-					});
-				});
-			}
-
-			function playlistClearListener() {
-				$('.clear-song').click(function() {
-					data = {
-						'pid': '{{ pid }}',
-						'access_token': '{{ access_token }}'
-					};
-					if ($('div.sm2-bar-ui').hasClass('playing')) {
-						var evt = $.Event('click');
-						evt.target = $('a.sm2-inline-button').get(0);
-						globalActions.play(evt);
-					}
-					$.post('/api/v1/player/playlist/clear', data, function(data) {
-						loadSongs(data);
-					});
-				});
-			}
-
-			function millisecondsToTime(milli) {
-				function addZero(n) {
-					return (n < 10 ? '0' : '') + n;
-				}
-				var seconds = Math.floor((milli / 1000) % 60);
-				var minutes = Math.floor((milli / 60000) % 60);
-				return addZero(minutes) + ":" + addZero(seconds);
-			}
-		</script>
+		<!-- SitFish -->
+		<script src="{{ url_for('static', filename='script/sitfish.js') }}"></script>
 	</body>
 </html>

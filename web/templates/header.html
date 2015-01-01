@@ -21,11 +21,12 @@
 					</ul>
 				</li>
 			</ul>
-			<form class="navbar-form navbar-right" role="search">
+			<form class="navbar-form navbar-right search-from" role="search" action="/search" method="GET" data-pjax="#main">
 				<div class="input-group" style="margin-top:5px;">
-					<input type="text" class="form-control" placeholder="单曲/歌手/专辑/歌单/用户" width="50px">
+					<input name="s" type="text" class="form-control" placeholder="单曲/歌手/专辑/歌单/用户" width="50px">
+					<input name="t" type="hidden" class="form-control" value="{{t|default('1')}}">
 					<div class="input-group-btn">
-						<button type="submit" class="btn btn-info">
+						<button type="submit" class="btn btn-info search-button">
 							<span class="glyphicon glyphicon-search"></span>
 						</button>
 					</div>

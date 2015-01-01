@@ -3,6 +3,7 @@
 
 import os
 import re
+import math
 import codecs
 import random
 import requests
@@ -32,6 +33,33 @@ app.config['JSON_AS_ASCII'] = False
 Foundation
 """
 
+@app.route('/search', methods=['GET'])
+def search():
+	params = {
+		's': request.args.get('s', default=''),
+		't': request.args.get('t', default='1'),
+		'offset': parse_int(request.args.get('offset', default=''), default=0),
+		'limit': parse_int(request.args.get('limit', default=''), default=30),
+		'ad': get_ad()
+	}
+	url = 'http://%s/v1/search?s=%s&t=%s&offset=%d&limit=%d' % (config['SERVER']['HOST'], params['s'], params['t'], params['offset'], params['limit'])
+	data = requests.get(url).json()
+	if params['t'] == '0':
+		pass
+	elif params['t'] == '1':
+		count = data['result']['songCount'] if 'result' in data and 'songCount' in data['result'] else 0
+		songs = data['result']['songs'] if 'result' in data and 'songs' in data['result'] else []
+		return pjax('search.html', search_template='song_list.html', title=False, page=True, count=count, songs=songs, **params)
+	elif params['t'] == '10':
+		pass
+	elif params['t'] == '100':
+		pass
+	elif params['t'] == '1000':
+		pass
+	elif params['t'] == '1006':
+		pass
+
+
 @app.route('/people/<id>', methods=['GET'])
 def people(id=''):
 	url = 'http://%s/v1/people/%s' % (config['SERVER']['HOST'], id)
@@ -55,7 +83,8 @@ def song(id=''):
 def album(id=''):
 	url = 'http://%s/v1/album/%s' % (config['SERVER']['HOST'], id)
 	data = requests.get(url).json()
-	return pjax('album.html', data=data, songs=data['album']['songs'], ad=get_ad())
+	songs = data['album']['songs'] if 'album' in data and 'songs' in data['album'] else []
+	return pjax('album.html', data=data, songs=songs, ad=get_ad())
 
 
 @app.route('/artist/<id>', methods=['GET'])
@@ -69,16 +98,18 @@ def artist(id=''):
 def playlist(id=''):
 	url = 'http://%s/v1/playlist/%s' % (config['SERVER']['HOST'], id)
 	data = requests.get(url).json()
-	return pjax('playlist.html', data=data, songs=data['result']['tracks'], ad=get_ad())
+	songs = data['result']['tracks'] if 'result' in data and 'tracks' in data['result'] else []
+	return pjax('playlist.html', data=data, songs=songs, ad=get_ad())
 
 
 @app.route('/', methods=['GET'])
 @app.route('/toplist/', methods=['GET'])
 @app.route('/toplist/<id>', methods=['GET'])
-def toplist(id='3778678'):
+def toplist(id='3779629'):
 	url = 'http://%s/v1/toplist/%s' % (config['SERVER']['HOST'], id)
 	data = requests.get(url).json()
-	return pjax('toplist.html', id=id, songs=data['songs'])
+	songs = data['songs'] if 'songs' in data else []
+	return pjax('toplist.html', id=id, songs=songs)
 
 
 @app.route('/explore/playlist', methods=['GET'])
@@ -90,14 +121,6 @@ def explore_playlist(cat='全部'):
 	url = 'http://%s/v1/explore/playlist/cat/%s?offset=%d&limit=%d' % (config['SERVER']['HOST'], cat, offset, limit)
 	data = requests.get(url).json()
 	return pjax('explore_playlist.html', playlists=data['playlists'])
-
-
-@app.route('/player', methods=['GET', 'POST'])
-def player_songs():
-	if request.method == 'GET':
-		pass
-	else:
-		pass
 
 
 """
@@ -158,7 +181,12 @@ def api(path=''):
 		return jsonify(**data)
 	else:
 		url = 'http://%s/%s?%s' % (config['SERVER']['HOST'], path, '&'.join(['%s=%s' % (key, request.args[key]) for key in request.args]))
-		data = requests.post(url, data=request.form).json()
+		post_data = {}
+		post_data.update(request.form)
+		if 'pid' in session and 'access_token' in session:
+			post_data['pid'] = session['pid']
+			post_data['access_token'] = session['access_token']
+		data = requests.post(url, data=post_data).json()
 		return jsonify(**data)
 
 
@@ -175,6 +203,11 @@ def date_format_filter(value, format='%Y-%m-%d'):
 def time_format_filter(value, format='%H:%M'):
 	seconds = int(value) // 1000
 	return '%02d:%02d' % (seconds // 60, seconds % 60)
+
+
+@app.template_filter('page_ceil_filter')
+def page_ceil_filter(value, max_value=9):
+	return min(math.ceil(value), max_value)
 
 
 """

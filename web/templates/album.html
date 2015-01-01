@@ -10,7 +10,7 @@
 				<small>歌手：<a href="/artist/{{ data['album']['artists'][0]['id'] }}" data-pjax="#main" style="color:#428bca;">{{ data['album']['artists'][0]['name'] }}</a></small><br>
 				<small>发行时间：{{ data['album']['publishTime']|date_format_filter }}</small><br>
 				<small>发行公司：{{ data['album']['company'] }}</small><br><br>
-				<button type="submit" class="btn btn-info add-all"><span class="glyphicon glyphicon-play-circle" aria-hidden="true"></span> 播放</button>
+				<button type="submit" class="btn btn-info replace-song"><span class="glyphicon glyphicon-play-circle" aria-hidden="true"></span> 播放</button>
 				<button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-star-empty" aria-hidden="true"></span> 收藏</button>
 				<button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-share" aria-hidden="true"></span> 分享</button>
 				<button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-comment" aria-hidden="true"></span> 评论</button>

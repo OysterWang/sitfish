@@ -1,1 +1,24 @@
-search
+<div class="row" style="padding-left:30px; padding-right:30px; margin-bottom:30px;">
+	<form class="search-form" role="search" action="/search" method="GET" data-pjax="#main">
+		<div class="input-group" style="margin:30px 200px 30px 200px;">
+			<input name="s" type="text" class="form-control" placeholder="单曲/歌手/专辑/歌单/用户" value="{{s}}" style="height:46px;">
+			<input name="t" type="hidden" class="form-control" value="{{t|default('1')}}">
+			<div class="input-group-btn">
+				<button type="submit" class="btn btn-lg btn-default search-button">
+					<span class="glyphicon glyphicon-search"></span>
+				</button>
+			</div>
+		</div>
+	</form>
+	<p class="font-tips">搜索"{{s}}", 找到<span style="color:#CD3333;"> {{count}} </span>首单曲.</p>
+	<ul class="nav nav-tabs">
+		<li role="presentation" {% if t == '1' %} class="active" {% endif %}><a>单曲</a></li>
+		<li role="presentation" {% if t == '10' %} class="active" {% endif %}><a>专辑</a></li>
+		<li role="presentation" {% if t == '100' %} class="active" {% endif %}><a>歌手</a></li>
+		<li role="presentation" {% if t == '1000' %} class="active" {% endif %}><a>歌单</a></li>
+		<li role="presentation" {% if t == '1006' %} class="active" {% endif %}><a>歌词</a></li>
+		<li role="presentation" {% if t == '0' %} class="active" {% endif %}><a>用户</a></li>
+	</ul>
+	<br>
+	{% include search_template %}
+</div>

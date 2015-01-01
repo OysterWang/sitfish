@@ -9,7 +9,7 @@
 				<h2>{{ song['name'] }}</h2>
 				<small>歌手：<a href="/artist/{{ song['artists'][0]['id'] }}" data-pjax="#main" style="color:#428bca;">{{ song['artists'][0]['name'] }}</a></small><br>
 				<small>专辑：<a href="/album/{{ song['album']['id'] }}" data-pjax="#main" style="color:#428bca;">{{ song['album']['name'] }}</a></small><br><br>
-				<button class="btn btn-info play-song">
+				<button class="btn btn-info add-song">
 					<span class="glyphicon glyphicon-play-circle" aria-hidden="true"
 						song-id="{{ song['id'] }}"
 						song-name="{{ song['name'] }}"
