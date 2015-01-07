@@ -66,8 +66,8 @@ def search():
 	limit = parse_int(request.args.get('limit', default=''), default=app.config['LIMIT'])
 	data = {}
 	if t == '0':
-		data = {'count': People.objects(pid__contains=s).count(), 'people': []}
-		for people in People.objects(pid__contains=s).skip(offset).limit(limit):
+		data = {'count': People.objects(id__contains=s).count(), 'people': []}
+		for people in People.objects(id__contains=s).skip(offset).limit(limit):
 			data['people'].append(people.public_json())
 	else:
 		url = 'http://music.163.com/api/search/pc'
@@ -77,10 +77,12 @@ def search():
 
 
 # TYPE - 0
+@app.route('/v1/people', methods=['GET'])
 @app.route('/v1/people/<id>', methods=['GET'])
 def people(id=''):
 	data = {'ret': 0}
-	people = People.objects(pid=id).first()
+	id = request.args.get('id', default='') if id == '' else id
+	people = People.objects(id=id).first() if id != '' else People.objects(email=request.args.get('email', default='')).first()
 	if people is not None:
 		data['ret'] = 1
 		data['people'] = people.public_json()
@@ -88,7 +90,7 @@ def people(id=''):
 
 
 # TYPE - 1
-@app.route('/v1/song/<ids>', methods=['GET'])
+@app.route('/v1/songs/<ids>', methods=['GET'])
 def song(ids=''):
 	ids = re.split(',', ids)
 	url = 'http://music.163.com/api/song/detail?ids=%s' % ids
@@ -170,29 +172,16 @@ def explore_playlist_cat(cat='全部'):
 Account related
 """
 
-@app.route('/v1/exist', methods=['GET'])
-def count():
-	s = request.args.get('s', default='')
-	t = request.args.get('t', default='0') # pid:0, email:1
-	data = {'exist': 0}
-	if t == '0':
-		if People.objects(pid=s).count() > 0:
-			data['exist'] = 1
-	elif t == '1':
-		if People.objects(email=s).count() > 0:
-			data['exist'] = 1
-	return jsonify(**data)
-
 
 @app.route('/v1/sign-up', methods=['POST'])
 def sign_up():
 	data = {'ret': 0}
 	try:
-		people = People.create(pid=request.form['pid'], name=request.form['name'], email=request.form['email'], password=request.form['password'])
+		people = People.create(id=request.form['id'], name=request.form['name'], email=request.form['email'], password=request.form['password'])
 		people.password = sha(people.password, people.activation_code)
 		people.save(force_insert=True)
 		brand = config['DEFAULT']['BRAND']
-		url = 'http://%s/activate/%s?code=%s' % (config['WEB']['HOST'], people.pid, people.activation_code)
+		url = 'http://%s/activate/%s?code=%s' % (config['WEB']['HOST'], people.id, people.activation_code)
 		html = '<p>亲爱的%s：</p><p>欢迎加入%s！</p><p>请点击下面的链接完成注册：</p><p><a href="%s" target="_blank">%s</a></p><p>如果以上链接无法点击，请将上面的地址复制到你的浏览器(如Chrome)的地址栏进入%s。</p><p>%s</p>' % (people.name, brand, url, url, brand, brand)
 		send_activation('%s账户激活' % brand, html, people.email)
 		data['ret'] = 1
@@ -201,11 +190,11 @@ def sign_up():
 	return jsonify(**data)
 
 
-@app.route('/v1/activate/<pid>', methods=['GET'])
-def activate(pid=''):
+@app.route('/v1/activate/<id>', methods=['GET'])
+def activate(id=''):
 	data = {'ret': 0}
 	code = request.args.get('code', default='')
-	people = People.objects(pid=pid, activation_code=code).first()
+	people = People.objects(id=id, activation_code=code).first()
 	if people is not None:
 		if people.activation is not True:
 			people.activation = True
@@ -222,7 +211,7 @@ def sign_in():
 		if not people.activation:
 			data['ret'] = -1
 		elif people.password == sha(request.form['password'], people.activation_code):
-			people.access_token = sha(people.pid, datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+			people.access_token = sha(people.id, datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 			people.save()
 			data['ret'] = 1
 			data['people'] = people.private_json()
@@ -232,7 +221,7 @@ def sign_in():
 @app.route('/v1/validate', methods=['POST'])
 def validate():
 	data = {'ret': 0}
-	people = People.objects(pid=request.form['pid']).first()
+	people = People.objects(id=request.form['id']).first()
 	if people is not None:
 		if people.access_token == request.form['access_token']:
 			data['ret'] = 1
@@ -247,7 +236,7 @@ Player related
 @app.route('/v1/player/<id>', methods=['GET'])
 def player(id=''):
 	data = {'ret': 0}
-	people = People.objects(pid=id).first()
+	people = People.objects(id=id).first()
 	if people is not None:
 		data['ret'] = 1
 		data['player'] = people.player.json() if people.player is not None else ''
@@ -257,56 +246,56 @@ def player(id=''):
 @app.route('/v1/player/playlist/add', methods=['POST'])
 def player_playlist_add():
 	data = {'ret': 0}
-	people = People.objects(pid=request.form['pid']).first()
+	people = People.objects(id=request.form['id']).first()
 	if people is not None:
 		if people.access_token == request.form['access_token']:
 			data['ret'] = 1
-			sids = set([song['sid'] for song in people.player.playlist])
+			ids = set([song['id'] for song in people.player.playlist])
 			for song in json.loads(request.form['songs']):
-				if song['sid'] not in sids:
-					obj = Song(sid=song['sid'], name=song['name'], source=song['source'], img=song['img'], time=song['time'], artist_id=song['artist_id'], artist_name=song['artist_name'])
+				if song['id'] not in ids:
+					obj = Song(id=song['id'], name=song['name'], source=song['source'], img=song['img'], time=song['time'], artist_id=song['artist_id'], artist_name=song['artist_name'])
 					people.player.update(push__playlist=obj)
-			data['player'] = People.objects(pid=request.form['pid']).first().player.json();
+			data['player'] = People.objects(id=request.form['id']).first().player.json();
 	return jsonify(**data)
 
 
 @app.route('/v1/player/playlist/replace', methods=['POST'])
 def player_playlist_replace():
 	data = {'ret': 0}
-	people = People.objects(pid=request.form['pid']).first()
+	people = People.objects(id=request.form['id']).first()
 	if people is not None:
 		if people.access_token == request.form['access_token']:
 			data['ret'] = 1
 			people.player.update(set__playlist=[])
 			for song in json.loads(request.form['songs']):
-				obj = Song(sid=song['sid'], name=song['name'], source=song['source'], img=song['img'], time=song['time'], artist_id=song['artist_id'], artist_name=song['artist_name'])
+				obj = Song(id=song['id'], name=song['name'], source=song['source'], img=song['img'], time=song['time'], artist_id=song['artist_id'], artist_name=song['artist_name'])
 				people.player.update(push__playlist=obj)
-			data['player'] = People.objects(pid=request.form['pid']).first().player.json();
+			data['player'] = People.objects(id=request.form['id']).first().player.json();
 	return jsonify(**data)
 
 
 @app.route('/v1/player/playlist/delete', methods=['POST'])
 def player_playlist_delete():
 	data = {'ret': 0}
-	people = People.objects(pid=request.form['pid']).first()
+	people = People.objects(id=request.form['id']).first()
 	if people is not None:
 		if people.access_token == request.form['access_token']:
 			data['ret'] = 1
-			for sid in json.loads(request.form['sids']):
-				people.player.update(pull__playlist={'sid': sid})
-			data['player'] = People.objects(pid=request.form['pid']).first().player.json();
+			for id in json.loads(request.form['ids']):
+				people.player.update(pull__playlist={'id': id})
+			data['player'] = People.objects(id=request.form['id']).first().player.json();
 	return jsonify(**data)
 
 
 @app.route('/v1/player/playlist/clear', methods=['POST'])
 def player_playlist_clear():
 	data = {'ret': 0}
-	people = People.objects(pid=request.form['pid']).first()
+	people = People.objects(id=request.form['id']).first()
 	if people is not None:
 		if people.access_token == request.form['access_token']:
 			data['ret'] = 1
 			people.player.update(set__playlist=[])
-			data['player'] = People.objects(pid=request.form['pid']).first().player.json();
+			data['player'] = People.objects(id=request.form['id']).first().player.json();
 	return jsonify(**data)
 
 
@@ -323,6 +312,16 @@ def player_pause():
 @app.route('/v1/player/skip', methods=['POST'])
 def player_skip():
 	return 'TODO'
+
+
+@app.route('/v1/token', methods=['POST'])
+def token():
+	grant_type = request.form['grant_type']
+	username = request.form['username']
+	password = request.form['password']
+	pprint(request.headers)
+	msg = '{} - {} - {}'.format(grant_type, username, password)
+	return msg
 
 
 """

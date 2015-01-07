@@ -131,6 +131,23 @@ function replaceSongListener() {
 	});
 }
 
+function connectRequestListener() {
+	$('.connectRequestButton').click(function() {
+		sendMsg($(this).attr('data-pid'), 1);
+	});
+}
+
+/* Auto reload */
+
+function autoReload() {
+	refreshNav();
+	addSongListener();
+	replaceSongListener();
+	connectRequestListener();
+}
+
+/* Pjax */
+
 function pjaxListener(callback) {
 	$.pjax.defaults.timeout = false
 	$(document).pjax('a[data-pjax]');
@@ -142,12 +159,30 @@ function pjaxListener(callback) {
 	});
 }
 
-/* Auto reload */
+/* WebSocket */
 
-function autoReload() {
-	refreshNav();
-	addSongListener();
-	replaceSongListener();
+var ws;
+
+function connectWebSocket() {
+	ws = new WebSocket('ws://' + $('#data-ws-host').attr('value') + ':' + $('#data-ws-port').attr('value'));
+	ws.onopen = function () {
+		ws.send(JSON.stringify({'from':$('#data-pid').attr('value')}));
+	};
+	ws.onmessage = function (e) {
+		console.log('server: ' + e.data);
+		var msg = $.parseJSON(e.data);
+		if (msg.content === 1) {
+			$('#connectRequestModal').modal();
+		}
+	};
+}
+
+function sendMsg(to, content) {
+	ws.send(JSON.stringify({
+		'from': $('#data-pid').attr('value'),
+		'to': to,
+		'content': content
+	}));
 }
 
 /* Onload */
@@ -157,4 +192,5 @@ $(function() {
 	loadSongs();
 	autoReload();
 	pjaxListener(autoReload);
+	connectWebSocket();
 });

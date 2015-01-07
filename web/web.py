@@ -22,7 +22,7 @@ from datetime import datetime
 config = configparser.ConfigParser()
 config.readfp(codecs.open("../config/config.ini", "r", "utf-8"))
 
-base_params = {'domain': config['WEB']['HOST'], 'brand': config['DEFAULT']['BRAND']}
+base_params = {'domain': config['WEB']['HOST'], 'brand': config['DEFAULT']['BRAND'], 'ws_host': config['WS']['HOST'], 'ws_port': config['WS']['PORT']}
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
@@ -132,6 +132,11 @@ def explore_playlist(cat='全部'):
 	url = 'http://%s/v1/explore/playlist/cat/%s?offset=%d&limit=%d' % (config['SERVER']['HOST'], params['cat'], params['offset'], params['limit'])
 	data = requests.get(url).json()
 	return pjax('explore_playlist.html', count=data['count'], playlists=data['playlists'], **params)
+
+
+@app.route('/notice', methods=['GET'])
+def notice():
+	return pjax('notice.html')
 
 
 """

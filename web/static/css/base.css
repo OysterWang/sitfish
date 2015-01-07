@@ -88,3 +88,11 @@ a.navbar-brand:hover {
 	background-color: #CD3333;
 	border-color: #CD3333;
 }
+
+.badge {
+	background-color: #CD3333;
+}
+
+.page-min-height {
+	min-height: 700px;
+}
