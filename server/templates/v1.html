@@ -20,14 +20,14 @@
 			<div class="row">
 				<div class="col-sm-3 col-md-2 sidebar" id="scroll">
 					<ul class="nav nav-sidebar" id="nav">
-						<li class="active"><a href="#explore-playlist-cat">/explore/playlist/cat/&lt;cat&gt;</a></li>
+						<li class="active"><a href="#search">/search</a></li>
 						<li><a href="#songs">/songs/[ids]</a></li>
-						<li><a href="#album">/album/&lt;id&gt;</a></li>
-						<li><a href="#artist">/artist/&lt;id&gt;</a></li>
-						<li><a href="#playlist">/playlist/&lt;id&gt;</a></li>
-						<li><a href="#lyric">/lyric/&lt;id&gt;</a></li>
-						<li><a href="#toplist">/toplist/&lt;id&gt;</a></li>
-						<li><a href="#search">/search</a></li>
+						<li><a href="#albums">/albums/&lt;id&gt;</a></li>
+						<li><a href="#artists">/artists/&lt;id&gt;</a></li>
+						<li><a href="#playlists">/playlists/&lt;id&gt;</a></li>
+						<li><a href="#lyrics">/lyrics/&lt;id&gt;</a></li>
+						<li><a href="#toplists">/toplists/&lt;id&gt;</a></li>
+						<li><a href="#explore-playlists">/explore/playlists/&lt;cat&gt;</a></li>
 						<hr>
 						<li><a href="#people">/people</a></li>
 						<hr>
@@ -51,241 +51,11 @@
 					</ul>
 				</div>
 				<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-					<section id="explore-playlist-cat" class="anchor">
-						<h1 class="page-header">/explore/playlist/cat/&lt;cat&gt;</h1>
-						<p>Explore playlist by category.</p>
-						<h4 class="child-header">Description</h4>
-						<table class="table table-hover">
-							<tbody>
-								<tr>
-									<td width="400">Request</td>
-									<td><b>GET</b> http://{{ host }}/{{ version }}/explore/playlist/cat/&lt;cat&gt;</td>
-								</tr>
-								<tr>
-									<td>Response</td>
-									<td>JSON</td>
-								</tr>
-								<tr>
-									<td>Authentication</td>
-									<td>No</td>
-								</tr>
-							</tbody>
-						</table>
-						<h4 class="child-header">Params</h4>
-						<table class="table table-hover">
-							<tbody>
-								<tr>
-									<td width="400">cat</td>
-									<td>
-										<table>
-											<tr valign="top">
-												<td width="50">语种：</td>
-												<td>华语、欧美、日语、韩语、粤语、小语种</td>
-											</tr>
-											<tr valign="top">
-												<td>场景：</td>
-												<td>清晨、黄昏、夜晚、学习、工作、午休、下午茶、地铁、驾车、运动、缠绵、聚会、度假、旅行、散步、校园、酒吧</td>
-											</tr>
-											<tr valign="top">
-												<td>风格：</td>
-												<td>流行、摇滚、民谣、电子、说唱、轻音乐、爵士、乡村、R&B/Soul、古典、民族、英伦、金属、朋克、蓝调、原声、雷鬼、世界音乐、拉丁、另类/独立、动漫、New Age、古风、Bossa Nova</td>
-											</tr>
-											<tr valign="top">
-												<td>情感：</td>
-												<td>怀旧、清新、浪漫、性感、伤感、治愈、放松、悲伤、温暖、孤独、感动、兴奋、快乐、安静、思念</td>
-											</tr>
-											<tr valign="top">
-												<td>主题：</td>
-												<td>游戏、70后、80后、90后、网络歌曲、KTV、经典、翻唱、吉他、钢琴、器乐、儿童、榜单、对唱、00后</td>
-											</tr>
-										</table>
-									</td>
-								</tr>
-								<tr>
-									<td>offset</td>
-									<td>default = {{ offset }}</td>
-								</tr>
-								<tr>
-									<td>limit</td>
-									<td>default = 35</td>
-								</tr>
-							</tbody>
-						</table>
-						<h4 class="child-header">Examples</h4>
-						<ul>
-							<li><a target="_blank" href="/{{ version }}/explore/playlist/cat/民谣">http://{{ host }}/{{ version }}/explore/playlist/cat/民谣</a></li>
-							<li><a target="_blank" href="/{{ version }}/explore/playlist/cat/思念">http://{{ host }}/{{ version }}/explore/playlist/cat/思念</a></li>
-						</ul>
-						<br><br>
-					</section>
-					<section id="songs" class="anchor">
-						<h1 class="page-header">/songs/[ids]</h1>
-						<p>Return a specified song.</p>
-						<h4 class="child-header">Description</h4>
-						<table class="table table-hover">
-							<tbody>
-								<tr>
-									<td width="400">Request</td>
-									<td><b>GET</b> http://{{ host }}/{{ version }}/song/&lt;ids&gt;</td>
-								</tr>
-								<tr>
-									<td>Response</td>
-									<td>JSON</td>
-								</tr>
-								<tr>
-									<td>Authentication</td>
-									<td>No</td>
-								</tr>
-							</tbody>
-						</table>
-						<h4 class="child-header">Params</h4>
-						<table class="table table-hover">
-							<tbody>
-								<tr>
-									<td width="400">ids</td>
-									<td>Song id list, split with comma.</td>
-								</tr>
-							</tbody>
-						</table>
-						<h4 class="child-header">Examples</h4>
-						<ul>
-							<li><a target="_blank" href="/{{ version }}/songs/29713754,28793502">http://{{ host }}/{{ version }}/songs/29713754,28793502</a></li>
-						</ul>
-						<br><br>
-					</section>
-					<section id="album" class="anchor">
-						<h1 class="page-header">/album/&lt;id&gt;</h1>
-						<p>Return a specified album.</p>
-						<h4 class="child-header">Description</h4>
-						<table class="table table-hover">
-							<tbody>
-								<tr>
-									<td width="400">Request</td>
-									<td><b>GET</b> http://{{ host }}/{{ version }}/album/&lt;id&gt;</td>
-								</tr>
-								<tr>
-									<td>Response</td>
-									<td>JSON</td>
-								</tr>
-								<tr>
-									<td>Authentication</td>
-									<td>No</td>
-								</tr>
-							</tbody>
-						</table>
-						<h4 class="child-header">Examples</h4>
-						<ul>
-							<li><a target="_blank" href="/{{ version }}/album/10818">http://{{ host }}/{{ version }}/album/10818</a></li>
-						</ul>
-						<br><br>
-					</section>
-					<section id="artist" class="anchor">
-						<h1 class="page-header">/artist/&lt;id&gt;</h1>
-						<p>Return a specified artist.</p>
-						<h4 class="child-header">Description</h4>
-						<table class="table table-hover">
-							<tbody>
-								<tr>
-									<td width="400">Request</td>
-									<td><b>GET</b> http://{{ host }}/{{ version }}/artist/&lt;id&gt;</td>
-								</tr>
-								<tr>
-									<td>Response</td>
-									<td>JSON</td>
-								</tr>
-								<tr>
-									<td>Authentication</td>
-									<td>No</td>
-								</tr>
-							</tbody>
-						</table>
-						<h4 class="child-header">Examples</h4>
-						<ul>
-							<li><a target="_blank" href="/{{ version }}/artist/3686">http://{{ host }}/{{ version }}/artist/3686</a></li>
-						</ul>
-						<br><br>
-					</section>
-					<section id="playlist" class="anchor">
-						<h1 class="page-header">/playlist/&lt;id&gt;</h1>
-						<p>Return a specified playlist.</p>
-						<h4 class="child-header">Description</h4>
-						<table class="table table-hover">
-							<tbody>
-								<tr>
-									<td width="400">Request</td>
-									<td><b>GET</b> http://{{ host }}/{{ version }}/playlist/&lt;id&gt;</td>
-								</tr>
-								<tr>
-									<td>Response</td>
-									<td>JSON</td>
-								</tr>
-								<tr>
-									<td>Authentication</td>
-									<td>No</td>
-								</tr>
-							</tbody>
-						</table>
-						<h4 class="child-header">Examples</h4>
-						<ul>
-							<li><a target="_blank" href="/{{ version }}/playlist/2294307">http://{{ host }}/{{ version }}/playlist/2294307</a></li>
-						</ul>
-						<br><br>
-					</section>
-					<section id="lyric" class="anchor">
-						<h1 class="page-header">/lyric/&lt;id&gt;</h1>
-						<p>Return a specified lyric.</p>
-						<h4 class="child-header">Description</h4>
-						<table class="table table-hover">
-							<tbody>
-								<tr>
-									<td width="400">Request</td>
-									<td><b>GET</b> http://{{ host }}/{{ version }}/lyric/&lt;id&gt;</td>
-								</tr>
-								<tr>
-									<td>Response</td>
-									<td>JSON</td>
-								</tr>
-								<tr>
-									<td>Authentication</td>
-									<td>No</td>
-								</tr>
-							</tbody>
-						</table>
-						<h4 class="child-header">Examples</h4>
-						<ul>
-							<li><a target="_blank" href="/{{ version }}/lyric/108933">http://{{ host }}/{{ version }}/lyric/108933</a></li>
-						</ul>
-						<br><br>
-					</section>
-					<section id="toplist" class="anchor">
-						<h1 class="page-header">/toplist/&lt;id&gt;</h1>
-						<p>Return a specified toplist.</p>
-						<h4 class="child-header">Description</h4>
-						<table class="table table-hover">
-							<tbody>
-								<tr>
-									<td width="400">Request</td>
-									<td><b>GET</b> http://{{ host }}/{{ version }}/toplist/&lt;id&gt;</td>
-								</tr>
-								<tr>
-									<td>Response</td>
-									<td>JSON</td>
-								</tr>
-								<tr>
-									<td>Authentication</td>
-									<td>No</td>
-								</tr>
-							</tbody>
-						</table>
-						<h4 class="child-header">Examples</h4>
-						<ul>
-							<li><a target="_blank" href="/{{ version }}/toplist/3778678">http://{{ host }}/{{ version }}/toplist/3778678</a></li>
-						</ul>
-						<br><br>
-					</section>
 					<section id="search" class="anchor">
 						<h1 class="page-header">/search</h1>
 						<p>Search people, song, album, artist, playlist and lyric.</p>
+						<h4>Definition</h4>
+						<p>GET http://{{ host }}/{{ version }}/search</p>
 						<h4 class="child-header">Description</h4>
 						<table class="table table-hover">
 							<tbody>
@@ -365,6 +135,238 @@
 							<li><a target="_blank" href="/{{ version }}/search?s=罗大佑&t=100">http://{{ host }}/{{ version }}/search?s=罗大佑&t=100</a></li>
 							<li><a target="_blank" href="/{{ version }}/search?s=罗大佑&t=1000">http://{{ host }}/{{ version }}/search?s=罗大佑&t=1000</a></li>
 							<li><a target="_blank" href="/{{ version }}/search?s=罗大佑&t=1006">http://{{ host }}/{{ version }}/search?s=罗大佑&t=1006</a></li>
+						</ul>
+						<br><br>
+					</section>
+					<section id="songs" class="anchor">
+						<h1 class="page-header">/songs/[ids]</h1>
+						<p>Return a specified song.</p>
+						<h4 class="child-header">Description</h4>
+						<table class="table table-hover">
+							<tbody>
+								<tr>
+									<td width="400">Request</td>
+									<td><b>GET</b> http://{{ host }}/{{ version }}/song/&lt;ids&gt;</td>
+								</tr>
+								<tr>
+									<td>Response</td>
+									<td>JSON</td>
+								</tr>
+								<tr>
+									<td>Authentication</td>
+									<td>No</td>
+								</tr>
+							</tbody>
+						</table>
+						<h4 class="child-header">Params</h4>
+						<table class="table table-hover">
+							<tbody>
+								<tr>
+									<td width="400">ids</td>
+									<td>Song id list, split with comma.</td>
+								</tr>
+							</tbody>
+						</table>
+						<h4 class="child-header">Examples</h4>
+						<ul>
+							<li><a target="_blank" href="/{{ version }}/songs/29713754,28793502">http://{{ host }}/{{ version }}/songs/29713754,28793502</a></li>
+						</ul>
+						<br><br>
+					</section>
+					<section id="albums" class="anchor">
+						<h1 class="page-header">/albums/&lt;id&gt;</h1>
+						<p>Return a specified album.</p>
+						<h4 class="child-header">Description</h4>
+						<table class="table table-hover">
+							<tbody>
+								<tr>
+									<td width="400">Request</td>
+									<td><b>GET</b> http://{{ host }}/{{ version }}/album/&lt;id&gt;</td>
+								</tr>
+								<tr>
+									<td>Response</td>
+									<td>JSON</td>
+								</tr>
+								<tr>
+									<td>Authentication</td>
+									<td>No</td>
+								</tr>
+							</tbody>
+						</table>
+						<h4 class="child-header">Examples</h4>
+						<ul>
+							<li><a target="_blank" href="/{{ version }}/album/10818">http://{{ host }}/{{ version }}/album/10818</a></li>
+						</ul>
+						<br><br>
+					</section>
+					<section id="artists" class="anchor">
+						<h1 class="page-header">/artists/&lt;id&gt;</h1>
+						<p>Return a specified artist.</p>
+						<h4 class="child-header">Description</h4>
+						<table class="table table-hover">
+							<tbody>
+								<tr>
+									<td width="400">Request</td>
+									<td><b>GET</b> http://{{ host }}/{{ version }}/artist/&lt;id&gt;</td>
+								</tr>
+								<tr>
+									<td>Response</td>
+									<td>JSON</td>
+								</tr>
+								<tr>
+									<td>Authentication</td>
+									<td>No</td>
+								</tr>
+							</tbody>
+						</table>
+						<h4 class="child-header">Examples</h4>
+						<ul>
+							<li><a target="_blank" href="/{{ version }}/artist/3686">http://{{ host }}/{{ version }}/artist/3686</a></li>
+						</ul>
+						<br><br>
+					</section>
+					<section id="playlists" class="anchor">
+						<h1 class="page-header">/playlists/&lt;id&gt;</h1>
+						<p>Return a specified playlist.</p>
+						<h4 class="child-header">Description</h4>
+						<table class="table table-hover">
+							<tbody>
+								<tr>
+									<td width="400">Request</td>
+									<td><b>GET</b> http://{{ host }}/{{ version }}/playlist/&lt;id&gt;</td>
+								</tr>
+								<tr>
+									<td>Response</td>
+									<td>JSON</td>
+								</tr>
+								<tr>
+									<td>Authentication</td>
+									<td>No</td>
+								</tr>
+							</tbody>
+						</table>
+						<h4 class="child-header">Examples</h4>
+						<ul>
+							<li><a target="_blank" href="/{{ version }}/playlist/2294307">http://{{ host }}/{{ version }}/playlist/2294307</a></li>
+						</ul>
+						<br><br>
+					</section>
+					<section id="lyrics" class="anchor">
+						<h1 class="page-header">/lyrics/&lt;id&gt;</h1>
+						<p>Return a specified lyric.</p>
+						<h4 class="child-header">Description</h4>
+						<table class="table table-hover">
+							<tbody>
+								<tr>
+									<td width="400">Request</td>
+									<td><b>GET</b> http://{{ host }}/{{ version }}/lyric/&lt;id&gt;</td>
+								</tr>
+								<tr>
+									<td>Response</td>
+									<td>JSON</td>
+								</tr>
+								<tr>
+									<td>Authentication</td>
+									<td>No</td>
+								</tr>
+							</tbody>
+						</table>
+						<h4 class="child-header">Examples</h4>
+						<ul>
+							<li><a target="_blank" href="/{{ version }}/lyric/108933">http://{{ host }}/{{ version }}/lyric/108933</a></li>
+						</ul>
+						<br><br>
+					</section>
+					<section id="toplists" class="anchor">
+						<h1 class="page-header">/toplists/&lt;id&gt;</h1>
+						<p>Return a specified toplist.</p>
+						<h4 class="child-header">Description</h4>
+						<table class="table table-hover">
+							<tbody>
+								<tr>
+									<td width="400">Request</td>
+									<td><b>GET</b> http://{{ host }}/{{ version }}/toplist/&lt;id&gt;</td>
+								</tr>
+								<tr>
+									<td>Response</td>
+									<td>JSON</td>
+								</tr>
+								<tr>
+									<td>Authentication</td>
+									<td>No</td>
+								</tr>
+							</tbody>
+						</table>
+						<h4 class="child-header">Examples</h4>
+						<ul>
+							<li><a target="_blank" href="/{{ version }}/toplist/3778678">http://{{ host }}/{{ version }}/toplist/3778678</a></li>
+						</ul>
+						<br><br>
+					</section>
+					<section id="explore-playlists" class="anchor">
+						<h1 class="page-header">/explore/playlists/&lt;cat&gt;</h1>
+						<p>Explore playlist by category.</p>
+						<h4 class="child-header">Description</h4>
+						<table class="table table-hover">
+							<tbody>
+								<tr>
+									<td width="400">Request</td>
+									<td><b>GET</b> http://{{ host }}/{{ version }}/explore/playlist/cat/&lt;cat&gt;</td>
+								</tr>
+								<tr>
+									<td>Response</td>
+									<td>JSON</td>
+								</tr>
+								<tr>
+									<td>Authentication</td>
+									<td>No</td>
+								</tr>
+							</tbody>
+						</table>
+						<h4 class="child-header">Params</h4>
+						<table class="table table-hover">
+							<tbody>
+								<tr>
+									<td width="400">cat</td>
+									<td>
+										<table>
+											<tr valign="top">
+												<td width="50">语种：</td>
+												<td>华语、欧美、日语、韩语、粤语、小语种</td>
+											</tr>
+											<tr valign="top">
+												<td>场景：</td>
+												<td>清晨、黄昏、夜晚、学习、工作、午休、下午茶、地铁、驾车、运动、缠绵、聚会、度假、旅行、散步、校园、酒吧</td>
+											</tr>
+											<tr valign="top">
+												<td>风格：</td>
+												<td>流行、摇滚、民谣、电子、说唱、轻音乐、爵士、乡村、R&B/Soul、古典、民族、英伦、金属、朋克、蓝调、原声、雷鬼、世界音乐、拉丁、另类/独立、动漫、New Age、古风、Bossa Nova</td>
+											</tr>
+											<tr valign="top">
+												<td>情感：</td>
+												<td>怀旧、清新、浪漫、性感、伤感、治愈、放松、悲伤、温暖、孤独、感动、兴奋、快乐、安静、思念</td>
+											</tr>
+											<tr valign="top">
+												<td>主题：</td>
+												<td>游戏、70后、80后、90后、网络歌曲、KTV、经典、翻唱、吉他、钢琴、器乐、儿童、榜单、对唱、00后</td>
+											</tr>
+										</table>
+									</td>
+								</tr>
+								<tr>
+									<td>offset</td>
+									<td>default = {{ offset }}</td>
+								</tr>
+								<tr>
+									<td>limit</td>
+									<td>default = 35</td>
+								</tr>
+							</tbody>
+						</table>
+						<h4 class="child-header">Examples</h4>
+						<ul>
+							<li><a target="_blank" href="/{{ version }}/explore/playlist/cat/民谣">http://{{ host }}/{{ version }}/explore/playlist/cat/民谣</a></li>
+							<li><a target="_blank" href="/{{ version }}/explore/playlist/cat/思念">http://{{ host }}/{{ version }}/explore/playlist/cat/思念</a></li>
 						</ul>
 						<br><br>
 					</section>

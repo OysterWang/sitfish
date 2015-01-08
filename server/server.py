@@ -4,7 +4,6 @@
 import re
 import json
 import codecs
-import hashlib
 import requests
 import configparser
 
@@ -316,12 +315,8 @@ def player_skip():
 
 @app.route('/v1/token', methods=['POST'])
 def token():
-	grant_type = request.form['grant_type']
-	username = request.form['username']
-	password = request.form['password']
-	pprint(request.headers)
-	msg = '{} - {} - {}'.format(grant_type, username, password)
-	return msg
+	pprint(request.headers.get('Authorization'))
+	return 'token'
 
 
 """
@@ -333,12 +328,6 @@ def parse_int(s, default=0):
 		return int(s)
 	except ValueError:
 		return default
-
-
-def sha(*params):
-	h = hashlib.new(config['DB']['SHA'])
-	h.update(' '.join(params).encode('utf-8'))
-	return h.hexdigest()
 
 
 def send_activation(subject, html, recipient):

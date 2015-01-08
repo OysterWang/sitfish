@@ -5,11 +5,12 @@ import sys
 import codecs
 import random
 import string
+import hashlib
 import datetime
 import configparser
 
 from mongoengine import *
-from pprint import pprint
+import pprint
 
 config = configparser.ConfigParser()
 config.readfp(codecs.open("../config/config.ini", "r", "utf-8"))
@@ -17,18 +18,23 @@ config.readfp(codecs.open("../config/config.ini", "r", "utf-8"))
 connect(db=config['DB']['NAME'], host=config['DB']['HOST'], port=int(config['DB']['PORT']))
 
 
-class Artist(Document):
+"""
+Utilities
+"""
 
-	id = StringField(primary_key=True)
-	name = StringField(default='')
+def random_str(length):
+	return ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(length))
 
-	def json(self):
-		json = {
-			'id': self.id,
-			'name': self.name
-		}
-		return json
 
+def sha(*params):
+	h = hashlib.new(config['SERVER']['SHA'])
+	h.update(' '.join(params).encode('utf-8'))
+	return h.hexdigest()
+
+
+"""
+Musics
+"""
 
 class Song(Document):
 
@@ -46,10 +52,27 @@ class Song(Document):
 			'source': self.source,
 			'img': self.img,
 			'time': self.time,
-			'artist': self.artist.json()
+			'artist': self.artist.json() if self.artist else {}
 		}
 		return json
 
+
+class Artist(Document):
+
+	id = StringField(primary_key=True)
+	name = StringField(default='')
+
+	def json(self):
+		json = {
+			'id': self.id,
+			'name': self.name
+		}
+		return json
+
+
+"""
+User
+"""
 
 class Player(Document):
 
@@ -60,7 +83,7 @@ class Player(Document):
 	def json(self):
 		json = {
 			'status': self.status,
-			'song': self.song.json(),
+			'song': self.song.json() if self.song else {},
 			'playlist': [s.json() for s in self.playlist]
 		}
 		return json
@@ -70,7 +93,7 @@ class People(Document):
 
 	class Activation(EmbeddedDocument):
 
-		code = StringField(default=''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(int(config['DB']['ACT_CODE_LEN']))))
+		code = StringField(default=random_str(int(config['SERVER']['ACT_CODE_LEN'])))
 		time = DateTimeField(default=datetime.datetime.now())
 		status = BooleanField(default=False)
 
@@ -83,13 +106,16 @@ class People(Document):
 
 	class Token(EmbeddedDocument):
 
-		value = StringField(default='')
-		expire = DateTimeField(default=datetime.datetime.now()+datetime.timedelta(days=int(config['DEFAULT']['TOKEN_EXPIRE'])))
+		access_token = StringField(default='')
+		token_type = StringField(default='Bearer')
+		expire_in = LongField(default=int(config['SERVER']['TOKEN_EXPIRE_IN']))
+		time = DateTimeField(default=datetime.datetime.now())
 
 		def json(self):
 			json ={
-				'value': self.value,
-				'expire': self.expire.strftime('%Y-%m-%d %H:%M:%S')
+				'access_token': self.access_token,
+				'token_type': self.token_type,
+				'expire_in': self.expire_in
 			}
 			return json
 
@@ -98,15 +124,13 @@ class People(Document):
 	email = StringField(default='', required=True, unique=True)
 	password = StringField(default='', required=True)
 	activation = EmbeddedDocumentField('Activation', default=Activation())
-	tokens = ListField(EmbeddedDocumentField('Token'))
 	friend = ReferenceField('People')
 	player = ReferenceField('Player')
 
-	def create(id='', name='', email='', password=''):
-		player = Player()
-		player.save()
-		people = People(id=id, name=name, email=email, password=password, player=player)
-		return people
+	def __init__(self, *args, **kwargs):
+		Document.__init__(self, *args, **kwargs)
+		self.password = sha(self.password)
+		self.player = Player().save()
 
 	def json(self):
 		json = {
@@ -123,8 +147,8 @@ class People(Document):
 			'email': self.email,
 			'activation': self.activation.json(),
 			'friend': {
-				'id': self.friend.id if self.friend is not None else '',
-				'name': self.friend.name if self.friend is not None else ''
+				'id': self.friend.id if self.friend else '',
+				'name': self.friend.name if self.friend else ''
 			},
 			'player': self.player.json()
 		}
@@ -154,5 +178,12 @@ class Notification(Document):
 
 
 if __name__ == '__main__':
-	pass
+	# p = People(id='zhaolong', name='赵龙', email='hello@gmail.com', password='hello001').save()
+	# pprint(p.detail())
+	d = {
+		'name':'zhaolong',
+		'address': {'a':'b', 'c':'d'}
+	}
+	pp = pprint.PrettyPrinter(indent=4)
+	pp.pprint(d)
 
