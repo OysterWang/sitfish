@@ -5,6 +5,7 @@ import re
 import json
 import codecs
 import requests
+import traceback
 import configparser
 
 from bs4 import BeautifulSoup
@@ -17,8 +18,8 @@ from database import *
 from functools import wraps
 from flask.ext.mail import Mail
 from flask.ext.mail import Message
+from mongoengine.errors import *
 
-from pprint import pprint
 
 config = configparser.ConfigParser()
 config.readfp(codecs.open("../config/config.ini", "r", "utf-8"))
@@ -75,70 +76,57 @@ def search():
 	return jsonify(**data)
 
 
-# TYPE - 0
-@app.route('/v1/people', methods=['GET'])
-@app.route('/v1/people/<id>', methods=['GET'])
-def people(id=''):
-	data = {'ret': 0}
-	id = request.args.get('id', default='') if id == '' else id
-	people = People.objects(id=id).first() if id != '' else People.objects(email=request.args.get('email', default='')).first()
-	if people is not None:
-		data['ret'] = 1
-		data['people'] = people.public_json()
-	return jsonify(**data)
-
-
 # TYPE - 1
 @app.route('/v1/songs/<ids>', methods=['GET'])
-def song(ids=''):
+def songs(ids=''):
 	ids = re.split(',', ids)
-	url = 'http://music.163.com/api/song/detail?ids=%s' % ids
+	url = 'http://music.163.com/api/song/detail?ids={}'.format(ids)
 	data = requests.get(url, headers=app.config['HEADERS']).json()
 	return jsonify(**data)
 
 
 # TYPE - 10
-@app.route('/v1/album/<id>', methods=['GET'])
-def album(id=''):
-	url = 'http://music.163.com/api/album/%s' % id
+@app.route('/v1/albums/<id>', methods=['GET'])
+def albums(id=''):
+	url = 'http://music.163.com/api/album/{}'.format(id)
 	data = requests.get(url, headers=app.config['HEADERS']).json()
 	return jsonify(**data)
 
 
 # TYPE - 100
-@app.route('/v1/artist/<id>', methods=['GET'])
-def artist(id=''):
-	url = 'http://music.163.com/api/artist/albums/%s?limit=%d' % (id, app.config['LIMIT'])
+@app.route('/v1/artists/<id>', methods=['GET'])
+def artists(id=''):
+	url = 'http://music.163.com/api/artist/albums/{}?limit={0:d}'.format(id, app.config['LIMIT'])
 	data = requests.get(url, headers=app.config['HEADERS']).json()
 	return jsonify(**data)
 
 
 # TYPE - 1000
-@app.route('/v1/playlist/<id>', methods=['GET'])
-def playlist(id=''):
-	url = 'http://music.163.com/api/playlist/detail?id=%s' % id
+@app.route('/v1/playlists/<id>', methods=['GET'])
+def playlists(id=''):
+	url = 'http://music.163.com/api/playlist/detail?id={}'.format(id)
 	data = requests.get(url, headers=app.config['HEADERS']).json()
 	return jsonify(**data)
 
 
 # TYPE - 1006
-@app.route('/v1/lyric/<id>', methods=['GET'])
-def lyric(id=''):
-	url = 'http://music.163.com/api/song/lyric?id=%s&lv=-1&kv=-1&tv=-1' % id
+@app.route('/v1/lyrics/<id>', methods=['GET'])
+def lyrics(id=''):
+	url = 'http://music.163.com/api/song/lyric?id={}&lv=-1&kv=-1&tv=-1'.format(id)
 	data = requests.get(url, headers=app.config['HEADERS']).json()
 	return jsonify(**data)
 
 
-@app.route('/v1/toplist/<id>', methods=['GET'])
-def toplist(id=''):
+@app.route('/v1/toplists/<id>', methods=['GET'])
+def toplists(id=''):
 	data = {'songs': []}
-	url = 'http://music.163.com/discover/toplist?id=%s' % id
+	url = 'http://music.163.com/discover/toplist?id={}'.format(id)
 	soup = BeautifulSoup(requests.get(url).content)
 	table = soup.find('tbody', id='tracklist')
-	if table is not None:
+	if table:
 		ids = re.findall(r'/song\?id=(\d+)', str(table))
 		ids = sorted(set(ids),key=ids.index)
-		url = 'http://music.163.com/api/song/detail?ids=[%s]' % ','.join(ids)
+		url = 'http://music.163.com/api/song/detail?ids=[{}]'.format(','.join(ids))
 		data = requests.get(url, headers=app.config['HEADERS']).json()
 	return jsonify(**data)
 
@@ -147,22 +135,22 @@ def toplist(id=''):
 Explore related
 """
 
-@app.route('/v1/explore/playlist/cat', methods=['GET'])
-@app.route('/v1/explore/playlist/cat/<cat>', methods=['GET'])
-def explore_playlist_cat(cat='全部'):
+@app.route('/v1/explore/playlists', methods=['GET'])
+@app.route('/v1/explore/playlists/<cat>', methods=['GET'])
+def explore_playlists_cat(cat='全部'):
 	offset = parse_int(request.args.get('offset', default=''), default=app.config['OFFSET'])
 	limit = parse_int(request.args.get('limit', default=''), default=35)
 	data = {'count': 0, 'playlists': []}
-	url = 'http://music.163.com/discover/playlist/?cat=%s&offset=%d&limit=%d' % (cat, offset, limit)
+	url = 'http://music.163.com/discover/playlist/?cat={}&offset={0:d}&limit={0:d}'.format(cat, offset, limit)
 	soup = BeautifulSoup(requests.get(url).content)
 	pages = soup.findAll('a', class_='zpgi')
 	if len(pages) > 0:
 		page_num = parse_int(pages[-1].text)
 		data['count'] = limit * page_num
 	ul = soup.find('ul', id='m-pl-container')
-	if ul is not None:
+	if ul:
 		for li in ul.findAll('li'):
-			if li.div is not None and li.div.img is not None and li.div.a is not None:
+			if li.div and li.div.img and li.div.a:
 				data['playlists'].append({'id': re.split('id=', li.div.a['href'])[-1], 'name': li.div.a['title'], 'coverImgUrl': re.split('\?param', li.div.img['src'])[0]})
 	return jsonify(**data)
 
@@ -171,74 +159,57 @@ def explore_playlist_cat(cat='全部'):
 Account related
 """
 
-
-@app.route('/v1/sign-up', methods=['POST'])
-def sign_up():
+@app.route('/v1/people', methods=['POST'])
+def people():
 	data = {'ret': 0}
 	try:
-		people = People.create(id=request.form['id'], name=request.form['name'], email=request.form['email'], password=request.form['password'])
-		people.password = sha(people.password, people.activation_code)
-		people.save(force_insert=True)
+		people = People.new(id=request.form['id'], name=request.form['name'], email=request.form['email'], password=request.form['password']).save(force_insert=True)
 		brand = config['DEFAULT']['BRAND']
-		url = 'http://%s/activate/%s?code=%s' % (config['WEB']['HOST'], people.id, people.activation_code)
-		html = '<p>亲爱的%s：</p><p>欢迎加入%s！</p><p>请点击下面的链接完成注册：</p><p><a href="%s" target="_blank">%s</a></p><p>如果以上链接无法点击，请将上面的地址复制到你的浏览器(如Chrome)的地址栏进入%s。</p><p>%s</p>' % (people.name, brand, url, url, brand, brand)
-		send_activation('%s账户激活' % brand, html, people.email)
+		url = 'http://{}/people/{}/activation?code={}'.format(config['WEB']['HOST'], people.id, people.activation.code)
+		html = '<p>亲爱的{}：</p><p>欢迎加入{}！</p><p>请点击下面的链接完成注册：</p><p><a href="{}" target="_blank">{}</a></p><p>如果以上链接无法点击，请将上面的地址复制到你的浏览器(如Chrome)的地址栏进入{}。</p><p>{}</p>'.format(people.name, brand, url, url, brand, brand)
+		send_activation('{}账户激活'.format(brand), html, people.email)
 		data['ret'] = 1
+	except NotUniqueError:
+		app.logger.info('This id "{}" has been taken.'.format(request.form['id']))
 	except:
-		pass
+		app.logger.error(traceback.format_exc())
 	return jsonify(**data)
 
 
-@app.route('/v1/activate/<id>', methods=['GET'])
+@app.route('/v1/people/<id>/activation', methods=['GET'])
 def activate(id=''):
 	data = {'ret': 0}
-	code = request.args.get('code', default='')
-	people = People.objects(id=id, activation_code=code).first()
-	if people is not None:
-		if people.activation is not True:
-			people.activation = True
+	people = People.objects(id=id).first()
+	if people and people.activation.code == request.args.get('code', default=''):
+		if not people.activation.status:
+			people.activation.time = datetime.datetime.now()
+			people.activation.status = True
 			people.save()
 		data['ret'] = 1
 	return jsonify(**data)
 
 
-@app.route('/v1/sign-in', methods=['POST'])
-def sign_in():
-	data = {'ret': 0}
-	people = People.objects(email=request.form['email']).first()
-	if people is not None:
-		if not people.activation:
-			data['ret'] = -1
-		elif people.password == sha(request.form['password'], people.activation_code):
-			people.access_token = sha(people.id, datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-			people.save()
-			data['ret'] = 1
-			data['people'] = people.private_json()
-	return jsonify(**data)
-
-
-@app.route('/v1/validate', methods=['POST'])
-def validate():
-	data = {'ret': 0}
-	people = People.objects(id=request.form['id']).first()
-	if people is not None:
-		if people.access_token == request.form['access_token']:
-			data['ret'] = 1
-			data['people'] = people.private_json()
-	return jsonify(**data)
-
-
 """
-Player related
+Detailed info
 """
+
+# TYPE - 0
+@app.route('/v1/people/<id>', methods=['GET'])
+def people_id(id=''):
+	data = {'ret': 0}
+	people = People.objects(id=id).first() if id != '' else People.objects(email=request.args.get('email', default='')).first()
+	if people:
+		data['ret'] = 1
+		data['people'] = people.public_json()
+	return jsonify(**data)
 
 @app.route('/v1/player/<id>', methods=['GET'])
 def player(id=''):
 	data = {'ret': 0}
 	people = People.objects(id=id).first()
-	if people is not None:
+	if people:
 		data['ret'] = 1
-		data['player'] = people.player.json() if people.player is not None else ''
+		data['player'] = people.player.json() if people.player else ''
 	return jsonify(**data)
 
 
@@ -246,7 +217,7 @@ def player(id=''):
 def player_playlist_add():
 	data = {'ret': 0}
 	people = People.objects(id=request.form['id']).first()
-	if people is not None:
+	if people:
 		if people.access_token == request.form['access_token']:
 			data['ret'] = 1
 			ids = set([song['id'] for song in people.player.playlist])
@@ -262,7 +233,7 @@ def player_playlist_add():
 def player_playlist_replace():
 	data = {'ret': 0}
 	people = People.objects(id=request.form['id']).first()
-	if people is not None:
+	if people:
 		if people.access_token == request.form['access_token']:
 			data['ret'] = 1
 			people.player.update(set__playlist=[])
@@ -277,7 +248,7 @@ def player_playlist_replace():
 def player_playlist_delete():
 	data = {'ret': 0}
 	people = People.objects(id=request.form['id']).first()
-	if people is not None:
+	if people:
 		if people.access_token == request.form['access_token']:
 			data['ret'] = 1
 			for id in json.loads(request.form['ids']):
@@ -290,7 +261,7 @@ def player_playlist_delete():
 def player_playlist_clear():
 	data = {'ret': 0}
 	people = People.objects(id=request.form['id']).first()
-	if people is not None:
+	if people:
 		if people.access_token == request.form['access_token']:
 			data['ret'] = 1
 			people.player.update(set__playlist=[])
@@ -313,10 +284,25 @@ def player_skip():
 	return 'TODO'
 
 
-@app.route('/v1/token', methods=['POST'])
-def token():
-	pprint(request.headers.get('Authorization'))
-	return 'token'
+"""
+Tokens
+"""
+
+@app.route('/v1/oauth2/tokens', methods=['POST'])
+def sign_in():
+	data = {'ret': 0}
+	people = People.objects(id=request.form['username']).first()
+	if people:
+		if not people.activation.status:
+			data['ret'] = -1
+		elif people.check_password(request.form['password']):
+			token = Token.new(people.id, people.activation.code)
+			people.update(push__tokens=token)
+			data['ret'] = 1
+			data['access_token'] = token.access_token
+			data['token_type'] = token.token_type
+			data['expire_in'] = token.expire_in
+	return jsonify(**data)
 
 
 """

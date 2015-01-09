@@ -30,8 +30,9 @@
 						<li><a href="#explore-playlists">/explore/playlists/&lt;cat&gt;</a></li>
 						<hr>
 						<li><a href="#people">/people</a></li>
+						<li><a href="#people-activation">/people/&lt;id&gt;/activation</a></li>
 						<hr>
-						<li><a href="#people_id">/people/&lt;id&gt;</a></li>
+						<li><a href="#people-id">/people/&lt;id&gt;</a></li>
 						<li><a href="#player-playlist-add">/player/playlist/add</a></li>
 						<li><a href="#player-playlist-replace">/player/playlist/replace</a></li>
 						<li><a href="#player-playlist-delete">/player/playlist/delete</a></li>
@@ -40,44 +41,20 @@
 						<li><a href="#player-pause">/player/pause</a></li>
 						<li><a href="#player-skip">/player/skip</a></li>
 						<hr>
-						<li><a href="#">/people/&lt;id&gt;/notifications</a></li>
-						<li><a href="#">/connect/request</a></li>
-						<li><a href="#">/connect/response</a></li>
-						<hr>
-						<li><a href="#sign-up">/sign-up</a></li>
-						<li><a href="#activate">/activate</a></li>
-						<li><a href="#sign-in">/sign-in</a></li>
-						<li><a href="#validate">/validate</a></li>
+						<li><a href="#oauth2-tokens">/oauth2/tokens</a></li>
 					</ul>
 				</div>
 				<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
 					<section id="search" class="anchor">
 						<h1 class="page-header">/search</h1>
-						<p>Search people, song, album, artist, playlist and lyric.</p>
 						<h4>Definition</h4>
-						<p>GET http://{{ host }}/{{ version }}/search</p>
-						<h4 class="child-header">Description</h4>
-						<table class="table table-hover">
+						<p><b>GET</b> http://{{ host }}/{{ version }}/search</p>
+						<p><i>Search people, song, album, artist, playlist and lyric.</i></p>
+						<h4 class="child-header">Arguments</h4>
+						<table class="table table-condensed">
 							<tbody>
 								<tr>
-									<td width="400">Request</td>
-									<td><b>GET</b> http://{{ host }}/{{ version }}/search</td>
-								</tr>
-								<tr>
-									<td>Response</td>
-									<td>JSON</td>
-								</tr>
-								<tr>
-									<td>Authentication</td>
-									<td>No</td>
-								</tr>
-							</tbody>
-						</table>
-						<h4 class="child-header">Params</h4>
-						<table class="table table-hover">
-							<tbody>
-								<tr>
-									<td width="400">s</td>
+									<td width="200">s</td>
 									<td>The query content.</td>
 								</tr>
 								<tr>
@@ -119,215 +96,101 @@
 								</tr>
 								<tr>
 									<td>offset</td>
-									<td>default = {{ offset }}</td>
+									<td>default={{ offset }}</td>
 								</tr>
 								<tr>
 									<td>limit</td>
-									<td>default = {{ limit }}</td>
+									<td>default={{ limit }}</td>
 								</tr>
 							</tbody>
 						</table>
 						<h4 class="child-header">Examples</h4>
 						<ul>
-							<li><a target="_blank" href="/{{ version }}/search?s=zhao&t=0">http://{{ host }}/{{ version }}/search?s=zhao&t=0</a></li>
-							<li><a target="_blank" href="/{{ version }}/search?s=罗大佑&t=1">http://{{ host }}/{{ version }}/search?s=罗大佑&t=1</a></li>
-							<li><a target="_blank" href="/{{ version }}/search?s=罗大佑&t=10">http://{{ host }}/{{ version }}/search?s=罗大佑&t=10</a></li>
-							<li><a target="_blank" href="/{{ version }}/search?s=罗大佑&t=100">http://{{ host }}/{{ version }}/search?s=罗大佑&t=100</a></li>
-							<li><a target="_blank" href="/{{ version }}/search?s=罗大佑&t=1000">http://{{ host }}/{{ version }}/search?s=罗大佑&t=1000</a></li>
-							<li><a target="_blank" href="/{{ version }}/search?s=罗大佑&t=1006">http://{{ host }}/{{ version }}/search?s=罗大佑&t=1006</a></li>
+							<li><a target="_blank" href="/{{ version }}/search?s=陈奕迅&t=1"><i>http://{{ host }}/{{ version }}/search?s=陈奕迅&t=1</i></a></li>
+							<li><a target="_blank" href="/{{ version }}/search?s=陈奕迅&t=10"><i>http://{{ host }}/{{ version }}/search?s=陈奕迅&t=10</i></a></li>
+							<li><a target="_blank" href="/{{ version }}/search?s=陈奕迅&t=100"><i>http://{{ host }}/{{ version }}/search?s=陈奕迅&t=100</i></a></li>
+							<li><a target="_blank" href="/{{ version }}/search?s=陈奕迅&t=1000"><i>http://{{ host }}/{{ version }}/search?s=陈奕迅&t=1000</i></a></li>
+							<li><a target="_blank" href="/{{ version }}/search?s=陈奕迅&t=1006"><i>http://{{ host }}/{{ version }}/search?s=陈奕迅&t=1006</i></a></li>
+							<li><a target="_blank" href="/{{ version }}/search?s=zhao&t=0"><i>http://{{ host }}/{{ version }}/search?s=zhao&t=0</i></a></li>
 						</ul>
 						<br><br>
 					</section>
 					<section id="songs" class="anchor">
 						<h1 class="page-header">/songs/[ids]</h1>
-						<p>Return a specified song.</p>
-						<h4 class="child-header">Description</h4>
-						<table class="table table-hover">
-							<tbody>
-								<tr>
-									<td width="400">Request</td>
-									<td><b>GET</b> http://{{ host }}/{{ version }}/song/&lt;ids&gt;</td>
-								</tr>
-								<tr>
-									<td>Response</td>
-									<td>JSON</td>
-								</tr>
-								<tr>
-									<td>Authentication</td>
-									<td>No</td>
-								</tr>
-							</tbody>
-						</table>
-						<h4 class="child-header">Params</h4>
-						<table class="table table-hover">
-							<tbody>
-								<tr>
-									<td width="400">ids</td>
-									<td>Song id list, split with comma.</td>
-								</tr>
-							</tbody>
-						</table>
+						<h4>Definition</h4>
+						<p><b>GET</b> http://{{ host }}/{{ version }}/songs/&lt;ids&gt;</p>
+						<p><i>Return a specified song. (ids split with comma)</i></p>
 						<h4 class="child-header">Examples</h4>
 						<ul>
-							<li><a target="_blank" href="/{{ version }}/songs/29713754,28793502">http://{{ host }}/{{ version }}/songs/29713754,28793502</a></li>
+							<li><a target="_blank" href="/{{ version }}/songs/29713754,28793502"><i>http://{{ host }}/{{ version }}/songs/29713754,28793502</i></a></li>
 						</ul>
 						<br><br>
 					</section>
 					<section id="albums" class="anchor">
 						<h1 class="page-header">/albums/&lt;id&gt;</h1>
-						<p>Return a specified album.</p>
-						<h4 class="child-header">Description</h4>
-						<table class="table table-hover">
-							<tbody>
-								<tr>
-									<td width="400">Request</td>
-									<td><b>GET</b> http://{{ host }}/{{ version }}/album/&lt;id&gt;</td>
-								</tr>
-								<tr>
-									<td>Response</td>
-									<td>JSON</td>
-								</tr>
-								<tr>
-									<td>Authentication</td>
-									<td>No</td>
-								</tr>
-							</tbody>
-						</table>
+						<h4>Definition</h4>
+						<p><b>GET</b> http://{{ host }}/{{ version }}/albums/&lt;id&gt;</p>
+						<p><i>Return a specified album.</i></p>
 						<h4 class="child-header">Examples</h4>
 						<ul>
-							<li><a target="_blank" href="/{{ version }}/album/10818">http://{{ host }}/{{ version }}/album/10818</a></li>
+							<li><a target="_blank" href="/{{ version }}/albums/10818"><i>http://{{ host }}/{{ version }}/albums/10818</i></a></li>
 						</ul>
 						<br><br>
 					</section>
 					<section id="artists" class="anchor">
 						<h1 class="page-header">/artists/&lt;id&gt;</h1>
-						<p>Return a specified artist.</p>
-						<h4 class="child-header">Description</h4>
-						<table class="table table-hover">
-							<tbody>
-								<tr>
-									<td width="400">Request</td>
-									<td><b>GET</b> http://{{ host }}/{{ version }}/artist/&lt;id&gt;</td>
-								</tr>
-								<tr>
-									<td>Response</td>
-									<td>JSON</td>
-								</tr>
-								<tr>
-									<td>Authentication</td>
-									<td>No</td>
-								</tr>
-							</tbody>
-						</table>
+						<h4>Definition</h4>
+						<p><b>GET</b> http://{{ host }}/{{ version }}/artists/&lt;id&gt;</p>
+						<p><i>Return a specified artist.</i></p>
 						<h4 class="child-header">Examples</h4>
 						<ul>
-							<li><a target="_blank" href="/{{ version }}/artist/3686">http://{{ host }}/{{ version }}/artist/3686</a></li>
+							<li><a target="_blank" href="/{{ version }}/artists/3686"><i>http://{{ host }}/{{ version }}/artists/3686</i></a></li>
 						</ul>
 						<br><br>
 					</section>
 					<section id="playlists" class="anchor">
 						<h1 class="page-header">/playlists/&lt;id&gt;</h1>
-						<p>Return a specified playlist.</p>
-						<h4 class="child-header">Description</h4>
-						<table class="table table-hover">
-							<tbody>
-								<tr>
-									<td width="400">Request</td>
-									<td><b>GET</b> http://{{ host }}/{{ version }}/playlist/&lt;id&gt;</td>
-								</tr>
-								<tr>
-									<td>Response</td>
-									<td>JSON</td>
-								</tr>
-								<tr>
-									<td>Authentication</td>
-									<td>No</td>
-								</tr>
-							</tbody>
-						</table>
+						<h4>Definition</h4>
+						<p><b>GET</b> http://{{ host }}/{{ version }}/playlists/&lt;id&gt;</p>
+						<p><i>Return a specified playlist.</i></p>
 						<h4 class="child-header">Examples</h4>
 						<ul>
-							<li><a target="_blank" href="/{{ version }}/playlist/2294307">http://{{ host }}/{{ version }}/playlist/2294307</a></li>
+							<li><a target="_blank" href="/{{ version }}/playlists/2294307"><i>http://{{ host }}/{{ version }}/playlists/2294307</i></a></li>
 						</ul>
 						<br><br>
 					</section>
 					<section id="lyrics" class="anchor">
 						<h1 class="page-header">/lyrics/&lt;id&gt;</h1>
-						<p>Return a specified lyric.</p>
-						<h4 class="child-header">Description</h4>
-						<table class="table table-hover">
-							<tbody>
-								<tr>
-									<td width="400">Request</td>
-									<td><b>GET</b> http://{{ host }}/{{ version }}/lyric/&lt;id&gt;</td>
-								</tr>
-								<tr>
-									<td>Response</td>
-									<td>JSON</td>
-								</tr>
-								<tr>
-									<td>Authentication</td>
-									<td>No</td>
-								</tr>
-							</tbody>
-						</table>
+						<h4>Definition</h4>
+						<p><b>GET</b> http://{{ host }}/{{ version }}/lyrics/&lt;id&gt;</p>
+						<p><i>Return a specified lyric.</i></p>
 						<h4 class="child-header">Examples</h4>
 						<ul>
-							<li><a target="_blank" href="/{{ version }}/lyric/108933">http://{{ host }}/{{ version }}/lyric/108933</a></li>
+							<li><a target="_blank" href="/{{ version }}/lyrics/108933"><i>http://{{ host }}/{{ version }}/lyrics/108933</i></a></li>
 						</ul>
 						<br><br>
 					</section>
 					<section id="toplists" class="anchor">
 						<h1 class="page-header">/toplists/&lt;id&gt;</h1>
-						<p>Return a specified toplist.</p>
-						<h4 class="child-header">Description</h4>
-						<table class="table table-hover">
-							<tbody>
-								<tr>
-									<td width="400">Request</td>
-									<td><b>GET</b> http://{{ host }}/{{ version }}/toplist/&lt;id&gt;</td>
-								</tr>
-								<tr>
-									<td>Response</td>
-									<td>JSON</td>
-								</tr>
-								<tr>
-									<td>Authentication</td>
-									<td>No</td>
-								</tr>
-							</tbody>
-						</table>
+						<h4>Definition</h4>
+						<p><b>GET</b> http://{{ host }}/{{ version }}/toplists/&lt;id&gt;</p>
+						<p><i>Return a specified toplist.</i></p>
 						<h4 class="child-header">Examples</h4>
 						<ul>
-							<li><a target="_blank" href="/{{ version }}/toplist/3778678">http://{{ host }}/{{ version }}/toplist/3778678</a></li>
+							<li><a target="_blank" href="/{{ version }}/toplists/3778678"><i>http://{{ host }}/{{ version }}/toplists/3778678</i></a></li>
 						</ul>
 						<br><br>
 					</section>
 					<section id="explore-playlists" class="anchor">
 						<h1 class="page-header">/explore/playlists/&lt;cat&gt;</h1>
-						<p>Explore playlist by category.</p>
-						<h4 class="child-header">Description</h4>
-						<table class="table table-hover">
+						<h4>Definition</h4>
+						<p><b>GET</b> http://{{ host }}/{{ version }}/explore/playlists/&lt;cat&gt;</p>
+						<p><i>Explore playlist by category.</i></p>
+						<h4 class="child-header">Arguments</h4>
+						<table class="table table-condensed">
 							<tbody>
 								<tr>
-									<td width="400">Request</td>
-									<td><b>GET</b> http://{{ host }}/{{ version }}/explore/playlist/cat/&lt;cat&gt;</td>
-								</tr>
-								<tr>
-									<td>Response</td>
-									<td>JSON</td>
-								</tr>
-								<tr>
-									<td>Authentication</td>
-									<td>No</td>
-								</tr>
-							</tbody>
-						</table>
-						<h4 class="child-header">Params</h4>
-						<table class="table table-hover">
-							<tbody>
-								<tr>
-									<td width="400">cat</td>
+									<td width="200">cat</td>
 									<td>
 										<table>
 											<tr valign="top">
@@ -365,49 +228,42 @@
 						</table>
 						<h4 class="child-header">Examples</h4>
 						<ul>
-							<li><a target="_blank" href="/{{ version }}/explore/playlist/cat/民谣">http://{{ host }}/{{ version }}/explore/playlist/cat/民谣</a></li>
-							<li><a target="_blank" href="/{{ version }}/explore/playlist/cat/思念">http://{{ host }}/{{ version }}/explore/playlist/cat/思念</a></li>
+							<li><a target="_blank" href="/{{ version }}/explore/playlists/民谣"><i>http://{{ host }}/{{ version }}/explore/playlists/民谣</i></a></li>
+							<li><a target="_blank" href="/{{ version }}/explore/playlists/思念"><i>http://{{ host }}/{{ version }}/explore/playlists/思念</i></a></li>
 						</ul>
 						<br><br>
 					</section>
 					<section id="people" class="anchor">
 						<h1 class="page-header">/people</h1>
-						<p>Return a specified people.</p>
-						<h4 class="child-header">Description</h4>
-						<table class="table table-hover">
+						<h4>Definition</h4>
+						<p><b>POST</b> http://{{ host }}/{{ version }}/people</p>
+						<p><i>New people sign up which will send an email notification.</i></p>
+						<h4 class="child-header">Arguments</h4>
+						<table class="table table-condensed">
 							<tbody>
 								<tr>
-									<td width="400">Request</td>
-									<td><b>GET</b> http://{{ host }}/{{ version }}/people</td>
-								</tr>
-								<tr>
-									<td>Response</td>
-									<td>JSON</td>
-								</tr>
-								<tr>
-									<td>Authentication</td>
-									<td>No</td>
-								</tr>
-							</tbody>
-						</table>
-						<h4 class="child-header">Params</h4>
-						<table class="table table-hover">
-							<tbody>
-								<tr>
-									<td width="400">id</td>
+									<td width="200">id</td>
 									<td>People id</td>
 								</tr>
 								<tr>
+									<td>name</td>
+									<td>People name.</td>
+								</tr>
+								<tr>
 									<td>email</td>
-									<td>Email</td>
+									<td>People email</td>
+								</tr>
+								<tr>
+									<td>password</td>
+									<td>People password</td>
 								</tr>
 							</tbody>
 						</table>
 						<h4 class="child-header">Return</h4>
-						<table class="table table-hover">
+						<table class="table table-condensed">
 							<tbody>
 								<tr>
-									<td width="400">ret</td>
+									<td width="200">ret</td>
 									<td>
 										<table>
 											<tr>
@@ -423,44 +279,66 @@
 										</table>
 									</td>
 								</tr>
-								<tr>
-									<td>people</td>
-									<td>Public people object in json format</td>
-								</tr>
 							</tbody>
 						</table>
 						<h4 class="child-header">Examples</h4>
 						<ul>
-							<li><a target="_blank" href="/{{ version }}/people?id=wuzang">http://{{ host }}/{{ version }}/people?id=wuzang</a></li>
-							<li><a target="_blank" href="/{{ version }}/people?email=bkmons@qq.com">http://{{ host }}/{{ version }}/people?email=bkmons@qq.com</a></li>
+							<li><i>curl http://api.sitfish.com/v1/people -d "id=wuzang" -d "name=武藏" -d "email=bkmons@qq.com" -d "password=sss"</i></li>
 						</ul>
 						<br><br>
 					</section>
-					<section id="people_id" class="anchor">
-						<h1 class="page-header">/people/&lt;id&gt;</h1>
-						<p>Return a specified people.</p>
-						<h4 class="child-header">Description</h4>
-						<table class="table table-hover">
+					<section id="people-activation" class="anchor">
+						<h1 class="page-header">/people/&lt;id&gt;/activation</h1>
+						<h4>Definition</h4>
+						<p><b>GET</b> http://{{ host }}/{{ version }}/people/&lt;id&gt;/activation</p>
+						<p><i>Account activation for new user.</i></p>
+						<h4 class="child-header">Arguments</h4>
+						<table class="table table-condensed">
 							<tbody>
 								<tr>
-									<td width="400">Request</td>
-									<td><b>GET</b> http://{{ host }}/{{ version }}/people/&lt;id&gt;</td>
-								</tr>
-								<tr>
-									<td>Response</td>
-									<td>JSON</td>
-								</tr>
-								<tr>
-									<td>Authentication</td>
-									<td>No</td>
+									<td width="200">code</td>
+									<td>Activation code.</td>
 								</tr>
 							</tbody>
 						</table>
 						<h4 class="child-header">Return</h4>
-						<table class="table table-hover">
+						<table class="table table-condensed">
 							<tbody>
 								<tr>
-									<td width="400">ret</td>
+									<td width="200">ret</td>
+									<td>
+										<table>
+											<tr>
+												<td>0</td>
+												<td width="15"></td>
+												<td>fail</td>
+											</tr>
+											<tr>
+												<td>1</td>
+												<td></td>
+												<td>success</td>
+											</tr>
+										</table>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<h4 class="child-header">Examples</h4>
+						<ul>
+							<li><a target="_blank" href="/{{ version }}/people/wuzang/activation?code=bal2w58ki6uojz19puxmxbwnzgq37s40"><i>http://{{ host }}/{{ version }}/people/wuzang/activation?code=bal2w58ki6uojz19puxmxbwnzgq37s40</i></a></li>
+						</ul>
+						<br><br>
+					</section>
+					<section id="people-id" class="anchor">
+						<h1 class="page-header">/people/&lt;id&gt;</h1>
+						<h4>Definition</h4>
+						<p><b>GET</b> http://{{ host }}/{{ version }}/people/&lt;id&gt;</p>
+						<p><i>Return a specified people.</i></p>
+						<h4 class="child-header">Return</h4>
+						<table class="table table-condensed">
+							<tbody>
+								<tr>
+									<td width="200">ret</td>
 									<td>
 										<table>
 											<tr>
@@ -484,35 +362,20 @@
 						</table>
 						<h4 class="child-header">Examples</h4>
 						<ul>
-							<li><a target="_blank" href="/{{ version }}/people/wuzang">http://{{ host }}/{{ version }}/people/wuzang</a></li>
+							<li><a target="_blank" href="/{{ version }}/people/wuzang"><i>http://{{ host }}/{{ version }}/people/wuzang</i></a></li>
 						</ul>
 						<br><br>
 					</section>
 					<section id="player-playlist-add" class="anchor">
 						<h1 class="page-header">/player/playlist/add</h1>
-						<p>Add songs to the people player's playlist.</p>
-						<h4 class="child-header">Description</h4>
-						<table class="table table-hover">
+						<h4>Definition</h4>
+						<p><b>POST</b> http://{{ host }}/{{ version }}/player/playlist/add</p>
+						<p><i>Add songs to the people player's playlist.</i></p>
+						<h4 class="child-header">Arguments</h4>
+						<table class="table table-condensed">
 							<tbody>
 								<tr>
-									<td width="400">Request</td>
-									<td><b>POST</b> http://{{ host }}/{{ version }}/player/playlist/add</td>
-								</tr>
-								<tr>
-									<td>Response</td>
-									<td>JSON</td>
-								</tr>
-								<tr>
-									<td>Authentication</td>
-									<td>Yes</td>
-								</tr>
-							</tbody>
-						</table>
-						<h4 class="child-header">Params</h4>
-						<table class="table table-hover">
-							<tbody>
-								<tr>
-									<td width="400">pid</td>
+									<td width="200">pid</td>
 									<td>People id</td>
 								</tr>
 								<tr>
@@ -526,10 +389,10 @@
 							</tbody>
 						</table>
 						<h4 class="child-header">Return</h4>
-						<table class="table table-hover">
+						<table class="table table-condensed">
 							<tbody>
 								<tr>
-									<td width="400">ret</td>
+									<td width="200">ret</td>
 									<td>
 										<table>
 											<tr>
@@ -555,29 +418,14 @@
 					</section>
 					<section id="player-playlist-replace" class="anchor">
 						<h1 class="page-header">/player/playlist/replace</h1>
-						<p>Replace the current people player's playlist.</p>
-						<h4 class="child-header">Description</h4>
-						<table class="table table-hover">
+						<h4>Definition</h4>
+						<p><b>POST</b> http://{{ host }}/{{ version }}/player/playlist/replace</p>
+						<p><i>Replace the current people player's playlist.</i></p>
+						<h4 class="child-header">Arguments</h4>
+						<table class="table table-condensed">
 							<tbody>
 								<tr>
-									<td width="400">Request</td>
-									<td><b>POST</b> http://{{ host }}/{{ version }}/player/playlist/replace</td>
-								</tr>
-								<tr>
-									<td>Response</td>
-									<td>JSON</td>
-								</tr>
-								<tr>
-									<td>Authentication</td>
-									<td>Yes</td>
-								</tr>
-							</tbody>
-						</table>
-						<h4 class="child-header">Params</h4>
-						<table class="table table-hover">
-							<tbody>
-								<tr>
-									<td width="400">pid</td>
+									<td width="200">pid</td>
 									<td>People id</td>
 								</tr>
 								<tr>
@@ -591,10 +439,10 @@
 							</tbody>
 						</table>
 						<h4 class="child-header">Return</h4>
-						<table class="table table-hover">
+						<table class="table table-condensed">
 							<tbody>
 								<tr>
-									<td width="400">ret</td>
+									<td width="200">ret</td>
 									<td>
 										<table>
 											<tr>
@@ -620,29 +468,14 @@
 					</section>
 					<section id="player-playlist-delete" class="anchor">
 						<h1 class="page-header">/player/playlist/delete</h1>
-						<p>Delete from the people player's playlist based on song id list.</p>
-						<h4 class="child-header">Description</h4>
-						<table class="table table-hover">
+						<h4>Definition</h4>
+						<p><b>POST</b> http://{{ host }}/{{ version }}/player/playlist/delete</p>
+						<p><i>Delete from the people player's playlist based on song id list.</i></p>
+						<h4 class="child-header">Arguments</h4>
+						<table class="table table-condensed">
 							<tbody>
 								<tr>
-									<td width="400">Request</td>
-									<td><b>POST</b> http://{{ host }}/{{ version }}/player/playlist/delete</td>
-								</tr>
-								<tr>
-									<td>Response</td>
-									<td>JSON</td>
-								</tr>
-								<tr>
-									<td>Authentication</td>
-									<td>Yes</td>
-								</tr>
-							</tbody>
-						</table>
-						<h4 class="child-header">Params</h4>
-						<table class="table table-hover">
-							<tbody>
-								<tr>
-									<td width="400">pid</td>
+									<td width="200">pid</td>
 									<td>People id</td>
 								</tr>
 								<tr>
@@ -656,10 +489,10 @@
 							</tbody>
 						</table>
 						<h4 class="child-header">Return</h4>
-						<table class="table table-hover">
+						<table class="table table-condensed">
 							<tbody>
 								<tr>
-									<td width="400">ret</td>
+									<td width="200">ret</td>
 									<td>
 										<table>
 											<tr>
@@ -685,29 +518,14 @@
 					</section>
 					<section id="player-playlist-clear" class="anchor">
 						<h1 class="page-header">/player/playlist/clear</h1>
-						<p>Clear the people player's playlist.</p>
-						<h4 class="child-header">Description</h4>
-						<table class="table table-hover">
+						<h4>Definition</h4>
+						<p><b>POST</b> http://{{ host }}/{{ version }}/player/playlist/clear</p>
+						<p><i>Clear the people player's playlist.</i></p>
+						<h4 class="child-header">Arguments</h4>
+						<table class="table table-condensed">
 							<tbody>
 								<tr>
-									<td width="400">Request</td>
-									<td><b>POST</b> http://{{ host }}/{{ version }}/player/playlist/clear</td>
-								</tr>
-								<tr>
-									<td>Response</td>
-									<td>JSON</td>
-								</tr>
-								<tr>
-									<td>Authentication</td>
-									<td>Yes</td>
-								</tr>
-							</tbody>
-						</table>
-						<h4 class="child-header">Params</h4>
-						<table class="table table-hover">
-							<tbody>
-								<tr>
-									<td width="400">pid</td>
+									<td width="200">pid</td>
 									<td>People id</td>
 								</tr>
 								<tr>
@@ -717,10 +535,10 @@
 							</tbody>
 						</table>
 						<h4 class="child-header">Return</h4>
-						<table class="table table-hover">
+						<table class="table table-condensed">
 							<tbody>
 								<tr>
-									<td width="400">ret</td>
+									<td width="200">ret</td>
 									<td>
 										<table>
 											<tr>
@@ -746,29 +564,14 @@
 					</section>
 					<section id="player-play" class="anchor">
 						<h1 class="page-header">/player/play</h1>
-						<p>Play the current song.</p>
-						<h4 class="child-header">Description</h4>
-						<table class="table table-hover">
+						<h4>Definition</h4>
+						<p><b>POST</b> http://{{ host }}/{{ version }}/player/play</p>
+						<p><i>Play the current song.</i></p>
+						<h4 class="child-header">Arguments</h4>
+						<table class="table table-condensed">
 							<tbody>
 								<tr>
-									<td width="400">Request</td>
-									<td><b>POST</b> http://{{ host }}/{{ version }}/player/play</td>
-								</tr>
-								<tr>
-									<td>Response</td>
-									<td>JSON</td>
-								</tr>
-								<tr>
-									<td>Authentication</td>
-									<td>Yes</td>
-								</tr>
-							</tbody>
-						</table>
-						<h4 class="child-header">Params</h4>
-						<table class="table table-hover">
-							<tbody>
-								<tr>
-									<td width="400">pid</td>
+									<td width="200">pid</td>
 									<td>People id</td>
 								</tr>
 								<tr>
@@ -778,10 +581,10 @@
 							</tbody>
 						</table>
 						<h4 class="child-header">Return</h4>
-						<table class="table table-hover">
+						<table class="table table-condensed">
 							<tbody>
 								<tr>
-									<td width="400">ret</td>
+									<td width="200">ret</td>
 									<td>
 										<table>
 											<tr>
@@ -807,29 +610,14 @@
 					</section>
 					<section id="player-pause" class="anchor">
 						<h1 class="page-header">/player/pause</h1>
-						<p>Pause the current song.</p>
-						<h4 class="child-header">Description</h4>
-						<table class="table table-hover">
+						<h4>Definition</h4>
+						<p><b>POST</b> http://{{ host }}/{{ version }}/player/pause</p>
+						<p><i>Pause the current song.</i></p>
+						<h4 class="child-header">Arguments</h4>
+						<table class="table table-condensed">
 							<tbody>
 								<tr>
-									<td width="400">Request</td>
-									<td><b>POST</b> http://{{ host }}/{{ version }}/player/pause</td>
-								</tr>
-								<tr>
-									<td>Response</td>
-									<td>JSON</td>
-								</tr>
-								<tr>
-									<td>Authentication</td>
-									<td>Yes</td>
-								</tr>
-							</tbody>
-						</table>
-						<h4 class="child-header">Params</h4>
-						<table class="table table-hover">
-							<tbody>
-								<tr>
-									<td width="400">pid</td>
+									<td width="200">pid</td>
 									<td>People id</td>
 								</tr>
 								<tr>
@@ -839,10 +627,10 @@
 							</tbody>
 						</table>
 						<h4 class="child-header">Return</h4>
-						<table class="table table-hover">
+						<table class="table table-condensed">
 							<tbody>
 								<tr>
-									<td width="400">ret</td>
+									<td width="200">ret</td>
 									<td>
 										<table>
 											<tr>
@@ -868,29 +656,14 @@
 					</section>
 					<section id="player-skip" class="anchor">
 						<h1 class="page-header">/player/skip</h1>
-						<p>Skip to another song.</p>
-						<h4 class="child-header">Description</h4>
-						<table class="table table-hover">
+						<h4>Definition</h4>
+						<p><b>POST</b> http://{{ host }}/{{ version }}/player/skip</p>
+						<p><i>Skip to another song.</i></p>
+						<h4 class="child-header">Arguments</h4>
+						<table class="table table-condensed">
 							<tbody>
 								<tr>
-									<td width="400">Request</td>
-									<td><b>POST</b> http://{{ host }}/{{ version }}/player/skip</td>
-								</tr>
-								<tr>
-									<td>Response</td>
-									<td>JSON</td>
-								</tr>
-								<tr>
-									<td>Authentication</td>
-									<td>Yes</td>
-								</tr>
-							</tbody>
-						</table>
-						<h4 class="child-header">Params</h4>
-						<table class="table table-hover">
-							<tbody>
-								<tr>
-									<td width="400">pid</td>
+									<td width="200">pid</td>
 									<td>People id</td>
 								</tr>
 								<tr>
@@ -898,7 +671,7 @@
 									<td>People access token</td>
 								</tr>
 								<tr>
-									<td width="400">song</td>
+									<td width="200">song</td>
 									<td>
 										<table>
 											<tr>
@@ -942,10 +715,10 @@
 							</tbody>
 						</table>
 						<h4 class="child-header">Return</h4>
-						<table class="table table-hover">
+						<table class="table table-condensed">
 							<tbody>
 								<tr>
-									<td width="400">ret</td>
+									<td width="200">ret</td>
 									<td>
 										<table>
 											<tr>
@@ -969,170 +742,33 @@
 						</table>
 						<br><br>
 					</section>
-					<section id="sign-up" class="anchor">
-						<h1 class="page-header">/sign-up</h1>
-						<p>New people sign up.</p>
-						<h4 class="child-header">Description</h4>
-						<table class="table table-hover">
+					<section id="oauth2-tokens" class="anchor">
+						<h1 class="page-header">/oauth2/tokens</h1>
+						<h4>Definition</h4>
+						<p><b>POST</b> http://{{ host }}/{{ version }}//oauth2/tokens</p>
+						<p><i>Request an access token for the user.</i></p>
+						<h4 class="child-header">Arguments</h4>
+						<table class="table table-condensed">
 							<tbody>
 								<tr>
-									<td width="400">Request</td>
-									<td><b>POST</b> http://{{ host }}/{{ version }}/sign-up</td>
+									<td width="200">grant_type</td>
+									<td>A fixed value "password".</td>
 								</tr>
 								<tr>
-									<td>Response</td>
-									<td>JSON</td>
-								</tr>
-								<tr>
-									<td>Authentication</td>
-									<td>No</td>
-								</tr>
-							</tbody>
-						</table>
-						<h4 class="child-header">Params</h4>
-						<table class="table table-hover">
-							<tbody>
-								<tr>
-									<td width="400">pid</td>
-									<td>People id</td>
-								</tr>
-								<tr>
-									<td>name</td>
-									<td>People name.</td>
-								</tr>
-								<tr>
-									<td>email</td>
-									<td>People email</td>
+									<td>username</td>
+									<td>The username.</td>
 								</tr>
 								<tr>
 									<td>password</td>
-									<td>People password</td>
+									<td>The password.</td>
 								</tr>
 							</tbody>
 						</table>
 						<h4 class="child-header">Return</h4>
-						<table class="table table-hover">
+						<table class="table table-condensed">
 							<tbody>
 								<tr>
-									<td width="400">ret</td>
-									<td>
-										<table>
-											<tr>
-												<td>0</td>
-												<td width="15"></td>
-												<td>fail</td>
-											</tr>
-											<tr>
-												<td>1</td>
-												<td></td>
-												<td>success</td>
-											</tr>
-										</table>
-									</td>
-								</tr>
-							</tbody>
-						</table>
-						<br><br>
-					</section>
-					<section id="activate" class="anchor">
-						<h1 class="page-header">/activate</h1>
-						<p>People activate</p>
-						<h4 class="child-header">Description</h4>
-						<table class="table table-hover">
-							<tbody>
-								<tr>
-									<td width="400">Request</td>
-									<td><b>GET</b> http://{{ host }}/{{ version }}/activate/{pid}</td>
-								</tr>
-								<tr>
-									<td>Response</td>
-									<td>JSON</td>
-								</tr>
-								<tr>
-									<td>Authentication</td>
-									<td>No</td>
-								</tr>
-							</tbody>
-						</table>
-						<h4 class="child-header">Params</h4>
-						<table class="table table-hover">
-							<tbody>
-								<tr>
-									<td width="400">pid</td>
-									<td>People id</td>
-								</tr>
-								<tr>
-									<td>code</td>
-									<td>Activation code</td>
-								</tr>
-							</tbody>
-						</table>
-						<h4 class="child-header">Return</h4>
-						<table class="table table-hover">
-							<tbody>
-								<tr>
-									<td width="400">ret</td>
-									<td>
-										<table>
-											<tr>
-												<td>0</td>
-												<td width="15"></td>
-												<td>fail</td>
-											</tr>
-											<tr>
-												<td>1</td>
-												<td></td>
-												<td>success</td>
-											</tr>
-										</table>
-									</td>
-								</tr>
-							</tbody>
-						</table>
-						<h4 class="child-header">Examples</h4>
-						<ul>
-							<li><a target="_blank" href="/{{ version }}/activate/wuzang?code=8WGHHI1IMQA6AMH0CZMG994YA1JPC3TP">http://{{ host }}/{{ version }}/activate/wuzang?code=8WGHHI1IMQA6AMH0CZMG994YA1JPC3TP</a></li>
-						</ul>
-						<br><br>
-					</section>
-					<section id="sign-in" class="anchor">
-						<h1 class="page-header">/sign-in</h1>
-						<p>People sign in.</p>
-						<h4 class="child-header">Description</h4>
-						<table class="table table-hover">
-							<tbody>
-								<tr>
-									<td width="400">Request</td>
-									<td><b>POST</b> http://{{ host }}/{{ version }}/sign-in</td>
-								</tr>
-								<tr>
-									<td>Response</td>
-									<td>JSON</td>
-								</tr>
-								<tr>
-									<td>Authentication</td>
-									<td>No</td>
-								</tr>
-							</tbody>
-						</table>
-						<h4 class="child-header">Params</h4>
-						<table class="table table-hover">
-							<tbody>
-								<tr>
-									<td width="400">email</td>
-									<td>People email</td>
-								</tr>
-								<tr>
-									<td>password</td>
-									<td>People password</td>
-								</tr>
-							</tbody>
-						</table>
-						<h4 class="child-header">Return</h4>
-						<table class="table table-hover">
-							<tbody>
-								<tr>
-									<td width="400">ret</td>
+									<td width="200">ret</td>
 									<td>
 										<table>
 											<tr>
@@ -1154,72 +790,23 @@
 									</td>
 								</tr>
 								<tr>
-									<td>people</td>
-									<td>Private people object in json format</td>
-								</tr>
-							</tbody>
-						</table>
-						<br><br>
-					</section>
-					<section id="validate" class="anchor">
-						<h1 class="page-header">/validate</h1>
-						<p>People validation</p>
-						<h4 class="child-header">Description</h4>
-						<table class="table table-hover">
-							<tbody>
-								<tr>
-									<td width="400">Request</td>
-									<td><b>POST</b> http://{{ host }}/{{ version }}/validate</td>
-								</tr>
-								<tr>
-									<td>Response</td>
-									<td>JSON</td>
-								</tr>
-								<tr>
-									<td>Authentication</td>
-									<td>No</td>
-								</tr>
-							</tbody>
-						</table>
-						<h4 class="child-header">Params</h4>
-						<table class="table table-hover">
-							<tbody>
-								<tr>
-									<td width="400">pid</td>
-									<td>People id</td>
-								</tr>
-								<tr>
 									<td>access_token</td>
-									<td>People access token</td>
+									<td>The access token for this user.</td>
+								</tr>
+								<tr>
+									<td>token_type</td>
+									<td>Default is "bearer".</td>
+								</tr>
+								<tr>
+									<td>expire_in</td>
+									<td>Default is 7 days.</td>
 								</tr>
 							</tbody>
 						</table>
-						<h4 class="child-header">Return</h4>
-						<table class="table table-hover">
-							<tbody>
-								<tr>
-									<td width="400">ret</td>
-									<td>
-										<table>
-											<tr>
-												<td>0</td>
-												<td width="15"></td>
-												<td>fail</td>
-											</tr>
-											<tr>
-												<td>1</td>
-												<td></td>
-												<td>success</td>
-											</tr>
-										</table>
-									</td>
-								</tr>
-								<tr>
-									<td>people</td>
-									<td>Private people object in json format</td>
-								</tr>
-							</tbody>
-						</table>
+						<h4 class="child-header">Examples</h4>
+						<ul>
+							<li><i>curl http://api.sitfish.com/v1/oauth2/tokens -d "grant_type=password" -d "username=wuzang" -d "password=sss"</i></li>
+						</ul>
 						<br><br>
 					</section>
 				</div>

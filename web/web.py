@@ -42,7 +42,7 @@ def search():
 		'limit': parse_int(request.args.get('limit', default=''), default=30),
 		'ad': get_ad()
 	}
-	url = 'http://%s/v1/search?s=%s&t=%s&offset=%d&limit=%d' % (config['SERVER']['HOST'], params['s'], params['t'], params['offset'], params['limit'])
+	url = 'http://{}/v1/search?s={}&t={}&offset={0:d}&limit={0:d}'.format(config['SERVER']['HOST'], params['s'], params['t'], params['offset'], params['limit'])
 	data = requests.get(url).json()
 	if params['t'] == '0':
 		count = data['count'] if 'count' in data else 0
@@ -70,16 +70,16 @@ def search():
 
 @app.route('/people/<id>', methods=['GET'])
 def people(id=''):
-	url = 'http://%s/v1/people/%s' % (config['SERVER']['HOST'], id)
+	url = 'http://{}/v1/people/{}'.format(config['SERVER']['HOST'], id)
 	people = requests.get(url).json()['people']
 	return pjax('people.html', people=people, ad=get_ad())
 
 
 @app.route('/song/<id>', methods=['GET'])
 def song(id=''):
-	url = 'http://%s/v1/song/%s' % (config['SERVER']['HOST'], id)
+	url = 'http://{}/v1/song/{}'.format(config['SERVER']['HOST'], id)
 	song = requests.get(url).json()['songs'][0]
-	url = 'http://%s/v1/lyric/%s' % (config['SERVER']['HOST'], id)
+	url = 'http://{}/v1/lyric/{}'.format(config['SERVER']['HOST'], id)
 	data = requests.get(url).json()
 	lyric = []
 	if 'lrc' in data and 'lyric' in data['lrc']:
@@ -89,7 +89,7 @@ def song(id=''):
 
 @app.route('/album/<id>', methods=['GET'])
 def album(id=''):
-	url = 'http://%s/v1/album/%s' % (config['SERVER']['HOST'], id)
+	url = 'http://{}/v1/album/{}'.format(config['SERVER']['HOST'], id)
 	data = requests.get(url).json()
 	songs = data['album']['songs'] if 'album' in data and 'songs' in data['album'] else []
 	return pjax('album.html', data=data, songs=songs, ad=get_ad())
@@ -97,14 +97,14 @@ def album(id=''):
 
 @app.route('/artist/<id>', methods=['GET'])
 def artist(id=''):
-	url = 'http://%s/v1/artist/%s' % (config['SERVER']['HOST'], id)
+	url = 'http://{}/v1/artist/{}'.format(config['SERVER']['HOST'], id)
 	data = requests.get(url).json()
 	return pjax('artist.html', data=data, ad=get_ad())
 
 
 @app.route('/playlist/<id>', methods=['GET'])
 def playlist(id=''):
-	url = 'http://%s/v1/playlist/%s' % (config['SERVER']['HOST'], id)
+	url = 'http://{}/v1/playlist/{}'.format(config['SERVER']['HOST'], id)
 	data = requests.get(url).json()
 	songs = data['result']['tracks'] if 'result' in data and 'tracks' in data['result'] else []
 	return pjax('playlist.html', data=data, songs=songs, ad=get_ad())
@@ -114,7 +114,7 @@ def playlist(id=''):
 @app.route('/toplist/', methods=['GET'])
 @app.route('/toplist/<id>', methods=['GET'])
 def toplist(id='3779629'):
-	url = 'http://%s/v1/toplist/%s' % (config['SERVER']['HOST'], id)
+	url = 'http://{}/v1/toplist/{}'.format(config['SERVER']['HOST'], id)
 	data = requests.get(url).json()
 	songs = data['songs'] if 'songs' in data else []
 	return pjax('toplist.html', id=id, songs=songs)
@@ -129,7 +129,7 @@ def explore_playlist(cat='全部'):
 		'offset': parse_int(request.args.get('offset', default=''), default=0),
 		'limit': parse_int(request.args.get('limit', default=''), default=30)
 	}
-	url = 'http://%s/v1/explore/playlist/cat/%s?offset=%d&limit=%d' % (config['SERVER']['HOST'], params['cat'], params['offset'], params['limit'])
+	url = 'http://{}/v1/explore/playlist/cat/{}?offset={0:d}&limit={0:d}'.format(config['SERVER']['HOST'], params['cat'], params['offset'], params['limit'])
 	data = requests.get(url).json()
 	return pjax('explore_playlist.html', count=data['count'], playlists=data['playlists'], **params)
 
@@ -148,18 +148,18 @@ def sign_up():
 	if request.method == 'GET':
 		return render_template('sign_up.html', **base_params)
 	else:
-		url = 'http://%s/v1/sign-up' % config['SERVER']['HOST']
+		url = 'http://{}/v1/sign-up'.format(config['SERVER']['HOST'])
 		payload = {'pid': request.form['pid'], 'name': request.form['name'], 'email': request.form['email'], 'password': request.form['password']}
 		data = requests.post(url, data=payload).json()
 		if data['ret'] == 1:
-			return render_template('tips.html', tips='%s，恭喜，注册成功！我们已向%s发送了一封邮件，请尽快登录并激活当前账户。' % (payload['name'], payload['email']), **base_params)
+			return render_template('tips.html', tips='{}，恭喜，注册成功！我们已向{}发送了一封邮件，请尽快登录并激活当前账户。'.format(payload['name'], payload['email']), **base_params)
 		else:
-			return render_template('tips.html', tips='%s，抱歉，注册失败，请稍候再次尝试。' % payload['name'], **base_params)
+			return render_template('tips.html', tips='{}，抱歉，注册失败，请稍候再次尝试。'.format(payload['name']), **base_params)
 
 
 @app.route('/activate/<pid>', methods=['GET'])
 def activate(pid=''):
-	url = 'http://%s/v1/activate/%s?code=%s' % (config['SERVER']['HOST'], pid, request.args.get('code', default=''))
+	url = 'http://{}/v1/activate/{}?code={}'.format(config['SERVER']['HOST'], pid, request.args.get('code', default=''))
 	data = requests.get(url).json()
 	if data['ret'] == 1:
 		return render_template('tips.html', tips='激活成功！', **base_params)
@@ -172,7 +172,7 @@ def sign_in():
 	if request.method == 'GET':
 		return render_template('sign_in.html', ret=1, email='', password='', **base_params)
 	else:
-		url = 'http://%s/v1/sign-in' % config['SERVER']['HOST']
+		url = 'http://{}/v1/sign-in'.format(config['SERVER']['HOST'])
 		payload = {'email': request.form['email'], 'password': request.form['password']}
 		data = requests.post(url, data=payload).json()
 		if data['ret'] == 1:
@@ -192,11 +192,11 @@ def sign_out():
 @app.route('/api/<path:path>', methods=['GET', 'POST'])
 def api(path=''):
 	if request.method == 'GET':
-		url = 'http://%s/%s?%s' % (config['SERVER']['HOST'], path, '&'.join(['%s=%s' % (key, request.args[key]) for key in request.args]))
+		url = 'http://{}/{}?{}'.format(config['SERVER']['HOST'], path, '&'.join(['{}={}'.format(key, request.args[key]) for key in request.args]))
 		data = requests.get(url).json()
 		return jsonify(**data)
 	else:
-		url = 'http://%s/%s?%s' % (config['SERVER']['HOST'], path, '&'.join(['%s=%s' % (key, request.args[key]) for key in request.args]))
+		url = 'http://{}/{}?{}'.format(config['SERVER']['HOST'], path, '&'.join(['{}={}'.format(key, request.args[key]) for key in request.args]))
 		post_data = {}
 		post_data.update(request.form)
 		if 'pid' in session and 'access_token' in session:
@@ -218,7 +218,7 @@ def date_format_filter(value, format='%Y-%m-%d'):
 @app.template_filter('time_format_filter')
 def time_format_filter(value, format='%H:%M'):
 	seconds = int(value) // 1000
-	return '%02d:%02d' % (seconds // 60, seconds % 60)
+	return '{0:02d}:{0:02d}'.format(seconds // 60, seconds % 60)
 
 
 @app.template_filter('page_ceil_filter')
@@ -251,7 +251,7 @@ def pjax(template, **params):
 
 def validate():
 	if 'pid' in session and 'access_token' in session:
-		url = 'http://%s/v1/validate' % config['SERVER']['HOST']
+		url = 'http://{}/v1/validate'.format(config['SERVER']['HOST'])
 		payload = {'pid': session['pid'], 'access_token': session['access_token']}
 		return requests.post(url, data=payload).json()
 	return None
