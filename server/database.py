@@ -44,9 +44,9 @@ def encrypt(plaintext, password):
 def decrypt(ciphertext, password):
 	key = sha(password).encode('utf-8')[:32]
 	aes = pyaes.AESModeOfOperationCTR(key)
-	decoded = base64.b64decode(ciphertext.encode('utf-8'))
-	plaintext = aes.decrypt(decoded)
 	try:
+		decoded = base64.b64decode(ciphertext.encode('utf-8'))
+		plaintext = aes.decrypt(decoded)
 		plaintext = plaintext.decode('utf-8')
 	except:
 		plaintext = ''
@@ -179,7 +179,6 @@ class People(Document):
 			'id': self.id,
 			'name': self.name,
 			'email': self.email,
-			'password': self.password,
 			'activation': self.activation.json(),
 			'friend': {
 				'id': self.friend.id if self.friend else '',

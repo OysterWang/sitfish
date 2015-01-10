@@ -13,6 +13,7 @@ from flask import Flask
 from flask import jsonify
 from flask import request
 from flask import redirect
+from flask import Response
 from flask import render_template
 from database import *
 from functools import wraps
@@ -197,11 +198,26 @@ Detailed info
 @app.route('/v1/people/<id>', methods=['GET'])
 def people_id(id=''):
 	data = {'ret': 0}
-	people = People.objects(id=id).first() if id != '' else People.objects(email=request.args.get('email', default='')).first()
+	status_code = 401
+	people = People.objects(id=id).first()
 	if people:
+		authorization = request.headers.get('Authorization')
+		if authorization:
+			access_token = authorization.split(' ')[-1]
+			if decrypt(access_token, people.activation.code).startswith(people.id + ' '):
+				for token in people.tokens:
+					if token.access_token == access_token:
+						if datetime.datetime.now() > token.time + datetime.timedelta(seconds=token.expire_in):
+							people.update(pull__tokens={'access_token':access_token})
+						else:
+							status_code = 200
+							break
 		data['ret'] = 1
-		data['people'] = people.public_json()
-	return jsonify(**data)
+		data['people'] = people.detail() if status_code == 200 else people.json()
+	resp = jsonify(**data)
+	resp.status_code = status_code
+	return resp
+
 
 @app.route('/v1/player/<id>', methods=['GET'])
 def player(id=''):

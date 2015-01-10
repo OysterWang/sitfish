@@ -283,7 +283,7 @@
 						</table>
 						<h4 class="child-header">Examples</h4>
 						<ul>
-							<li><i>curl http://api.sitfish.com/v1/people -d "id=wuzang" -d "name=武藏" -d "email=bkmons@qq.com" -d "password=sss"</i></li>
+							<li><i>curl http://api.sitfish.com/v1/people -d "id=wuzang" -d "name=武藏" -d "email=bkmons@qq.com" -d "password=sss" -v</i></li>
 						</ul>
 						<br><br>
 					</section>
@@ -325,7 +325,7 @@
 						</table>
 						<h4 class="child-header">Examples</h4>
 						<ul>
-							<li><a target="_blank" href="/{{ version }}/people/wuzang/activation?code=bal2w58ki6uojz19puxmxbwnzgq37s40"><i>http://{{ host }}/{{ version }}/people/wuzang/activation?code=bal2w58ki6uojz19puxmxbwnzgq37s40</i></a></li>
+							<li><a target="_blank" href="/{{ version }}/people/wuzang/activation?code=281eqshd9zjcw0pbivmlgjoohfmxkd9s"><i>http://{{ host }}/{{ version }}/people/wuzang/activation?code=bal2w58ki6uojz19puxmxbwnzgq37s40</i></a></li>
 						</ul>
 						<br><br>
 					</section>
@@ -334,6 +334,7 @@
 						<h4>Definition</h4>
 						<p><b>GET</b> http://{{ host }}/{{ version }}/people/&lt;id&gt;</p>
 						<p><i>Return a specified people.</i></p>
+						<p><b><i>An access token is required if you request for detailed info.</i></b></p>
 						<h4 class="child-header">Return</h4>
 						<table class="table table-condensed">
 							<tbody>
@@ -363,6 +364,7 @@
 						<h4 class="child-header">Examples</h4>
 						<ul>
 							<li><a target="_blank" href="/{{ version }}/people/wuzang"><i>http://{{ host }}/{{ version }}/people/wuzang</i></a></li>
+							<li><i>curl http://api.sitfish.com/v1/people/wuzang -H "Authorization: Bearer ISAQwbJyJFxLDNEpvZztK6S0UxAwYO619pIulGC3/xzY6E1WEsykv1b2y5MOO3kn8KignqMNQDMd5veM4sQYUm+0dyaI3aQ=" -v</i></li>
 						</ul>
 						<br><br>
 					</section>
@@ -805,7 +807,7 @@
 						</table>
 						<h4 class="child-header">Examples</h4>
 						<ul>
-							<li><i>curl http://api.sitfish.com/v1/oauth2/tokens -d "grant_type=password" -d "username=wuzang" -d "password=sss"</i></li>
+							<li><i>curl http://api.sitfish.com/v1/oauth2/tokens -d "grant_type=password" -d "username=wuzang" -d "password=sss" -v</i></li>
 						</ul>
 						<br><br>
 					</section>
