@@ -177,7 +177,7 @@ def people():
 	return jsonify(**data)
 
 
-@app.route('/v1/people/<id>/activation', methods=['GET'])
+@app.route('/v1/people/<id>/activation', methods=['POST'])
 def activate(id=''):
 	data = {'ret': 0}
 	people = People.objects(id=id).first()

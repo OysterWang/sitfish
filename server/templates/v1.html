@@ -33,13 +33,9 @@
 						<li><a href="#people-activation">/people/&lt;id&gt;/activation</a></li>
 						<hr>
 						<li><a href="#people-id">/people/&lt;id&gt;</a></li>
-						<li><a href="#player-playlist-add">/player/playlist/add</a></li>
-						<li><a href="#player-playlist-replace">/player/playlist/replace</a></li>
-						<li><a href="#player-playlist-delete">/player/playlist/delete</a></li>
-						<li><a href="#player-playlist-clear">/player/playlist/clear</a></li>
-						<li><a href="#player-play">/player/play</a></li>
-						<li><a href="#player-pause">/player/pause</a></li>
-						<li><a href="#player-skip">/player/skip</a></li>
+						<li><a href="#people-id-player">/people/&lt;id&gt;/player</a></li>
+						<li><a href="#people-id-player-playlist">/people/&lt;id&gt;/player/playlist</a></li>
+						<li><a href="#people-id-player-playlist-sid">/people/&lt;id&gt;/player/playlist/&lt;sid&gt;</a></li>
 						<hr>
 						<li><a href="#oauth2-tokens">/oauth2/tokens</a></li>
 					</ul>
@@ -283,7 +279,7 @@
 						</table>
 						<h4 class="child-header">Examples</h4>
 						<ul>
-							<li><i>curl http://api.sitfish.com/v1/people -d "id=wuzang" -d "name=武藏" -d "email=bkmons@qq.com" -d "password=sss" -v</i></li>
+							<li><i>curl -X POST http://api.sitfish.com/v1/people -d "id=wuzang" -d "name=武藏" -d "email=bkmons@qq.com" -d "password=sss" -v</i></li>
 						</ul>
 						<br><br>
 					</section>
@@ -325,7 +321,7 @@
 						</table>
 						<h4 class="child-header">Examples</h4>
 						<ul>
-							<li><a target="_blank" href="/{{ version }}/people/wuzang/activation?code=281eqshd9zjcw0pbivmlgjoohfmxkd9s"><i>http://{{ host }}/{{ version }}/people/wuzang/activation?code=bal2w58ki6uojz19puxmxbwnzgq37s40</i></a></li>
+							<li><i>curl -X POST http://{{ host }}/{{ version }}/people/wuzang/activation?code=bal2w58ki6uojz19puxmxbwnzgq37s40 -v</i></li>
 						</ul>
 						<br><br>
 					</section>
@@ -364,29 +360,26 @@
 						<h4 class="child-header">Examples</h4>
 						<ul>
 							<li><a target="_blank" href="/{{ version }}/people/wuzang"><i>http://{{ host }}/{{ version }}/people/wuzang</i></a></li>
-							<li><i>curl http://api.sitfish.com/v1/people/wuzang -H "Authorization: Bearer ISAQwbJyJFxLDNEpvZztK6S0UxAwYO619pIulGC3/xzY6E1WEsykv1b2y5MOO3kn8KignqMNQDMd5veM4sQYUm+0dyaI3aQ=" -v</i></li>
+							<li><i>curl -X GET http://api.sitfish.com/v1/people/wuzang -H "Authorization: Bearer ISAQwbJyJFxLDNEpvZztK6S0UxAwYO619pIulGC3/xzY6E1WEsykv1b2y5MOO3kn8KignqMNQDMd5veM4sQYUm+0dyaI3aQ=" -v</i></li>
 						</ul>
 						<br><br>
 					</section>
-					<section id="player-playlist-add" class="anchor">
-						<h1 class="page-header">/player/playlist/add</h1>
+					<section id="people-id-player" class="anchor">
+						<h1 class="page-header">/people/&lt;id&gt;/player</h1>
 						<h4>Definition</h4>
-						<p><b>POST</b> http://{{ host }}/{{ version }}/player/playlist/add</p>
-						<p><i>Add songs to the people player's playlist.</i></p>
+						<p><b>PUT</b> http://{{ host }}/{{ version }}/people/&lt;id&gt;/player</p>
+						<p><i>Update the player status.</i></p>
+						<p><b><i>An access token is required.</i></b></p>
 						<h4 class="child-header">Arguments</h4>
 						<table class="table table-condensed">
 							<tbody>
 								<tr>
-									<td width="200">pid</td>
-									<td>People id</td>
+									<td width="200">status</td>
+									<td>They are: "stopped", "paused", "playing".</td>
 								</tr>
 								<tr>
-									<td>access_token</td>
-									<td>People access token</td>
-								</tr>
-								<tr>
-									<td>songs</td>
-									<td>A list of songs. The definition of song, please reference <a href="#player-skip">player/skip</a>.</td>
+									<td>sid</td>
+									<td>Song id</td>
 								</tr>
 							</tbody>
 						</table>
@@ -410,33 +403,26 @@
 										</table>
 									</td>
 								</tr>
-								<tr>
-									<td>player</td>
-									<td>Player object in json format</td>
-								</tr>
 							</tbody>
 						</table>
+						<h4 class="child-header">Examples</h4>
+						<ul>
+							<li><i>curl -X PUT http://api.sitfish.com/v1/people/wuzang/player -H "Authorization: Bearer ISAQwbJyJFxLDNEpvZztK6S0UxAwYO619pIulGC3/xzY6E1WEsykv1b2y5MOO3kn8KignqMNQDMd5veM4sQYUm+0dyaI3aQ=" -d "status=playing" -d "sid=189192" -v</i></li>
+						</ul>
 						<br><br>
 					</section>
-					<section id="player-playlist-replace" class="anchor">
-						<h1 class="page-header">/player/playlist/replace</h1>
-						<h4>Definition</h4>
-						<p><b>POST</b> http://{{ host }}/{{ version }}/player/playlist/replace</p>
-						<p><i>Replace the current people player's playlist.</i></p>
+					<section id="people-id-player-playlist" class="anchor">
+						<h1 class="page-header">/people/&lt;id&gt;/player/playlist</h1>
+						<h4>1. Definition</h4>
+						<p><b>POST</b> http://{{ host }}/{{ version }}/people/&lt;id&gt;/player/playlist</p>
+						<p><i>Add a song to the playlist.</i></p>
+						<p><b><i>An access token is required.</i></b></p>
 						<h4 class="child-header">Arguments</h4>
 						<table class="table table-condensed">
 							<tbody>
 								<tr>
-									<td width="200">pid</td>
-									<td>People id</td>
-								</tr>
-								<tr>
-									<td>access_token</td>
-									<td>People access token</td>
-								</tr>
-								<tr>
-									<td>songs</td>
-									<td>A list of songs. The definition of song, please reference <a href="#player-skip">player/skip</a>.</td>
+									<td width="200">sid</td>
+									<td>Song id</td>
 								</tr>
 							</tbody>
 						</table>
@@ -460,36 +446,91 @@
 										</table>
 									</td>
 								</tr>
+							</tbody>
+						</table>
+						<h4 class="child-header">Examples</h4>
+						<ul>
+							<li><i>curl -X POST http://api.sitfish.com/v1/people/wuzang/player/playerlist -H "Authorization: Bearer ISAQwbJyJFxLDNEpvZztK6S0UxAwYO619pIulGC3/xzY6E1WEsykv1b2y5MOO3kn8KignqMNQDMd5veM4sQYUm+0dyaI3aQ=" -d "sid=189192" -v</i></li>
+						</ul>
+						<br>
+						<h4>2. Definition</h4>
+						<p><b>PUT</b> http://{{ host }}/{{ version }}/people/&lt;id&gt;/player/playlist</p>
+						<p><i>Update the current playlist.</i></p>
+						<p><b><i>An access token is required.</i></b></p>
+						<h4 class="child-header">Arguments</h4>
+						<table class="table table-condensed">
+							<tbody>
 								<tr>
-									<td>player</td>
-									<td>Player object in json format</td>
+									<td width="200">sids</td>
+									<td>Song id list</td>
 								</tr>
 							</tbody>
 						</table>
+						<h4 class="child-header">Return</h4>
+						<table class="table table-condensed">
+							<tbody>
+								<tr>
+									<td width="200">ret</td>
+									<td>
+										<table>
+											<tr>
+												<td>0</td>
+												<td width="15"></td>
+												<td>fail</td>
+											</tr>
+											<tr>
+												<td>1</td>
+												<td></td>
+												<td>success</td>
+											</tr>
+										</table>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<h4 class="child-header">Examples</h4>
+						<ul>
+							<li><i>curl -X PUT http://api.sitfish.com/v1/people/wuzang/player/playerlist -H "Authorization: Bearer ISAQwbJyJFxLDNEpvZztK6S0UxAwYO619pIulGC3/xzY6E1WEsykv1b2y5MOO3kn8KignqMNQDMd5veM4sQYUm+0dyaI3aQ=" -d "sids=189192,29713754,28793502" -v</i></li>
+						</ul>
+						<br>
+						<h4>3. Definition</h4>
+						<p><b>DELETE</b> http://{{ host }}/{{ version }}/people/&lt;id&gt;/player/playlist</p>
+						<p><i>Clear the current playlist.</i></p>
+						<p><b><i>An access token is required.</i></b></p>
+						<h4 class="child-header">Return</h4>
+						<table class="table table-condensed">
+							<tbody>
+								<tr>
+									<td width="200">ret</td>
+									<td>
+										<table>
+											<tr>
+												<td>0</td>
+												<td width="15"></td>
+												<td>fail</td>
+											</tr>
+											<tr>
+												<td>1</td>
+												<td></td>
+												<td>success</td>
+											</tr>
+										</table>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<h4 class="child-header">Examples</h4>
+						<ul>
+							<li><i>curl -X DELETE http://api.sitfish.com/v1/people/wuzang/player/playerlist -H "Authorization: Bearer ISAQwbJyJFxLDNEpvZztK6S0UxAwYO619pIulGC3/xzY6E1WEsykv1b2y5MOO3kn8KignqMNQDMd5veM4sQYUm+0dyaI3aQ=" -v</i></li>
+						</ul>
 						<br><br>
 					</section>
-					<section id="player-playlist-delete" class="anchor">
-						<h1 class="page-header">/player/playlist/delete</h1>
+					<section id="people-id-player-playlist-sid" class="anchor">
+						<h1 class="page-header">/people/&lt;id&gt;/player/playlist/&lt;sid&gt;</h1>
 						<h4>Definition</h4>
-						<p><b>POST</b> http://{{ host }}/{{ version }}/player/playlist/delete</p>
-						<p><i>Delete from the people player's playlist based on song id list.</i></p>
-						<h4 class="child-header">Arguments</h4>
-						<table class="table table-condensed">
-							<tbody>
-								<tr>
-									<td width="200">pid</td>
-									<td>People id</td>
-								</tr>
-								<tr>
-									<td>access_token</td>
-									<td>People access token</td>
-								</tr>
-								<tr>
-									<td>sids</td>
-									<td>Song id list.</td>
-								</tr>
-							</tbody>
-						</table>
+						<p><b>DELETE</b> http://{{ host }}/{{ version }}/people/&lt;id&gt;/player/playlist/&lt;sid&gt;</p>
+						<p><i>Delete the specified song from playlist.</i></p>
+						<p><b><i>An access token is required.</i></b></p>
 						<h4 class="child-header">Return</h4>
 						<table class="table table-condensed">
 							<tbody>
@@ -510,238 +551,12 @@
 										</table>
 									</td>
 								</tr>
-								<tr>
-									<td>player</td>
-									<td>Player object in json format</td>
-								</tr>
 							</tbody>
 						</table>
-						<br><br>
-					</section>
-					<section id="player-playlist-clear" class="anchor">
-						<h1 class="page-header">/player/playlist/clear</h1>
-						<h4>Definition</h4>
-						<p><b>POST</b> http://{{ host }}/{{ version }}/player/playlist/clear</p>
-						<p><i>Clear the people player's playlist.</i></p>
-						<h4 class="child-header">Arguments</h4>
-						<table class="table table-condensed">
-							<tbody>
-								<tr>
-									<td width="200">pid</td>
-									<td>People id</td>
-								</tr>
-								<tr>
-									<td>access_token</td>
-									<td>People access token</td>
-								</tr>
-							</tbody>
-						</table>
-						<h4 class="child-header">Return</h4>
-						<table class="table table-condensed">
-							<tbody>
-								<tr>
-									<td width="200">ret</td>
-									<td>
-										<table>
-											<tr>
-												<td>0</td>
-												<td width="15"></td>
-												<td>fail</td>
-											</tr>
-											<tr>
-												<td>1</td>
-												<td></td>
-												<td>success</td>
-											</tr>
-										</table>
-									</td>
-								</tr>
-								<tr>
-									<td>player</td>
-									<td>Player object in json format</td>
-								</tr>
-							</tbody>
-						</table>
-						<br><br>
-					</section>
-					<section id="player-play" class="anchor">
-						<h1 class="page-header">/player/play</h1>
-						<h4>Definition</h4>
-						<p><b>POST</b> http://{{ host }}/{{ version }}/player/play</p>
-						<p><i>Play the current song.</i></p>
-						<h4 class="child-header">Arguments</h4>
-						<table class="table table-condensed">
-							<tbody>
-								<tr>
-									<td width="200">pid</td>
-									<td>People id</td>
-								</tr>
-								<tr>
-									<td>access_token</td>
-									<td>People access token</td>
-								</tr>
-							</tbody>
-						</table>
-						<h4 class="child-header">Return</h4>
-						<table class="table table-condensed">
-							<tbody>
-								<tr>
-									<td width="200">ret</td>
-									<td>
-										<table>
-											<tr>
-												<td>0</td>
-												<td width="15"></td>
-												<td>fail</td>
-											</tr>
-											<tr>
-												<td>1</td>
-												<td></td>
-												<td>success</td>
-											</tr>
-										</table>
-									</td>
-								</tr>
-								<tr>
-									<td>player</td>
-									<td>Player object in json format</td>
-								</tr>
-							</tbody>
-						</table>
-						<br><br>
-					</section>
-					<section id="player-pause" class="anchor">
-						<h1 class="page-header">/player/pause</h1>
-						<h4>Definition</h4>
-						<p><b>POST</b> http://{{ host }}/{{ version }}/player/pause</p>
-						<p><i>Pause the current song.</i></p>
-						<h4 class="child-header">Arguments</h4>
-						<table class="table table-condensed">
-							<tbody>
-								<tr>
-									<td width="200">pid</td>
-									<td>People id</td>
-								</tr>
-								<tr>
-									<td>access_token</td>
-									<td>People access token</td>
-								</tr>
-							</tbody>
-						</table>
-						<h4 class="child-header">Return</h4>
-						<table class="table table-condensed">
-							<tbody>
-								<tr>
-									<td width="200">ret</td>
-									<td>
-										<table>
-											<tr>
-												<td>0</td>
-												<td width="15"></td>
-												<td>fail</td>
-											</tr>
-											<tr>
-												<td>1</td>
-												<td></td>
-												<td>success</td>
-											</tr>
-										</table>
-									</td>
-								</tr>
-								<tr>
-									<td>player</td>
-									<td>Player object in json format</td>
-								</tr>
-							</tbody>
-						</table>
-						<br><br>
-					</section>
-					<section id="player-skip" class="anchor">
-						<h1 class="page-header">/player/skip</h1>
-						<h4>Definition</h4>
-						<p><b>POST</b> http://{{ host }}/{{ version }}/player/skip</p>
-						<p><i>Skip to another song.</i></p>
-						<h4 class="child-header">Arguments</h4>
-						<table class="table table-condensed">
-							<tbody>
-								<tr>
-									<td width="200">pid</td>
-									<td>People id</td>
-								</tr>
-								<tr>
-									<td>access_token</td>
-									<td>People access token</td>
-								</tr>
-								<tr>
-									<td width="200">song</td>
-									<td>
-										<table>
-											<tr>
-												<td>sid</td>
-												<td width="15"></td>
-												<td>Song id</td>
-											</tr>
-											<tr>
-												<td>name</td>
-												<td></td>
-												<td>Song name</td>
-											</tr>
-											<tr>
-												<td>source</td>
-												<td></td>
-												<td>Mp3 source of this song</td>
-											</tr>
-											<tr>
-												<td>img</td>
-												<td></td>
-												<td>Album cover</td>
-											</tr>
-											<tr>
-												<td>time</td>
-												<td></td>
-												<td>Song time length</td>
-											</tr>
-											<tr>
-												<td>artist_id</td>
-												<td></td>
-												<td>Artist id</td>
-											</tr>
-											<tr>
-												<td>artist_name</td>
-												<td></td>
-												<td>Artist name</td>
-											</tr>
-										</table>
-									</td>
-								</tr>
-							</tbody>
-						</table>
-						<h4 class="child-header">Return</h4>
-						<table class="table table-condensed">
-							<tbody>
-								<tr>
-									<td width="200">ret</td>
-									<td>
-										<table>
-											<tr>
-												<td>0</td>
-												<td width="15"></td>
-												<td>fail</td>
-											</tr>
-											<tr>
-												<td>1</td>
-												<td></td>
-												<td>success</td>
-											</tr>
-										</table>
-									</td>
-								</tr>
-								<tr>
-									<td>player</td>
-									<td>Player object in json format</td>
-								</tr>
-							</tbody>
-						</table>
+						<h4 class="child-header">Examples</h4>
+						<ul>
+							<li><i>curl -X DELETE http://api.sitfish.com/v1/people/wuzang/player/playerlist/189192 -H "Authorization: Bearer ISAQwbJyJFxLDNEpvZztK6S0UxAwYO619pIulGC3/xzY6E1WEsykv1b2y5MOO3kn8KignqMNQDMd5veM4sQYUm+0dyaI3aQ=" -v</i></li>
+						</ul>
 						<br><br>
 					</section>
 					<section id="oauth2-tokens" class="anchor">
@@ -807,7 +622,7 @@
 						</table>
 						<h4 class="child-header">Examples</h4>
 						<ul>
-							<li><i>curl http://api.sitfish.com/v1/oauth2/tokens -d "grant_type=password" -d "username=wuzang" -d "password=sss" -v</i></li>
+							<li><i>curl -X POST http://api.sitfish.com/v1/oauth2/tokens -d "grant_type=password" -d "username=wuzang" -d "password=sss" -v</i></li>
 						</ul>
 						<br><br>
 					</section>
