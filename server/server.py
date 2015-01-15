@@ -42,7 +42,7 @@ mail = Mail(app)
 
 
 """
-API website related
+API website template related
 """
 
 @app.route('/', methods=['GET'])
@@ -56,7 +56,7 @@ def index():
 
 
 """
-Resource related
+Music lib related
 """
 
 @app.route('/v1/search', methods=['GET'])
@@ -180,7 +180,6 @@ def people():
 	return jsonify(**data)
 
 
-# TYPE - 0
 @app.route('/v1/people/<id>', methods=['GET'])
 def people_id(id=''):
 	data = {'ret': 0}
@@ -208,7 +207,8 @@ def activate(id=''):
 @app.route('/v1/oauth2/tokens', methods=['POST'])
 def sign_in():
 	data = {'ret': 0}
-	people = People.objects(id=request.form['username']).first()
+	username = request.form['username']
+	people = People.objects(email=username).first() if is_valid_email(username) else People.objects(id=username).first()
 	if people:
 		if not people.activation.status:
 			data['ret'] = -1
@@ -223,7 +223,7 @@ def sign_in():
 
 
 """
-Detailed info
+Resource needs access token
 """
 
 def access_token_required(f):
@@ -244,6 +244,26 @@ def access_token_required(f):
 		response.status_code = 401
 		return response
 	return decorated_function
+
+
+def update_songs(ids):
+	old_ids = [song.id for song in Song.objects(id__in=ids)]
+	new_ids = [id for id in ids if id not in old_ids]
+	data = get_songs(new_ids)
+	if 'songs' in data and len(data['songs']) > 0:
+		for json in data['songs']:
+			song = Song()
+			song.id = str(json['id'])
+			song.name = json['name']
+			song.source = json['mp3Url']
+			song.img = json['album']['picUrl'] if 'album' in json else ''
+			song.time = json['bMusic']['playTime'] if 'bMusic' in json else 0
+			if 'artists' in json and len(json['artists']) > 0:
+				song.artist.id = str(json['artists'][0]['id'])
+				song.artist.name = json['artists'][0]['name']
+			song.save()
+			app.logger.info('Song {} was updated'.format(song.id))
+	return Song.objects(id__in=ids)
 
 
 @app.route('/v1/people/<id>/detail', methods=['GET'])
@@ -319,26 +339,6 @@ def is_valid_email(email):
 	if not re.match("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$", email):
 		return False
 	return True
-
-
-def update_songs(ids):
-	old_ids = [song.id for song in Song.objects(id__in=ids)]
-	new_ids = [id for id in ids if id not in old_ids]
-	data = get_songs(new_ids)
-	if 'songs' in data and len(data['songs']) > 0:
-		for json in data['songs']:
-			song = Song()
-			song.id = str(json['id'])
-			song.name = json['name']
-			song.source = json['mp3Url']
-			song.img = json['album']['picUrl'] if 'album' in json else ''
-			song.time = json['bMusic']['playTime'] if 'bMusic' in json else 0
-			if 'artists' in json and len(json['artists']) > 0:
-				song.artist.id = str(json['artists'][0]['id'])
-				song.artist.name = json['artists'][0]['name']
-			song.save()
-			app.logger.info('Song {} was updated'.format(song.id))
-	return Song.objects(id__in=ids)
 
 
 

@@ -323,7 +323,7 @@
 					<section id="people-activation" class="anchor">
 						<h1 class="page-header">/people/&lt;id&gt;/activation</h1>
 						<h4>Definition</h4>
-						<p><b>GET</b> http://{{ host }}/{{ version }}/people/&lt;id&gt;/activation</p>
+						<p><b>POST</b> http://{{ host }}/{{ version }}/people/&lt;id&gt;/activation</p>
 						<p><i>Account activation for new user.</i></p>
 						<h4 class="child-header">Arguments</h4>
 						<table class="table table-condensed">
@@ -376,7 +376,7 @@
 								</tr>
 								<tr>
 									<td>username</td>
-									<td>The username.</td>
+									<td>User id or email.</td>
 								</tr>
 								<tr>
 									<td>password</td>

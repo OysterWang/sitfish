@@ -111,10 +111,10 @@ def playlist(id=''):
 
 
 @app.route('/', methods=['GET'])
-@app.route('/toplist/', methods=['GET'])
-@app.route('/toplist/<id>', methods=['GET'])
-def toplist(id='3779629'):
-	url = 'http://{}/v1/toplist/{}'.format(config['SERVER']['HOST'], id)
+@app.route('/toplists/', methods=['GET'])
+@app.route('/toplists/<id>', methods=['GET'])
+def toplists(id='3779629'):
+	url = 'http://{}/v1/toplists/{}'.format(config['SERVER']['HOST'], id)
 	data = requests.get(url).json()
 	songs = data['songs'] if 'songs' in data else []
 	return pjax('toplist.html', id=id, songs=songs)
@@ -140,7 +140,7 @@ def notice():
 
 
 """
-People management
+Account related
 """
 
 @app.route('/sign-up', methods=['GET', 'POST'])
@@ -148,8 +148,8 @@ def sign_up():
 	if request.method == 'GET':
 		return render_template('sign_up.html', **base_params)
 	else:
-		url = 'http://{}/v1/sign-up'.format(config['SERVER']['HOST'])
-		payload = {'pid': request.form['pid'], 'name': request.form['name'], 'email': request.form['email'], 'password': request.form['password']}
+		url = get_url('/people')
+		payload = {'id': request.form['pid'], 'name': request.form['name'], 'email': request.form['email'], 'password': request.form['password']}
 		data = requests.post(url, data=payload).json()
 		if data['ret'] == 1:
 			return render_template('tips.html', tips='{}，恭喜，注册成功！我们已向{}发送了一封邮件，请尽快登录并激活当前账户。'.format(payload['name'], payload['email']), **base_params)
@@ -157,10 +157,10 @@ def sign_up():
 			return render_template('tips.html', tips='{}，抱歉，注册失败，请稍候再次尝试。'.format(payload['name']), **base_params)
 
 
-@app.route('/activate/<pid>', methods=['GET'])
-def activate(pid=''):
-	url = 'http://{}/v1/activate/{}?code={}'.format(config['SERVER']['HOST'], pid, request.args.get('code', default=''))
-	data = requests.get(url).json()
+@app.route('/people/<id>/activation', methods=['GET'])
+def activate(id=''):
+	url = get_url('/people/{}/activation?code={}'.format(id, request.args.get('code', default='')))
+	data = requests.post(url).json()
 	if data['ret'] == 1:
 		return render_template('tips.html', tips='激活成功！', **base_params)
 	else:
@@ -170,17 +170,20 @@ def activate(pid=''):
 @app.route('/sign-in', methods=['GET', 'POST'])
 def sign_in():
 	if request.method == 'GET':
-		return render_template('sign_in.html', ret=1, email='', password='', **base_params)
+		return render_template('sign_in.html', ret=1, username='', password='', **base_params)
 	else:
-		url = 'http://{}/v1/sign-in'.format(config['SERVER']['HOST'])
-		payload = {'email': request.form['email'], 'password': request.form['password']}
+		url = get_url('/oauth2/tokens')
+		payload = {'grant_type': 'password', 'username': request.form['username'], 'password': request.form['password']}
 		data = requests.post(url, data=payload).json()
 		if data['ret'] == 1:
-			session['pid'] = data['people']['pid']
-			session['access_token'] = data['people']['access_token']
+			url = get_url('/people/{}'.format(payload['username']))
+			people = requests.get(url).json()['people']
+			session['id'] = people['id']
+			session['name'] = people['name']
+			session['access_token'] = data['access_token']
 			return redirect('/')
 		else:
-			return render_template('sign_in.html', ret=data['ret'], email=payload['email'], password=payload['password'], **base_params)
+			return render_template('sign_in.html', ret=data['ret'], username=payload['username'], password=payload['password'], **base_params)
 
 
 @app.route('/sign-out', methods=['GET'])
@@ -230,6 +233,10 @@ def page_ceil_filter(value, max_value=9):
 Utilities
 """
 
+def get_url(resource):
+	return 'http://{}/{}{}'.format(config['SERVER']['HOST'], config['WEB']['VERSION'], resource)
+
+
 def parse_int(s, default=0):
 	try:
 		return int(s)
@@ -238,23 +245,15 @@ def parse_int(s, default=0):
 
 
 def pjax(template, **params):
-	data = validate()
-	if data is not None and data['ret'] == 1:
-		params.update(data['people'])
+	if 'id' in session and 'access_token' in session:
+		base_params['id'] = session['id']
+		base_params['name'] = session['name']
 		if 'X-PJAX' in request.headers:
-			return render_template(template, **dict(base_params, **params))
+			return render_template(template, **base_params)
 		else:
-			return render_template("base.html", template=template, **dict(base_params, **params))
+			return render_template("base.html", template=template, **base_params)
 	else:
 		return render_template('index.html', **base_params)
-
-
-def validate():
-	if 'pid' in session and 'access_token' in session:
-		url = 'http://{}/v1/validate'.format(config['SERVER']['HOST'])
-		payload = {'pid': session['pid'], 'access_token': session['access_token']}
-		return requests.post(url, data=payload).json()
-	return None
 
 
 def get_ad():
