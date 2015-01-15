@@ -57,6 +57,19 @@ def decrypt(ciphertext, password):
 Musics
 """
 
+class Artist(EmbeddedDocument):
+
+	id = StringField(default='')
+	name = StringField(default='')
+
+	def json(self):
+		json = {
+			'id': self.id,
+			'name': self.name
+		}
+		return json
+
+
 class Song(Document):
 
 	id = StringField(primary_key=True)
@@ -64,7 +77,7 @@ class Song(Document):
 	source = StringField(default='')
 	img = StringField(default='')
 	time = LongField(default=0)
-	artist = ReferenceField('Artist')
+	artist = EmbeddedDocumentField('Artist', default=Artist())
 
 	def json(self):
 		json = {
@@ -74,19 +87,6 @@ class Song(Document):
 			'img': self.img,
 			'time': self.time,
 			'artist': self.artist.json() if self.artist else {}
-		}
-		return json
-
-
-class Artist(Document):
-
-	id = StringField(primary_key=True)
-	name = StringField(default='')
-
-	def json(self):
-		json = {
-			'id': self.id,
-			'name': self.name
 		}
 		return json
 

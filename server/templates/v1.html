@@ -30,14 +30,14 @@
 						<li><a href="#explore-playlists">/explore/playlists/&lt;cat&gt;</a></li>
 						<hr>
 						<li><a href="#people">/people</a></li>
-						<li><a href="#people-activation">/people/&lt;id&gt;/activation</a></li>
-						<hr>
 						<li><a href="#people-id">/people/&lt;id&gt;</a></li>
+						<li><a href="#people-activation">/people/&lt;id&gt;/activation</a></li>
+						<li><a href="#oauth2-tokens">/oauth2/tokens</a></li>
+						<hr>
+						<li><a href="#people-id-detail">/people/&lt;id&gt;/detail</a></li>
 						<li><a href="#people-id-player">/people/&lt;id&gt;/player</a></li>
 						<li><a href="#people-id-player-playlist">/people/&lt;id&gt;/player/playlist</a></li>
 						<li><a href="#people-id-player-playlist-sid">/people/&lt;id&gt;/player/playlist/&lt;sid&gt;</a></li>
-						<hr>
-						<li><a href="#oauth2-tokens">/oauth2/tokens</a></li>
 					</ul>
 				</div>
 				<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
@@ -283,6 +283,43 @@
 						</ul>
 						<br><br>
 					</section>
+					<section id="people-id" class="anchor">
+						<h1 class="page-header">/people/&lt;id&gt;</h1>
+						<h4>Definition</h4>
+						<p><b>GET</b> http://{{ host }}/{{ version }}/people/&lt;id&gt;</p>
+						<p><i>Return a specified people.</i></p>
+						<h4 class="child-header">Return</h4>
+						<table class="table table-condensed">
+							<tbody>
+								<tr>
+									<td width="200">ret</td>
+									<td>
+										<table>
+											<tr>
+												<td>0</td>
+												<td width="15"></td>
+												<td>fail</td>
+											</tr>
+											<tr>
+												<td>1</td>
+												<td></td>
+												<td>success</td>
+											</tr>
+										</table>
+									</td>
+								</tr>
+								<tr>
+									<td>people</td>
+									<td>Public people object in json format</td>
+								</tr>
+							</tbody>
+						</table>
+						<h4 class="child-header">Examples</h4>
+						<ul>
+							<li><a target="_blank" href="/{{ version }}/people/wuzang"><i>http://{{ host }}/{{ version }}/people/wuzang</i></a></li>
+						</ul>
+						<br><br>
+					</section>
 					<section id="people-activation" class="anchor">
 						<h1 class="page-header">/people/&lt;id&gt;/activation</h1>
 						<h4>Definition</h4>
@@ -325,12 +362,79 @@
 						</ul>
 						<br><br>
 					</section>
-					<section id="people-id" class="anchor">
-						<h1 class="page-header">/people/&lt;id&gt;</h1>
+					<section id="oauth2-tokens" class="anchor">
+						<h1 class="page-header">/oauth2/tokens</h1>
 						<h4>Definition</h4>
-						<p><b>GET</b> http://{{ host }}/{{ version }}/people/&lt;id&gt;</p>
-						<p><i>Return a specified people.</i></p>
-						<p><b><i>An access token is required if you request for detailed info.</i></b></p>
+						<p><b>POST</b> http://{{ host }}/{{ version }}//oauth2/tokens</p>
+						<p><i>Request an access token for the user.</i></p>
+						<h4 class="child-header">Arguments</h4>
+						<table class="table table-condensed">
+							<tbody>
+								<tr>
+									<td width="200">grant_type</td>
+									<td>A fixed value "password".</td>
+								</tr>
+								<tr>
+									<td>username</td>
+									<td>The username.</td>
+								</tr>
+								<tr>
+									<td>password</td>
+									<td>The password.</td>
+								</tr>
+							</tbody>
+						</table>
+						<h4 class="child-header">Return</h4>
+						<table class="table table-condensed">
+							<tbody>
+								<tr>
+									<td width="200">ret</td>
+									<td>
+										<table>
+											<tr>
+												<td>-1</td>
+												<td width="15"></td>
+												<td>not activated</td>
+											</tr>
+											<tr>
+												<td>0</td>
+												<td></td>
+												<td>email or password is not correct</td>
+											</tr>
+											<tr>
+												<td>1</td>
+												<td></td>
+												<td>success</td>
+											</tr>
+										</table>
+									</td>
+								</tr>
+								<tr>
+									<td>access_token</td>
+									<td>The access token for this user.</td>
+								</tr>
+								<tr>
+									<td>token_type</td>
+									<td>Default is "bearer".</td>
+								</tr>
+								<tr>
+									<td>expire_in</td>
+									<td>Default is 7 days.</td>
+								</tr>
+							</tbody>
+						</table>
+						<h4 class="child-header">Examples</h4>
+						<ul>
+							<li><i>curl -X POST http://api.sitfish.com/v1/oauth2/tokens -d "grant_type=password" -d "username=wuzang" -d "password=sss" -v</i></li>
+						</ul>
+						<br><br>
+					</section>
+					<section id="people-id-detail" class="anchor">
+						<h1 class="page-header">/people/&lt;id&gt;/detail</h1>
+						<h4>Definition</h4>
+						<p><b>GET</b> http://{{ host }}/{{ version }}/people/&lt;id&gt;/detail</p>
+						<p><i>Return a specified people with detailed info.</i></p>
+						<p><b><i>An access token is required.</i></b></p>
 						<h4 class="child-header">Return</h4>
 						<table class="table table-condensed">
 							<tbody>
@@ -359,8 +463,7 @@
 						</table>
 						<h4 class="child-header">Examples</h4>
 						<ul>
-							<li><a target="_blank" href="/{{ version }}/people/wuzang"><i>http://{{ host }}/{{ version }}/people/wuzang</i></a></li>
-							<li><i>curl -X GET http://api.sitfish.com/v1/people/wuzang -H "Authorization: Bearer ISAQwbJyJFxLDNEpvZztK6S0UxAwYO619pIulGC3/xzY6E1WEsykv1b2y5MOO3kn8KignqMNQDMd5veM4sQYUm+0dyaI3aQ=" -v</i></li>
+							<li><i>curl -X GET http://api.sitfish.com/v1/people/wuzang/detail -H "Authorization: Bearer ISAQwbJyJFxLDNEpvZztK6S0UxAwYO619pIulGC3/xzY6E1WEsykv1b2y5MOO3kn8KignqMNQDMd5veM4sQYUm+0dyaI3aQ=" -v</i></li>
 						</ul>
 						<br><br>
 					</section>
@@ -450,7 +553,7 @@
 						</table>
 						<h4 class="child-header">Examples</h4>
 						<ul>
-							<li><i>curl -X POST http://api.sitfish.com/v1/people/wuzang/player/playerlist -H "Authorization: Bearer ISAQwbJyJFxLDNEpvZztK6S0UxAwYO619pIulGC3/xzY6E1WEsykv1b2y5MOO3kn8KignqMNQDMd5veM4sQYUm+0dyaI3aQ=" -d "sid=189192" -v</i></li>
+							<li><i>curl -X POST http://api.sitfish.com/v1/people/wuzang/player/playlist -H "Authorization: Bearer ISAQwbJyJFxLDNEpvZztK6S0UxAwYO619pIulGC3/xzY6E1WEsykv1b2y5MOO3kn8KignqMNQDMd5veM4sQYUm+0dyaI3aQ=" -d "sid=189192" -v</i></li>
 						</ul>
 						<br>
 						<h4>2. Definition</h4>
@@ -490,7 +593,7 @@
 						</table>
 						<h4 class="child-header">Examples</h4>
 						<ul>
-							<li><i>curl -X PUT http://api.sitfish.com/v1/people/wuzang/player/playerlist -H "Authorization: Bearer ISAQwbJyJFxLDNEpvZztK6S0UxAwYO619pIulGC3/xzY6E1WEsykv1b2y5MOO3kn8KignqMNQDMd5veM4sQYUm+0dyaI3aQ=" -d "sids=189192,29713754,28793502" -v</i></li>
+							<li><i>curl -X PUT http://api.sitfish.com/v1/people/wuzang/player/playlist -H "Authorization: Bearer ISAQwbJyJFxLDNEpvZztK6S0UxAwYO619pIulGC3/xzY6E1WEsykv1b2y5MOO3kn8KignqMNQDMd5veM4sQYUm+0dyaI3aQ=" -d "sids=189192,29713754,28793502" -v</i></li>
 						</ul>
 						<br>
 						<h4>3. Definition</h4>
@@ -521,7 +624,7 @@
 						</table>
 						<h4 class="child-header">Examples</h4>
 						<ul>
-							<li><i>curl -X DELETE http://api.sitfish.com/v1/people/wuzang/player/playerlist -H "Authorization: Bearer ISAQwbJyJFxLDNEpvZztK6S0UxAwYO619pIulGC3/xzY6E1WEsykv1b2y5MOO3kn8KignqMNQDMd5veM4sQYUm+0dyaI3aQ=" -v</i></li>
+							<li><i>curl -X DELETE http://api.sitfish.com/v1/people/wuzang/player/playlist -H "Authorization: Bearer ISAQwbJyJFxLDNEpvZztK6S0UxAwYO619pIulGC3/xzY6E1WEsykv1b2y5MOO3kn8KignqMNQDMd5veM4sQYUm+0dyaI3aQ=" -v</i></li>
 						</ul>
 						<br><br>
 					</section>
@@ -555,74 +658,7 @@
 						</table>
 						<h4 class="child-header">Examples</h4>
 						<ul>
-							<li><i>curl -X DELETE http://api.sitfish.com/v1/people/wuzang/player/playerlist/189192 -H "Authorization: Bearer ISAQwbJyJFxLDNEpvZztK6S0UxAwYO619pIulGC3/xzY6E1WEsykv1b2y5MOO3kn8KignqMNQDMd5veM4sQYUm+0dyaI3aQ=" -v</i></li>
-						</ul>
-						<br><br>
-					</section>
-					<section id="oauth2-tokens" class="anchor">
-						<h1 class="page-header">/oauth2/tokens</h1>
-						<h4>Definition</h4>
-						<p><b>POST</b> http://{{ host }}/{{ version }}//oauth2/tokens</p>
-						<p><i>Request an access token for the user.</i></p>
-						<h4 class="child-header">Arguments</h4>
-						<table class="table table-condensed">
-							<tbody>
-								<tr>
-									<td width="200">grant_type</td>
-									<td>A fixed value "password".</td>
-								</tr>
-								<tr>
-									<td>username</td>
-									<td>The username.</td>
-								</tr>
-								<tr>
-									<td>password</td>
-									<td>The password.</td>
-								</tr>
-							</tbody>
-						</table>
-						<h4 class="child-header">Return</h4>
-						<table class="table table-condensed">
-							<tbody>
-								<tr>
-									<td width="200">ret</td>
-									<td>
-										<table>
-											<tr>
-												<td>-1</td>
-												<td width="15"></td>
-												<td>not activated</td>
-											</tr>
-											<tr>
-												<td>0</td>
-												<td></td>
-												<td>email or password is not correct</td>
-											</tr>
-											<tr>
-												<td>1</td>
-												<td></td>
-												<td>success</td>
-											</tr>
-										</table>
-									</td>
-								</tr>
-								<tr>
-									<td>access_token</td>
-									<td>The access token for this user.</td>
-								</tr>
-								<tr>
-									<td>token_type</td>
-									<td>Default is "bearer".</td>
-								</tr>
-								<tr>
-									<td>expire_in</td>
-									<td>Default is 7 days.</td>
-								</tr>
-							</tbody>
-						</table>
-						<h4 class="child-header">Examples</h4>
-						<ul>
-							<li><i>curl -X POST http://api.sitfish.com/v1/oauth2/tokens -d "grant_type=password" -d "username=wuzang" -d "password=sss" -v</i></li>
+							<li><i>curl -X DELETE http://api.sitfish.com/v1/people/wuzang/player/playlist/189192 -H "Authorization: Bearer ISAQwbJyJFxLDNEpvZztK6S0UxAwYO619pIulGC3/xzY6E1WEsykv1b2y5MOO3kn8KignqMNQDMd5veM4sQYUm+0dyaI3aQ=" -v</i></li>
 						</ul>
 						<br><br>
 					</section>

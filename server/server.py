@@ -80,10 +80,12 @@ def search():
 # TYPE - 1
 @app.route('/v1/songs/<ids>', methods=['GET'])
 def songs(ids=''):
-	ids = re.split(',', ids)
+	return jsonify(**get_songs(re.split(',', ids)))
+
+
+def get_songs(ids=[]):
 	url = 'http://music.163.com/api/song/detail?ids={}'.format(ids)
-	data = requests.get(url, headers=app.config['HEADERS']).json()
-	return jsonify(**data)
+	return requests.get(url, headers=app.config['HEADERS']).json()
 
 
 # TYPE - 10
@@ -165,6 +167,7 @@ def people():
 	data = {'ret': 0}
 	try:
 		people = People.new(id=request.form['id'], name=request.form['name'], email=request.form['email'], password=request.form['password']).save(force_insert=True)
+		app.logger.info('New register user {}'.format(people.id))
 		brand = config['DEFAULT']['BRAND']
 		url = 'http://{}/people/{}/activation?code={}'.format(config['WEB']['HOST'], people.id, people.activation.code)
 		html = '<p>亲爱的{}：</p><p>欢迎加入{}！</p><p>请点击下面的链接完成注册：</p><p><a href="{}" target="_blank">{}</a></p><p>如果以上链接无法点击，请将上面的地址复制到你的浏览器(如Chrome)的地址栏进入{}。</p><p>{}</p>'.format(people.name, brand, url, url, brand, brand)
@@ -177,6 +180,17 @@ def people():
 	return jsonify(**data)
 
 
+# TYPE - 0
+@app.route('/v1/people/<id>', methods=['GET'])
+def people_id(id=''):
+	data = {'ret': 0}
+	people = People.objects(email=id).first() if is_valid_email(id) else People.objects(id=id).first()
+	if people:
+		data['ret'] = 1
+		data['people'] = people.json()
+	return jsonify(**data)
+
+
 @app.route('/v1/people/<id>/activation', methods=['POST'])
 def activate(id=''):
 	data = {'ret': 0}
@@ -186,123 +200,10 @@ def activate(id=''):
 			people.activation.time = datetime.datetime.now()
 			people.activation.status = True
 			people.save()
+			app.logger.info('User {} activated'.format(people.id))
 		data['ret'] = 1
 	return jsonify(**data)
 
-
-"""
-Detailed info
-"""
-
-# TYPE - 0
-@app.route('/v1/people/<id>', methods=['GET'])
-def people_id(id=''):
-	data = {'ret': 0}
-	status_code = 401
-	people = People.objects(id=id).first()
-	if people:
-		authorization = request.headers.get('Authorization')
-		if authorization:
-			access_token = authorization.split(' ')[-1]
-			if decrypt(access_token, people.activation.code).startswith(people.id + ' '):
-				for token in people.tokens:
-					if token.access_token == access_token:
-						if datetime.datetime.now() > token.time + datetime.timedelta(seconds=token.expire_in):
-							people.update(pull__tokens={'access_token':access_token})
-						else:
-							status_code = 200
-							break
-		data['ret'] = 1
-		data['people'] = people.detail() if status_code == 200 else people.json()
-	resp = jsonify(**data)
-	resp.status_code = status_code
-	return resp
-
-
-@app.route('/v1/player/<id>', methods=['GET'])
-def player(id=''):
-	data = {'ret': 0}
-	people = People.objects(id=id).first()
-	if people:
-		data['ret'] = 1
-		data['player'] = people.player.json() if people.player else ''
-	return jsonify(**data)
-
-
-@app.route('/v1/player/playlist/add', methods=['POST'])
-def player_playlist_add():
-	data = {'ret': 0}
-	people = People.objects(id=request.form['id']).first()
-	if people:
-		if people.access_token == request.form['access_token']:
-			data['ret'] = 1
-			ids = set([song['id'] for song in people.player.playlist])
-			for song in json.loads(request.form['songs']):
-				if song['id'] not in ids:
-					obj = Song(id=song['id'], name=song['name'], source=song['source'], img=song['img'], time=song['time'], artist_id=song['artist_id'], artist_name=song['artist_name'])
-					people.player.update(push__playlist=obj)
-			data['player'] = People.objects(id=request.form['id']).first().player.json();
-	return jsonify(**data)
-
-
-@app.route('/v1/player/playlist/replace', methods=['POST'])
-def player_playlist_replace():
-	data = {'ret': 0}
-	people = People.objects(id=request.form['id']).first()
-	if people:
-		if people.access_token == request.form['access_token']:
-			data['ret'] = 1
-			people.player.update(set__playlist=[])
-			for song in json.loads(request.form['songs']):
-				obj = Song(id=song['id'], name=song['name'], source=song['source'], img=song['img'], time=song['time'], artist_id=song['artist_id'], artist_name=song['artist_name'])
-				people.player.update(push__playlist=obj)
-			data['player'] = People.objects(id=request.form['id']).first().player.json();
-	return jsonify(**data)
-
-
-@app.route('/v1/player/playlist/delete', methods=['POST'])
-def player_playlist_delete():
-	data = {'ret': 0}
-	people = People.objects(id=request.form['id']).first()
-	if people:
-		if people.access_token == request.form['access_token']:
-			data['ret'] = 1
-			for id in json.loads(request.form['ids']):
-				people.player.update(pull__playlist={'id': id})
-			data['player'] = People.objects(id=request.form['id']).first().player.json();
-	return jsonify(**data)
-
-
-@app.route('/v1/player/playlist/clear', methods=['POST'])
-def player_playlist_clear():
-	data = {'ret': 0}
-	people = People.objects(id=request.form['id']).first()
-	if people:
-		if people.access_token == request.form['access_token']:
-			data['ret'] = 1
-			people.player.update(set__playlist=[])
-			data['player'] = People.objects(id=request.form['id']).first().player.json();
-	return jsonify(**data)
-
-
-@app.route('/v1/player/play', methods=['POST'])
-def player_play():
-	return 'TODO'
-
-
-@app.route('/v1/player/pause', methods=['POST'])
-def player_pause():
-	return 'TODO'
-
-
-@app.route('/v1/player/skip', methods=['POST'])
-def player_skip():
-	return 'TODO'
-
-
-"""
-Tokens
-"""
 
 @app.route('/v1/oauth2/tokens', methods=['POST'])
 def sign_in():
@@ -322,6 +223,84 @@ def sign_in():
 
 
 """
+Detailed info
+"""
+
+def access_token_required(f):
+	@wraps(f)
+	def decorated_function(*args, **kwargs):
+		people = People.objects(id=kwargs['id']).first()
+		authorization = request.headers.get('Authorization')
+		if people and authorization:
+			access_token = authorization.split(' ')[-1]
+			if decrypt(access_token, people.activation.code).startswith(people.id + ' '):
+				for token in people.tokens:
+					if token.access_token == access_token:
+						if datetime.datetime.now() > token.time + datetime.timedelta(seconds=token.expire_in):
+							people.update(pull__tokens={'access_token':access_token})
+						else:
+							return f(*args, **kwargs)
+		response = jsonify(ret=0)
+		response.status_code = 401
+		return response
+	return decorated_function
+
+
+@app.route('/v1/people/<id>/detail', methods=['GET'])
+@access_token_required
+def people_id_detail(id=''):
+	data = {'ret': 0}
+	people = People.objects(id=id).first()
+	if people:
+		data['ret'] = 1
+		data['people'] = people.detail()
+	return jsonify(**data)
+
+
+@app.route('/v1/people/<id>/player', methods=['PUT'])
+@access_token_required
+def people_id_player(id=''):
+	data = {'ret': 0}
+	people = People.objects(id=id).first()
+	if people:
+		people.player.update(set__status=request.form['status'])
+		people.player.update(set__song=update_songs([request.form['sid'], ])[0])
+		data['ret'] = 1
+	return jsonify(**data)
+
+
+@app.route('/v1/people/<id>/player/playlist', methods=['POST', 'PUT', 'DELETE'])
+@access_token_required
+def people_id_player_playlist(id=''):
+	data = {'ret': 0}
+	people = People.objects(id=id).first()
+	if people:
+		if request.method == 'POST':
+			song = update_songs([request.form['sid'], ])[0]
+			if song not in people.player.playlist:
+				people.player.update(push__playlist=song)
+			data['ret'] = 1
+		elif request.method == 'PUT':
+			people.player.update(set__playlist=update_songs(re.split(',', request.form['sids'])))
+			data['ret'] = 1
+		elif request.method == 'DELETE':
+			people.player.update(set__playlist=[])
+			data['ret'] = 1
+	return jsonify(**data)
+
+
+@app.route('/v1/people/<id>/player/playlist/<sid>', methods=['DELETE'])
+@access_token_required
+def people_id_player_playlist_sid(id='', sid=''):
+	data = {'ret': 0}
+	people = People.objects(id=id).first()
+	if people:
+		people.player.update(pull__playlist=sid)
+		data['ret'] = 1
+	return jsonify(**data)
+
+
+"""
 Utilities
 """
 
@@ -334,6 +313,32 @@ def parse_int(s, default=0):
 
 def send_activation(subject, html, recipient):
 	mail.send(Message(subject, html=html, sender=(config['DEFAULT']['BRAND'], config['MAIL']['USERNAME']), recipients=[recipient]))
+
+
+def is_valid_email(email):
+	if not re.match("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$", email):
+		return False
+	return True
+
+
+def update_songs(ids):
+	old_ids = [song.id for song in Song.objects(id__in=ids)]
+	new_ids = [id for id in ids if id not in old_ids]
+	data = get_songs(new_ids)
+	if 'songs' in data and len(data['songs']) > 0:
+		for json in data['songs']:
+			song = Song()
+			song.id = str(json['id'])
+			song.name = json['name']
+			song.source = json['mp3Url']
+			song.img = json['album']['picUrl'] if 'album' in json else ''
+			song.time = json['bMusic']['playTime'] if 'bMusic' in json else 0
+			if 'artists' in json and len(json['artists']) > 0:
+				song.artist.id = str(json['artists'][0]['id'])
+				song.artist.name = json['artists'][0]['name']
+			song.save()
+			app.logger.info('Song {} was updated'.format(song.id))
+	return Song.objects(id__in=ids)
 
 
 
