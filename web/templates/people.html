@@ -12,8 +12,8 @@
 			<h2 style="padding-bottom:10px; border-bottom:2px solid #CD3333;">个人信息</h2>
 			<div style="font-size:16px; line-height:24px; font-family: 'Microsoft Yahei'; margin:50px 0px 80px 0px;">
 				<p>姓名：{{ people.name }}</p>
-				<p>注册时间：{{ people.reg_time }}</p>
-				<p>永久域名：<a href="http://{{ domain }}/people/{{ people.pid }}" data-pjax="#main" style="text-decoration:underline;">http://{{ domain }}/people/{{ people.pid }}</a></p>
+				<p>注册时间：{{ people.activation.time }}</p>
+				<p>永久域名：<a href="http://{{ domain }}/people/{{ people.id }}" data-pjax="#main" style="text-decoration:underline;">http://{{ domain }}/people/{{ people.id }}</a></p>
 			</div>
 			{% include 'comment.html' %}
 		</div>

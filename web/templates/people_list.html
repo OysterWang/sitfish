@@ -3,9 +3,9 @@
 	{% for people in people_list %}
 		<tr>
 			<td width="40">{{ offset|default(0) + loop.index }}</td>
-			<td width="100"><a data-pjax="#main" href="/people/{{people.pid}}">{{people.pid}}</a></td>
-			<td><a data-pjax="#main" href="/people/{{people.pid}}">{{people.name}}</a></td>
-			<td width="160">{{people.reg_time}}</td>
+			<td width="100"><a data-pjax="#main" href="/people/{{people.id}}">{{people.id}}</a></td>
+			<td><a data-pjax="#main" href="/people/{{people.id}}">{{people.name}}</a></td>
+			<td width="160">{{people.activation.time}}</td>
 			<td width="25">
 				<button type="submit" class="btn btn-sm btn-default connectRequestButton" data-pid="{{people.pid}}">
 					连接

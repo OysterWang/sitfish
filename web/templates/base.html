@@ -23,7 +23,7 @@
 			<span style="color: #999; font:12px Helvetica,Arial,sans-serif;">© 2014-2015 sitfish.com, all rights reserved &nbsp;{{ brand }}科技</span>
 		</footer>
 		<nav class="navbar navbar-fixed-bottom" style="min-height:45px;">
-			<div class="container" style="padding:0; height:45px;">
+			<div class="container" style="padding:0; height:45px;" id="player">
 				{% include "player.html" %}
 			</div>
 		</nav>
@@ -56,7 +56,6 @@
 			</div>
 		</div>
 		<!-- Data -->
-		<data id="data-pid" value="{{pid}}"></data>
 		<data id="data-logo-img" value="{{url_for('static', filename='image/logo.png')}}"></data>
 		<data id="data-ws-host" value="{{ws_host}}"></data>
 		<data id="data-ws-port" value="{{ws_port}}"></data>

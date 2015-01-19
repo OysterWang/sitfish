@@ -16,8 +16,8 @@ from flask import session
 from flask import redirect
 from flask import render_template
 
-from pprint import pprint
 from datetime import datetime
+from functools import wraps
 
 config = configparser.ConfigParser()
 config.readfp(codecs.open("../config/config.ini", "r", "utf-8"))
@@ -30,10 +30,44 @@ app.config['JSON_AS_ASCII'] = False
 
 
 """
-Foundation
+Renders
 """
 
+def get_headers():
+	return {'Authorization': 'Bearer {}'.format(session['access_token'])}
+
+
+def mine():
+	return requests.get(get_url('/people/{}/detail'.format(session['id'])), headers=get_headers()).json()
+
+
+def pjax(template, **params):
+	params.update(base_params)
+	if 'X-PJAX' in request.headers:
+		params['mine'] = {
+			'id': session['id'],
+			'name': session['name']
+		}
+		return render_template(template, **params)
+	else:
+		params['mine'] = mine()['people']
+		return render_template("base.html", template=template, **params)
+
+
+def login_required(f):
+	@wraps(f)
+	def decorated_function(*args, **kwargs):
+		if 'id' in session and 'access_token' in session:
+			url = get_url('/people/{}/valid'.format(session['id']))
+			data = requests.get(url, headers=get_headers()).json()
+			if data['ret'] == 1:
+				return f(*args, **kwargs)
+		return render_template('index.html', **base_params)
+	return decorated_function
+
+
 @app.route('/search', methods=['GET'])
+@login_required
 def search():
 	params = {
 		's': request.args.get('s', default=''),
@@ -42,44 +76,76 @@ def search():
 		'limit': parse_int(request.args.get('limit', default=''), default=30),
 		'ad': get_ad()
 	}
-	url = 'http://{}/v1/search?s={}&t={}&offset={0:d}&limit={0:d}'.format(config['SERVER']['HOST'], params['s'], params['t'], params['offset'], params['limit'])
+	url = get_url('/search?s={}&t={}&offset={:d}&limit={:d}'.format(params['s'], params['t'], params['offset'], params['limit']))
 	data = requests.get(url).json()
-	if params['t'] == '0':
-		count = data['count'] if 'count' in data else 0
-		people_list = data['people'] if 'people' in data else []
-		return pjax('search.html', search_template='people_list.html', count=count, people_list=people_list, **params)
-	elif params['t'] == '1':
-		count = data['result']['songCount'] if 'result' in data and 'songCount' in data['result'] else 0
-		songs = data['result']['songs'] if 'result' in data and 'songs' in data['result'] else []
-		return pjax('search.html', search_template='song_list.html', title=False, page=True, count=count, songs=songs, **params)
-	elif params['t'] == '10':
-		count = data['result']['albumCount'] if 'result' in data and 'albumCount' in data['result'] else 0
-		albums = data['result']['albums'] if 'result' in data and 'albums' in data['result'] else []
-		return pjax('search.html', search_template='album_list.html', count=count, albums=albums, **params)
-	elif params['t'] == '100':
-		count = data['result']['artistCount'] if 'result' in data and 'artistCount' in data['result'] else 0
-		artists = data['result']['artists'] if 'result' in data and 'artists' in data['result'] else []
-		return pjax('search.html', search_template='artist_list.html', count=count, artists=artists, **params)
-	elif params['t'] == '1000':
-		count = data['result']['playlistCount'] if 'result' in data and 'playlistCount' in data['result'] else 0
-		playlists = data['result']['playlists'] if 'result' in data and 'playlists' in data['result'] else []
-		return pjax('search.html', search_template='playlist_list.html', count=count, playlists=playlists, **params)
+	search_route = {
+		'1': search_songs,
+		'10': search_albums,
+		'100': search_artists,
+		'1000': search_playlists,
+		'0': search_people
+	}
+	if params['t'] in search_route:
+		ret = search_route[params['t']](data)
+		ret.update(params)
+		return pjax('search.html', **ret)
 	else:
 		return pjax('404.html')
 
 
-@app.route('/people/<id>', methods=['GET'])
-def people(id=''):
-	url = 'http://{}/v1/people/{}'.format(config['SERVER']['HOST'], id)
-	people = requests.get(url).json()['people']
-	return pjax('people.html', people=people, ad=get_ad())
+def search_songs(data):
+	ret = {
+		'search_template': 'song_list.html',
+		'count': data['result']['songCount'] if 'result' in data and 'songCount' in data['result'] else 0,
+		'songs': data['result']['songs'] if 'result' in data and 'songs' in data['result'] else [],
+		'title': False,
+		'page': True
+	}
+	return ret
 
 
-@app.route('/song/<id>', methods=['GET'])
+def search_albums(data):
+	ret = {
+		'search_template': 'album_list.html',
+		'count': data['result']['albumCount'] if 'result' in data and 'albumCount' in data['result'] else 0,
+		'albums': data['result']['albums'] if 'result' in data and 'albums' in data['result'] else []
+	}
+	return ret
+
+
+def search_artists(data):
+	ret = {
+		'search_template': 'artist_list.html',
+		'count': data['result']['artistCount'] if 'result' in data and 'artistCount' in data['result'] else 0,
+		'artists': data['result']['artists'] if 'result' in data and 'artists' in data['result'] else []
+	}
+	return ret
+
+
+def search_playlists(data):
+	ret = {
+		'search_template': 'playlist_list.html',
+		'count': data['result']['playlistCount'] if 'result' in data and 'playlistCount' in data['result'] else 0,
+		'playlists': data['result']['playlists'] if 'result' in data and 'playlists' in data['result'] else []
+	}
+	return ret
+
+
+def search_people(data):
+	ret = {
+		'search_template': 'people_list.html',
+		'count': data['count'] if 'count' in data else 0,
+		'people_list': data['people'] if 'people' in data else []
+	}
+	return ret
+
+
+@app.route('/songs/<id>', methods=['GET'])
+@login_required
 def song(id=''):
-	url = 'http://{}/v1/song/{}'.format(config['SERVER']['HOST'], id)
+	url = get_url('/songs/{}'.format(id))
 	song = requests.get(url).json()['songs'][0]
-	url = 'http://{}/v1/lyric/{}'.format(config['SERVER']['HOST'], id)
+	url = get_url('/lyrics/{}'.format(id))
 	data = requests.get(url).json()
 	lyric = []
 	if 'lrc' in data and 'lyric' in data['lrc']:
@@ -87,24 +153,27 @@ def song(id=''):
 	return pjax('song.html', song=song, lyric=lyric, ad=get_ad())
 
 
-@app.route('/album/<id>', methods=['GET'])
+@app.route('/albums/<id>', methods=['GET'])
+@login_required
 def album(id=''):
-	url = 'http://{}/v1/album/{}'.format(config['SERVER']['HOST'], id)
+	url = get_url('/albums/{}'.format(id))
 	data = requests.get(url).json()
 	songs = data['album']['songs'] if 'album' in data and 'songs' in data['album'] else []
 	return pjax('album.html', data=data, songs=songs, ad=get_ad())
 
 
-@app.route('/artist/<id>', methods=['GET'])
+@app.route('/artists/<id>', methods=['GET'])
+@login_required
 def artist(id=''):
-	url = 'http://{}/v1/artist/{}'.format(config['SERVER']['HOST'], id)
+	url = get_url('/artists/{}'.format(id))
 	data = requests.get(url).json()
 	return pjax('artist.html', data=data, ad=get_ad())
 
 
-@app.route('/playlist/<id>', methods=['GET'])
+@app.route('/playlists/<id>', methods=['GET'])
+@login_required
 def playlist(id=''):
-	url = 'http://{}/v1/playlist/{}'.format(config['SERVER']['HOST'], id)
+	url = get_url('/playlists/{}'.format(id))
 	data = requests.get(url).json()
 	songs = data['result']['tracks'] if 'result' in data and 'tracks' in data['result'] else []
 	return pjax('playlist.html', data=data, songs=songs, ad=get_ad())
@@ -113,28 +182,51 @@ def playlist(id=''):
 @app.route('/', methods=['GET'])
 @app.route('/toplists/', methods=['GET'])
 @app.route('/toplists/<id>', methods=['GET'])
-def toplists(id='3779629'):
-	url = 'http://{}/v1/toplists/{}'.format(config['SERVER']['HOST'], id)
+@login_required
+def toplist(id='3779629'):
+	url = get_url('/toplists/{}'.format(id))
 	data = requests.get(url).json()
-	songs = data['songs'] if 'songs' in data else []
-	return pjax('toplist.html', id=id, songs=songs)
+	toplist = {
+		'id': id,
+		'songs': data['songs'] if 'songs' in data else []
+	}
+	return pjax('toplist.html', toplist=toplist)
 
 
-@app.route('/explore/playlist', methods=['GET'])
-@app.route('/explore/playlist/cat', methods=['GET'])
-@app.route('/explore/playlist/cat/<cat>', methods=['GET'])
+@app.route('/explore/playlists', methods=['GET'])
+@app.route('/explore/playlists/<cat>', methods=['GET'])
+@login_required
 def explore_playlist(cat='全部'):
 	params = {
 		'cat': cat,
 		'offset': parse_int(request.args.get('offset', default=''), default=0),
 		'limit': parse_int(request.args.get('limit', default=''), default=30)
 	}
-	url = 'http://{}/v1/explore/playlist/cat/{}?offset={0:d}&limit={0:d}'.format(config['SERVER']['HOST'], params['cat'], params['offset'], params['limit'])
+	url = get_url('/explore/playlists/{}?offset={:d}&limit={:d}'.format(params['cat'], params['offset'], params['limit']))
 	data = requests.get(url).json()
 	return pjax('explore_playlist.html', count=data['count'], playlists=data['playlists'], **params)
 
 
+@app.route('/people/<id>', methods=['GET'])
+@login_required
+def people(id=''):
+	url = get_url('/people/{}'.format(id))
+	people = requests.get(url).json()['people']
+	return pjax('people.html', people=people, ad=get_ad())
+
+
+"""
+Play and sync related
+"""
+
+@app.route('/player', methods=['GET'])
+@login_required
+def player():
+	return render_template('player.html', mine=mine()['people'], **base_params)
+
+
 @app.route('/notice', methods=['GET'])
+@login_required
 def notice():
 	return pjax('notice.html')
 
@@ -192,23 +284,6 @@ def sign_out():
 	return redirect('/')
 
 
-@app.route('/api/<path:path>', methods=['GET', 'POST'])
-def api(path=''):
-	if request.method == 'GET':
-		url = 'http://{}/{}?{}'.format(config['SERVER']['HOST'], path, '&'.join(['{}={}'.format(key, request.args[key]) for key in request.args]))
-		data = requests.get(url).json()
-		return jsonify(**data)
-	else:
-		url = 'http://{}/{}?{}'.format(config['SERVER']['HOST'], path, '&'.join(['{}={}'.format(key, request.args[key]) for key in request.args]))
-		post_data = {}
-		post_data.update(request.form)
-		if 'pid' in session and 'access_token' in session:
-			post_data['pid'] = session['pid']
-			post_data['access_token'] = session['access_token']
-		data = requests.post(url, data=post_data).json()
-		return jsonify(**data)
-
-
 """
 Filters
 """
@@ -233,10 +308,6 @@ def page_ceil_filter(value, max_value=9):
 Utilities
 """
 
-def get_url(resource):
-	return 'http://{}/{}{}'.format(config['SERVER']['HOST'], config['WEB']['VERSION'], resource)
-
-
 def parse_int(s, default=0):
 	try:
 		return int(s)
@@ -244,20 +315,33 @@ def parse_int(s, default=0):
 		return default
 
 
-def pjax(template, **params):
-	if 'id' in session and 'access_token' in session:
-		base_params['id'] = session['id']
-		base_params['name'] = session['name']
-		if 'X-PJAX' in request.headers:
-			return render_template(template, **base_params)
-		else:
-			return render_template("base.html", template=template, **base_params)
-	else:
-		return render_template('index.html', **base_params)
-
-
 def get_ad():
 	return random.randint(0, 5)
+
+
+def get_url(resource):
+	return 'http://{}/{}{}'.format(config['SERVER']['HOST'], config['WEB']['VERSION'], resource)
+
+
+"""
+Deprecated
+"""
+
+@app.route('/api_deprecated/<path:path>', methods=['GET', 'POST'])
+def api(path=''):
+	if request.method == 'GET':
+		url = 'http://{}/{}?{}'.format(config['SERVER']['HOST'], path, '&'.join(['{}={}'.format(key, request.args[key]) for key in request.args]))
+		data = requests.get(url).json()
+		return jsonify(**data)
+	else:
+		url = 'http://{}/{}?{}'.format(config['SERVER']['HOST'], path, '&'.join(['{}={}'.format(key, request.args[key]) for key in request.args]))
+		post_data = {}
+		post_data.update(request.form)
+		if 'pid' in session and 'access_token' in session:
+			post_data['pid'] = session['pid']
+			post_data['access_token'] = session['access_token']
+		data = requests.post(url, data=post_data).json()
+		return jsonify(**data)
 
 
 

@@ -34,6 +34,7 @@
 						<li><a href="#people-activation">/people/&lt;id&gt;/activation</a></li>
 						<li><a href="#oauth2-tokens">/oauth2/tokens</a></li>
 						<hr>
+						<li><a href="#people-id-valid">/people/&lt;id&gt;/valid</a></li>
 						<li><a href="#people-id-detail">/people/&lt;id&gt;/detail</a></li>
 						<li><a href="#people-id-player">/people/&lt;id&gt;/player</a></li>
 						<li><a href="#people-id-player-playlist">/people/&lt;id&gt;/player/playlist</a></li>
@@ -429,6 +430,40 @@
 						</ul>
 						<br><br>
 					</section>
+					<section id="people-id-valid" class="anchor">
+						<h1 class="page-header">/people/&lt;id&gt;/valid</h1>
+						<h4>Definition</h4>
+						<p><b>GET</b> http://{{ host }}/{{ version }}/people/&lt;id&gt;/valid</p>
+						<p><i>Validate access token.</i></p>
+						<p><b><i>An access token is required.</i></b></p>
+						<h4 class="child-header">Return</h4>
+						<table class="table table-condensed">
+							<tbody>
+								<tr>
+									<td width="200">ret</td>
+									<td>
+										<table>
+											<tr>
+												<td>0</td>
+												<td width="15"></td>
+												<td>fail</td>
+											</tr>
+											<tr>
+												<td>1</td>
+												<td></td>
+												<td>success</td>
+											</tr>
+										</table>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<h4 class="child-header">Examples</h4>
+						<ul>
+							<li><i>curl -X GET http://api.sitfish.com/v1/people/wuzang/valid -H "Authorization: Bearer ISAQwbJyJB0EHN45rs60daO3BAAwdbLk+sE4gmXm5F/NvkEXE9vxvwj/kpYVNmk99a2hwrFHWy0csKyPpZYYRm6+cS6V0fA=" -v</i></li>
+						</ul>
+						<br><br>
+					</section>
 					<section id="people-id-detail" class="anchor">
 						<h1 class="page-header">/people/&lt;id&gt;/detail</h1>
 						<h4>Definition</h4>
@@ -463,7 +498,7 @@
 						</table>
 						<h4 class="child-header">Examples</h4>
 						<ul>
-							<li><i>curl -X GET http://api.sitfish.com/v1/people/wuzang/detail -H "Authorization: Bearer ISAQwbJyJFxLDNEpvZztK6S0UxAwYO619pIulGC3/xzY6E1WEsykv1b2y5MOO3kn8KignqMNQDMd5veM4sQYUm+0dyaI3aQ=" -v</i></li>
+							<li><i>curl -X GET http://api.sitfish.com/v1/people/wuzang/detail -H "Authorization: Bearer ISAQwbJyJB0EHN45rs60daO3BAAwdbLk+sE4gmXm5F/NvkEXE9vxvwj/kpYVNmk99a2hwrFHWy0csKyPpZYYRm6+cS6V0fA=" -v</i></li>
 						</ul>
 						<br><br>
 					</section>
@@ -510,7 +545,7 @@
 						</table>
 						<h4 class="child-header">Examples</h4>
 						<ul>
-							<li><i>curl -X PUT http://api.sitfish.com/v1/people/wuzang/player -H "Authorization: Bearer ISAQwbJyJFxLDNEpvZztK6S0UxAwYO619pIulGC3/xzY6E1WEsykv1b2y5MOO3kn8KignqMNQDMd5veM4sQYUm+0dyaI3aQ=" -d "status=playing" -d "sid=189192" -v</i></li>
+							<li><i>curl -X PUT http://api.sitfish.com/v1/people/wuzang/player -H "Authorization: Bearer ISAQwbJyJB0EHN45rs60daO3BAAwdbLk+sE4gmXm5F/NvkEXE9vxvwj/kpYVNmk99a2hwrFHWy0csKyPpZYYRm6+cS6V0fA=" -d "status=playing" -d "sid=189192" -v</i></li>
 						</ul>
 						<br><br>
 					</section>
@@ -553,7 +588,7 @@
 						</table>
 						<h4 class="child-header">Examples</h4>
 						<ul>
-							<li><i>curl -X POST http://api.sitfish.com/v1/people/wuzang/player/playlist -H "Authorization: Bearer ISAQwbJyJFxLDNEpvZztK6S0UxAwYO619pIulGC3/xzY6E1WEsykv1b2y5MOO3kn8KignqMNQDMd5veM4sQYUm+0dyaI3aQ=" -d "sid=189192" -v</i></li>
+							<li><i>curl -X POST http://api.sitfish.com/v1/people/wuzang/player/playlist -H "Authorization: Bearer ISAQwbJyJB0EHN45rs60daO3BAAwdbLk+sE4gmXm5F/NvkEXE9vxvwj/kpYVNmk99a2hwrFHWy0csKyPpZYYRm6+cS6V0fA=" -d "sid=189192" -v</i></li>
 						</ul>
 						<br>
 						<h4>2. Definition</h4>
@@ -593,7 +628,7 @@
 						</table>
 						<h4 class="child-header">Examples</h4>
 						<ul>
-							<li><i>curl -X PUT http://api.sitfish.com/v1/people/wuzang/player/playlist -H "Authorization: Bearer ISAQwbJyJFxLDNEpvZztK6S0UxAwYO619pIulGC3/xzY6E1WEsykv1b2y5MOO3kn8KignqMNQDMd5veM4sQYUm+0dyaI3aQ=" -d "sids=189192,29713754,28793502" -v</i></li>
+							<li><i>curl -X PUT http://api.sitfish.com/v1/people/wuzang/player/playlist -H "Authorization: Bearer ISAQwbJyJB0EHN45rs60daO3BAAwdbLk+sE4gmXm5F/NvkEXE9vxvwj/kpYVNmk99a2hwrFHWy0csKyPpZYYRm6+cS6V0fA=" -d "sids=189192,29713754,28793502" -v</i></li>
 						</ul>
 						<br>
 						<h4>3. Definition</h4>
@@ -624,7 +659,7 @@
 						</table>
 						<h4 class="child-header">Examples</h4>
 						<ul>
-							<li><i>curl -X DELETE http://api.sitfish.com/v1/people/wuzang/player/playlist -H "Authorization: Bearer ISAQwbJyJFxLDNEpvZztK6S0UxAwYO619pIulGC3/xzY6E1WEsykv1b2y5MOO3kn8KignqMNQDMd5veM4sQYUm+0dyaI3aQ=" -v</i></li>
+							<li><i>curl -X DELETE http://api.sitfish.com/v1/people/wuzang/player/playlist -H "Authorization: Bearer ISAQwbJyJB0EHN45rs60daO3BAAwdbLk+sE4gmXm5F/NvkEXE9vxvwj/kpYVNmk99a2hwrFHWy0csKyPpZYYRm6+cS6V0fA=" -v</i></li>
 						</ul>
 						<br><br>
 					</section>
@@ -658,7 +693,7 @@
 						</table>
 						<h4 class="child-header">Examples</h4>
 						<ul>
-							<li><i>curl -X DELETE http://api.sitfish.com/v1/people/wuzang/player/playlist/189192 -H "Authorization: Bearer ISAQwbJyJFxLDNEpvZztK6S0UxAwYO619pIulGC3/xzY6E1WEsykv1b2y5MOO3kn8KignqMNQDMd5veM4sQYUm+0dyaI3aQ=" -v</i></li>
+							<li><i>curl -X DELETE http://api.sitfish.com/v1/people/wuzang/player/playlist/189192 -H "Authorization: Bearer ISAQwbJyJB0EHN45rs60daO3BAAwdbLk+sE4gmXm5F/NvkEXE9vxvwj/kpYVNmk99a2hwrFHWy0csKyPpZYYRm6+cS6V0fA=" -v</i></li>
 						</ul>
 						<br><br>
 					</section>

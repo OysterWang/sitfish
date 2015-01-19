@@ -52,7 +52,7 @@
 		<div class="sm2-inline-element sm2-button-element sm2-menu">
 			<div class="sm2-button-bd">
 				<a href="#menu" class="sm2-inline-button menu">menu</a>
-				<span id="song-num" style="float:right; padding-top:1px; padding-right:2px; font-size:11px;">{{mine.player.playlist|length}}</span>
+				<span id="song-num" style="float:right; padding-top:1px; padding-right:2px; font-size:11px;">0</span>
 			</div>
 		</div>
 	</div>
@@ -75,21 +75,28 @@
 			<div class="row">
 				<div class="col-sm-7">
 					<ul id="player-playlist" class="sm2-playlist-bd">
-						{% for song in mine.player.playlist %}
+						<li>
+							<a href="javascript:void(0);"></a>
+						</li>
+					</ul>
+					{% raw %}
+					<script id="player-playlist-template" type="text/x-handlebars-template">
+						{{#each playlist}}
 						<li style="position:relative;">
-							<a href="{{song.source}}" img="{{song.img}}" style="padding-right:30px;">
+							<a href="{{source}}" img="{{img}}" style="padding-right:30px;">
 								<table width="100%">
 									<tr>
-										<td>{{song.name}}</td>
-										<td width="120">{{song.artist.name}}</td>
-										<td width="60">{{song.time|time_format_filter}}</td>
+										<td>{{name}}</td>
+										<td width="120">{{artist.name}}</td>
+										<td width="60">{{formatTime time}}</td>
 									</tr>
 								</table>
 							</a>
 							<span song-id="{{sid}}" class="glyphicon glyphicon-trash delete-song" aria-hidden="true" style="position:absolute; top:8px; right:15px;"></span>
 						</li>
-						{% endfor %}
-					</ul>
+						{{/each}}
+					</script>
+					{% endraw %}
 				</div>
 				<div class="col-sm-5">
 					<p>歌词</p>

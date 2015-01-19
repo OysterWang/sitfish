@@ -7,7 +7,7 @@
 		<br><br>
 		<div class="row">
 			<div class="col-sm-3">
-				<img src="{{ url_for('static', filename='image/toplist/%s.jpg' % id) }}" width="150" height="150" style="border:1px solid #d3d3d3;">
+				<img src="{{ url_for('static', filename='image/toplist/%s.jpg' % toplist.id) }}" width="150" height="150" style="border:1px solid #d3d3d3;">
 			</div>
 			<div class="col-sm-9" style="padding-left:5px;">
 				<h2>{{ brand }}新歌榜</h2>
@@ -20,7 +20,9 @@
 		</div>
 		<br>
 		<div class="row" style="padding:0px 50px 0px 20px;">
+			{% with songs=toplist.songs %}
 			{% include 'song_list.html' %}
+			{% endwith %}
 			<br>
 			{% include 'comment.html' %}
 		</div>

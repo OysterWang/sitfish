@@ -69,7 +69,7 @@ def search():
 	if t == '0':
 		data = {'count': People.objects(id__contains=s).count(), 'people': []}
 		for people in People.objects(id__contains=s).skip(offset).limit(limit):
-			data['people'].append(people.public_json())
+			data['people'].append(people.json())
 	else:
 		url = 'http://music.163.com/api/search/pc'
 		payload = {'s': s, 'type': t, 'offset': offset, 'total': 'true', 'limit': limit}
@@ -99,7 +99,7 @@ def albums(id=''):
 # TYPE - 100
 @app.route('/v1/artists/<id>', methods=['GET'])
 def artists(id=''):
-	url = 'http://music.163.com/api/artist/albums/{}?limit={0:d}'.format(id, app.config['LIMIT'])
+	url = 'http://music.163.com/api/artist/albums/{}?limit={:d}'.format(id, app.config['LIMIT'])
 	data = requests.get(url, headers=app.config['HEADERS']).json()
 	return jsonify(**data)
 
@@ -144,7 +144,7 @@ def explore_playlists_cat(cat='全部'):
 	offset = parse_int(request.args.get('offset', default=''), default=app.config['OFFSET'])
 	limit = parse_int(request.args.get('limit', default=''), default=35)
 	data = {'count': 0, 'playlists': []}
-	url = 'http://music.163.com/discover/playlist/?cat={}&offset={0:d}&limit={0:d}'.format(cat, offset, limit)
+	url = 'http://music.163.com/discover/playlist/?cat={}&offset={:d}&limit={:d}'.format(cat, offset, limit)
 	soup = BeautifulSoup(requests.get(url).content)
 	pages = soup.findAll('a', class_='zpgi')
 	if len(pages) > 0:
@@ -264,6 +264,16 @@ def update_songs(ids):
 			song.save()
 			app.logger.info('Song {} was updated'.format(song.id))
 	return Song.objects(id__in=ids)
+
+
+@app.route('/v1/people/<id>/valid', methods=['GET'])
+@access_token_required
+def people_id_valid(id=''):
+	data = {'ret': 0}
+	people = People.objects(id=id).first()
+	if people:
+		data['ret'] = 1
+	return jsonify(**data)
 
 
 @app.route('/v1/people/<id>/detail', methods=['GET'])

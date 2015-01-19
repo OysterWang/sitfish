@@ -28,30 +28,36 @@ function refreshNav() {
 
 /* Playlist in player */
 
-function loadSongs() {
-	$.get('/api/v1/player/' + $('#data-pid').attr('value'), function(data) {
-		refreshSongs(data);
-	});
-}
+// function loadSongs() {
+// 	$.get('/mine', function(data) {
+// 		refreshSongs(data);
+// 	});
+// }
+
+// function refreshSongs(data) {
+// 	if (data['ret'] == 1) {
+// 		var playlist = data['people']['player']['playlist'];
+// 		if (playlist.length > 0) {
+// 			var template = Handlebars.compile($("#player-playlist-template").html());
+// 			$('#player-playlist').html(template({'playlist': playlist}));
+// 			$('#song-img').attr('src', playlist[0]['img']);
+// 			$('div.sm2-playlist-target').html('<ul class="sm2-playlist-bd"><li>' + playlist[0]['name'] + ' - ' + playlist[0]['artist_name'] + '</li></ul>');
+// 			$('#player-playlist>li:first').addClass('selected');
+// 		} else {
+// 			$('#player-playlist').html('<li><a href="javascript:void(0);"></a></li>');
+// 			$('#song-img').attr('src', $('#data-logo-img').attr('value'));
+// 			$('div.sm2-playlist-target').html('<ul class="sm2-playlist-bd"><li></li></ul>');
+// 		}
+// 		$('#song-num').html(playlist.length);
+// 		deleteSongListener();
+// 		clearSongListener();
+// 	} else {
+
+// 	}
+// }
 
 function refreshSongs(data) {
-	if (data['ret'] == 1) {
-		var playlist = data['player']['playlist'];
-		if (playlist.length > 0) {
-			var template = Handlebars.compile($("#player-playlist-template").html());
-			$('#player-playlist').html(template({'playlist': playlist}));
-			$('#song-img').attr('src', playlist[0]['img']);
-			$('div.sm2-playlist-target').html('<ul class="sm2-playlist-bd"><li>' + playlist[0]['name'] + ' - ' + playlist[0]['artist_name'] + '</li></ul>');
-			$('#player-playlist>li:first').addClass('selected');
-		} else {
-			$('#player-playlist').html('<li><a href="javascript:void(0);"></a></li>');
-			$('#song-img').attr('src', $('#data-logo-img').attr('value'));
-			$('div.sm2-playlist-target').html('<ul class="sm2-playlist-bd"><li></li></ul>');
-		}
-		$('#song-num').html(playlist.length);
-		deleteSongListener();
-		clearSongListener();
-	}
+	$.pjax.reload('#player')
 }
 
 function deleteSongListener() {
@@ -189,8 +195,8 @@ function sendMsg(to, content) {
 
 $(function() {
 	registHelpers();
-	loadSongs();
+	// loadSongs();
 	autoReload();
 	pjaxListener(autoReload);
-	connectWebSocket();
+	// connectWebSocket();
 });
