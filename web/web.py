@@ -3,6 +3,7 @@
 
 import os
 import re
+import json
 import math
 import codecs
 import random
@@ -222,7 +223,30 @@ Play and sync related
 @app.route('/player', methods=['GET'])
 @login_required
 def player():
-	return render_template('player.html', mine=mine()['people'], **base_params)
+	url = get_url('/people/{}/player'.format(session['id']))
+	data = requests.get(url, headers=get_headers()).json()
+	return jsonify(**data)
+
+
+@app.route('/player/playlist', methods=['POST', 'PUT', 'DELETE'])
+@login_required
+def player_playlist():
+	url = get_url('/people/{}/player/playlist'.format(session['id']))
+	data = requests.request(request.method, url, headers=get_headers(), data=request.form).json()
+	if data['ret'] == 1 and request.method in ('POST', 'PUT'):
+		sid = request.form['sid'] if request.method == 'POST' else json.loads(request.form['sids'])[0]
+		url = get_url('/people/{}/player'.format(session['id']))
+		ret = requests.request('PUT', url, headers=get_headers(), data={'status':'playing', 'sid':sid}).json()
+		app.logger.info('update player song {}'.format('success' if 'ret' in ret and ret['ret'] == 1 else 'failed'))
+	return jsonify(**data)
+
+
+@app.route('/player/playlist/<sid>', methods=['DELETE'])
+@login_required
+def player_playlist_sid(sid=''):
+	url = get_url('/people/{}/player/playlist/{}'.format(session['id'], sid))
+	data = requests.request(request.method, url, headers=get_headers(), data=request.form).json()
+	return jsonify(**data)
 
 
 @app.route('/notice', methods=['GET'])

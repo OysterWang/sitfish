@@ -4,7 +4,7 @@
 		<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
 		<base href="http://{{ host }}" />
 		<title>{{ brand }} - API</title>
-		<link rel="icon" href="{{url_for('static', filename='image/logo.png')}}" />
+		<link rel="icon" href="{{url_for('static', filename='image/logo.jpg')}}" />
 		<link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.1/css/bootstrap.min.css">
 		<link rel="stylesheet" href="{{url_for('static', filename='css/v1.css')}}">
 	</head>
@@ -460,7 +460,7 @@
 						</table>
 						<h4 class="child-header">Examples</h4>
 						<ul>
-							<li><i>curl -X GET http://api.sitfish.com/v1/people/wuzang/valid -H "Authorization: Bearer ISAQwbJyJB0EHN45rs60daO3BAAwdbLk+sE4gmXm5F/NvkEXE9vxvwj/kpYVNmk99a2hwrFHWy0csKyPpZYYRm6+cS6V0fA=" -v</i></li>
+							<li><i>curl -X GET http://api.sitfish.com/v1/people/wuzang/valid -H "Authorization: Bearer {{access_token}}" -v</i></li>
 						</ul>
 						<br><br>
 					</section>
@@ -498,13 +498,48 @@
 						</table>
 						<h4 class="child-header">Examples</h4>
 						<ul>
-							<li><i>curl -X GET http://api.sitfish.com/v1/people/wuzang/detail -H "Authorization: Bearer ISAQwbJyJB0EHN45rs60daO3BAAwdbLk+sE4gmXm5F/NvkEXE9vxvwj/kpYVNmk99a2hwrFHWy0csKyPpZYYRm6+cS6V0fA=" -v</i></li>
+							<li><i>curl -X GET http://api.sitfish.com/v1/people/wuzang/detail -H "Authorization: Bearer {{access_token}}" -v</i></li>
 						</ul>
 						<br><br>
 					</section>
 					<section id="people-id-player" class="anchor">
 						<h1 class="page-header">/people/&lt;id&gt;/player</h1>
-						<h4>Definition</h4>
+						<h4>1. Definition</h4>
+						<p><b>GET</b> http://{{ host }}/{{ version }}/people/&lt;id&gt;/player</p>
+						<p><i>Get the current player.</i></p>
+						<p><b><i>An access token is required.</i></b></p>
+						<h4 class="child-header">Return</h4>
+						<table class="table table-condensed">
+							<tbody>
+								<tr>
+									<td width="200">ret</td>
+									<td>
+										<table>
+											<tr>
+												<td>0</td>
+												<td width="15"></td>
+												<td>fail</td>
+											</tr>
+											<tr>
+												<td>1</td>
+												<td></td>
+												<td>success</td>
+											</tr>
+										</table>
+									</td>
+								</tr>
+								<tr>
+									<td>player</td>
+									<td>The current player.</td>
+								</tr>
+							</tbody>
+						</table>
+						<h4 class="child-header">Examples</h4>
+						<ul>
+							<li><i>curl -X GET http://api.sitfish.com/v1/people/wuzang/player -H "Authorization: Bearer {{access_token}}" -v</i></li>
+						</ul>
+						<br>
+						<h4>2. Definition</h4>
 						<p><b>PUT</b> http://{{ host }}/{{ version }}/people/&lt;id&gt;/player</p>
 						<p><i>Update the player status.</i></p>
 						<p><b><i>An access token is required.</i></b></p>
@@ -545,7 +580,7 @@
 						</table>
 						<h4 class="child-header">Examples</h4>
 						<ul>
-							<li><i>curl -X PUT http://api.sitfish.com/v1/people/wuzang/player -H "Authorization: Bearer ISAQwbJyJB0EHN45rs60daO3BAAwdbLk+sE4gmXm5F/NvkEXE9vxvwj/kpYVNmk99a2hwrFHWy0csKyPpZYYRm6+cS6V0fA=" -d "status=playing" -d "sid=189192" -v</i></li>
+							<li><i>curl -X PUT http://api.sitfish.com/v1/people/wuzang/player -H "Authorization: Bearer {{access_token}}" -d "status=playing" -d "sid=189192" -v</i></li>
 						</ul>
 						<br><br>
 					</section>
@@ -584,11 +619,15 @@
 										</table>
 									</td>
 								</tr>
+								<tr>
+									<td>player</td>
+									<td>The current player.</td>
+								</tr>
 							</tbody>
 						</table>
 						<h4 class="child-header">Examples</h4>
 						<ul>
-							<li><i>curl -X POST http://api.sitfish.com/v1/people/wuzang/player/playlist -H "Authorization: Bearer ISAQwbJyJB0EHN45rs60daO3BAAwdbLk+sE4gmXm5F/NvkEXE9vxvwj/kpYVNmk99a2hwrFHWy0csKyPpZYYRm6+cS6V0fA=" -d "sid=189192" -v</i></li>
+							<li><i>curl -X POST http://api.sitfish.com/v1/people/wuzang/player/playlist -H "Authorization: Bearer {{access_token}}" -d "sid=189192" -v</i></li>
 						</ul>
 						<br>
 						<h4>2. Definition</h4>
@@ -624,11 +663,15 @@
 										</table>
 									</td>
 								</tr>
+								<tr>
+									<td>player</td>
+									<td>The current player.</td>
+								</tr>
 							</tbody>
 						</table>
 						<h4 class="child-header">Examples</h4>
 						<ul>
-							<li><i>curl -X PUT http://api.sitfish.com/v1/people/wuzang/player/playlist -H "Authorization: Bearer ISAQwbJyJB0EHN45rs60daO3BAAwdbLk+sE4gmXm5F/NvkEXE9vxvwj/kpYVNmk99a2hwrFHWy0csKyPpZYYRm6+cS6V0fA=" -d "sids=189192,29713754,28793502" -v</i></li>
+							<li><i>curl -X PUT http://api.sitfish.com/v1/people/wuzang/player/playlist -H "Authorization: Bearer {{access_token}}" -d "sids=189192,29713754,28793502" -v</i></li>
 						</ul>
 						<br>
 						<h4>3. Definition</h4>
@@ -655,11 +698,15 @@
 										</table>
 									</td>
 								</tr>
+								<tr>
+									<td>player</td>
+									<td>The current player.</td>
+								</tr>
 							</tbody>
 						</table>
 						<h4 class="child-header">Examples</h4>
 						<ul>
-							<li><i>curl -X DELETE http://api.sitfish.com/v1/people/wuzang/player/playlist -H "Authorization: Bearer ISAQwbJyJB0EHN45rs60daO3BAAwdbLk+sE4gmXm5F/NvkEXE9vxvwj/kpYVNmk99a2hwrFHWy0csKyPpZYYRm6+cS6V0fA=" -v</i></li>
+							<li><i>curl -X DELETE http://api.sitfish.com/v1/people/wuzang/player/playlist -H "Authorization: Bearer {{access_token}}" -v</i></li>
 						</ul>
 						<br><br>
 					</section>
@@ -689,11 +736,15 @@
 										</table>
 									</td>
 								</tr>
+								<tr>
+									<td>player</td>
+									<td>The current player.</td>
+								</tr>
 							</tbody>
 						</table>
 						<h4 class="child-header">Examples</h4>
 						<ul>
-							<li><i>curl -X DELETE http://api.sitfish.com/v1/people/wuzang/player/playlist/189192 -H "Authorization: Bearer ISAQwbJyJB0EHN45rs60daO3BAAwdbLk+sE4gmXm5F/NvkEXE9vxvwj/kpYVNmk99a2hwrFHWy0csKyPpZYYRm6+cS6V0fA=" -v</i></li>
+							<li><i>curl -X DELETE http://api.sitfish.com/v1/people/wuzang/player/playlist/189192 -H "Authorization: Bearer {{access_token}}" -v</i></li>
 						</ul>
 						<br><br>
 					</section>

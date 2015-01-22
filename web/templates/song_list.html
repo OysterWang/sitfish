@@ -19,15 +19,7 @@
 			<td width="40">{{ offset|default(0) + loop.index }}</td>
 			<td width="25">
 				<a title="播放这首歌" href="javascript:void(0);" class="add-song">
-					<span class="glyphicon glyphicon-play-circle" aria-hidden="true"
-						song-id="{{ song['id'] }}"
-						song-name="{{ song['name'] }}"
-						song-source="{{ song['mp3Url'] }}"
-						song-img="{{ song['album']['picUrl'] }}"
-						song-time="{{ song['bMusic']['playTime'] }}"
-						song-artist-id="{{ song['artists'][0]['id'] }}"
-						song-artist-name="{{ song['artists'][0]['name'] }}">
-					</span>
+					<span class="glyphicon glyphicon-play-circle" aria-hidden="true" song-id="{{ song['id'] }}"></span>
 				</a>
 			</td>
 			<td><a title="{{ song['name'] }}" href="/songs/{{ song['id'] }}" data-pjax="#main">{{ song['name']|truncate(30, True) }}</a></td>

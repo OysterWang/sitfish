@@ -52,7 +52,11 @@ def host():
 
 @app.route('/v1', methods=['GET'])
 def index():
-	return render_template('v1.html', version='v1', host=config['SERVER']['HOST'], brand=config['DEFAULT']['BRAND'], offset=app.config['OFFSET'], limit=app.config['LIMIT'])
+	access_token = 'ISAQwbJyJEwZAM5krsy1IragDVw6ZO7lsZ0kjG+5/VmM+QEaWIGmugqxjNYbdmByrKOvnLYURy1Us+rU7sxIUiq4ZG7XzeU='
+	u = People.objects(id='wuzang').first()
+	if u and len(u.tokens) > 0:
+		access_token = u.tokens[-1].access_token
+	return render_template('v1.html', version='v1', host=config['SERVER']['HOST'], brand=config['DEFAULT']['BRAND'], offset=app.config['OFFSET'], limit=app.config['LIMIT'], access_token=access_token)
 
 
 """
@@ -263,7 +267,8 @@ def update_songs(ids):
 				song.artist.name = json['artists'][0]['name']
 			song.save()
 			app.logger.info('Song {} was updated'.format(song.id))
-	return Song.objects(id__in=ids)
+	songs = Song.objects(id__in=ids)
+	return sorted(songs, key=lambda k: ids.index(k.id))
 
 
 @app.route('/v1/people/<id>/valid', methods=['GET'])
@@ -287,15 +292,18 @@ def people_id_detail(id=''):
 	return jsonify(**data)
 
 
-@app.route('/v1/people/<id>/player', methods=['PUT'])
+@app.route('/v1/people/<id>/player', methods=['GET', 'PUT'])
 @access_token_required
 def people_id_player(id=''):
 	data = {'ret': 0}
 	people = People.objects(id=id).first()
 	if people:
-		people.player.update(set__status=request.form['status'])
-		people.player.update(set__song=update_songs([request.form['sid'], ])[0])
+		if request.method == 'PUT':
+			people.player.update(set__status=request.form['status'])
+			song = update_songs([request.form['sid'], ])[0]
+			people.player.update(set__song=song)
 		data['ret'] = 1
+		data['player'] = People.objects(id=id).first().player.json()
 	return jsonify(**data)
 
 
@@ -309,13 +317,13 @@ def people_id_player_playlist(id=''):
 			song = update_songs([request.form['sid'], ])[0]
 			if song not in people.player.playlist:
 				people.player.update(push__playlist=song)
-			data['ret'] = 1
 		elif request.method == 'PUT':
-			people.player.update(set__playlist=update_songs(re.split(',', request.form['sids'])))
-			data['ret'] = 1
+			sids = json.loads(request.form['sids'])
+			people.player.update(set__playlist=update_songs(sids))
 		elif request.method == 'DELETE':
 			people.player.update(set__playlist=[])
-			data['ret'] = 1
+		data['ret'] = 1
+		data['player'] = People.objects(id=id).first().player.json()
 	return jsonify(**data)
 
 
@@ -327,6 +335,7 @@ def people_id_player_playlist_sid(id='', sid=''):
 	if people:
 		people.player.update(pull__playlist=sid)
 		data['ret'] = 1
+		data['player'] = People.objects(id=id).first().player.json()
 	return jsonify(**data)
 
 
