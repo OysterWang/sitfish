@@ -69,7 +69,7 @@
 					</p>
 				</div>
 				<div class="col-sm-5">
-					<p style="padding:10px 0px 10px 0px;"><b>匆匆那年</b></p>
+					<p style="padding:10px 0px 10px 0px;"><b id="song-name">请选择要收听的歌曲</b></p>
 				</div>
 			</div>
 			<div class="row">
@@ -99,7 +99,18 @@
 					{% endraw %}
 				</div>
 				<div class="col-sm-5">
-					<p>歌词</p>
+					<ul id="song-lyrics" class="sm2-playlist-bd">
+						<li>
+							<a href="javascript:void(0);"></a>
+						</li>
+					</ul>
+					{% raw %}
+					<script id="song-lyrics-template" type="text/x-handlebars-template">
+						{{#each lyrics}}
+						<li style="position:relative; line-height:1.5em;">{{this}}</li>
+						{{/each}}
+					</script>
+					{% endraw %}
 				</div>
 			</div>
 		</div>

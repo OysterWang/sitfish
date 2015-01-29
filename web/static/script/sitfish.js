@@ -56,10 +56,24 @@ function menuListener() {
 		}
 	});
 	$(document).on('click', function(e) {
-		if (!(e.target.text == 'menu') && $('div.sm2-bar-ui').hasClass('playlist-open')) {
+		var playlist = $('div.sm2-playlist-wrapper')[0];
+		var control = $('div.sm2-main-controls')[0];
+		var target = e.target;
+		if (!isDescendant(playlist, target) && !isDescendant(control, target) && $('div.sm2-bar-ui').hasClass('playlist-open')) {
 			globalActions.menu();
 		}
 	});
+}
+
+function isDescendant(parent, child) {
+	var node = child;
+	while (node != null) {
+		if (node == parent) {
+			return true;
+		}
+		node = node.parentNode;
+	}
+	return false;
 }
 
 function pjaxListener(callback) {
@@ -85,11 +99,12 @@ function loadSongs() {
 
 function refreshSongs(data) {
 	var song = data['player']['song'];
-	console.log(song);
 	var playlist = data['player']['playlist'];
 	if (playlist.length > 0) {
 		var template = Handlebars.compile($("#player-playlist-template").html());
 		$('#player-playlist').html(template({'playlist': playlist}));
+		$('#song-name').html(song['name']);
+		addLyric(song['id']);
 		$('#song-img').attr('src', song['img']);
 		$('div.sm2-playlist-target').html('<ul class="sm2-playlist-bd"><li>' + song['name'] + ' - ' + song['artist']['name'] + '</li></ul>');
 		$('#player-playlist>li:first').addClass('selected');
@@ -103,6 +118,13 @@ function refreshSongs(data) {
 	clearSongListener();
 }
 
+function addLyric(sid) {
+	$.get('/lyrics/' + sid, function(data) {
+		var template = Handlebars.compile($("#song-lyrics-template").html());
+		$('#song-lyrics').html(template({'lyrics': data['lyrics']}));
+	});
+}
+
 function addSongListener() {
 	$('.add-song').click(function() {
 		var span = $(this).find('span:first');
@@ -112,8 +134,6 @@ function addSongListener() {
 				if (data['ret'] == 1) {
 					refreshSongs(data);
 					globalPlayLink($('span[song-id=' + sid + ']').prev().get(0));
-				} else {
-					console.log('add song[' + sid + '] failed');
 				}
 			}
 		})(span.attr('song-id')));
@@ -132,12 +152,10 @@ function replaceSongListener() {
 			url: "/player/playlist",
 			data: {'sids': JSON.stringify(sids)}
 		}).done(function(data) {
-			console.log(data);
 			if (data['ret'] == 1) {
 				refreshSongs(data);
 				globalPlayLink($('li.selected a').get(0));
 			} else {
-				console.log('replace songs failed');
 			}
 		});
 	});
@@ -159,7 +177,6 @@ function deleteSongListener() {
 			if (data['ret'] == 1) {
 				refreshSongs(data);
 			} else {
-				console.log('delete song failed');
 			}
 		});
 	});
@@ -179,7 +196,6 @@ function clearSongListener() {
 			if (data['ret'] == 1) {
 				refreshSongs(data);
 			} else {
-				console.log('clear songs failed');
 			}
 		});
 	});
@@ -207,7 +223,6 @@ function connectWebSocket() {
 		ws.send(JSON.stringify({'from':$('#data-pid').attr('value')}));
 	};
 	ws.onmessage = function (e) {
-		console.log('server: ' + e.data);
 		var msg = $.parseJSON(e.data);
 		if (msg.content === 1) {
 			$('#connectRequestModal').modal();

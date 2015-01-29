@@ -74,8 +74,7 @@ def search():
 		's': request.args.get('s', default=''),
 		't': request.args.get('t', default='1'),
 		'offset': parse_int(request.args.get('offset', default=''), default=0),
-		'limit': parse_int(request.args.get('limit', default=''), default=30),
-		'ad': get_ad()
+		'limit': parse_int(request.args.get('limit', default=''), default=30)
 	}
 	url = get_url('/search?s={}&t={}&offset={:d}&limit={:d}'.format(params['s'], params['t'], params['offset'], params['limit']))
 	data = requests.get(url).json()
@@ -151,7 +150,7 @@ def song(id=''):
 	lyric = []
 	if 'lrc' in data and 'lyric' in data['lrc']:
 		lyric = [re.sub('\[.*\]', '', line) for line in re.split('\n', data['lrc']['lyric'])]
-	return pjax('song.html', song=song, lyric=lyric, ad=get_ad())
+	return pjax('song.html', song=song, lyric=lyric)
 
 
 @app.route('/albums/<id>', methods=['GET'])
@@ -160,7 +159,7 @@ def album(id=''):
 	url = get_url('/albums/{}'.format(id))
 	data = requests.get(url).json()
 	songs = data['album']['songs'] if 'album' in data and 'songs' in data['album'] else []
-	return pjax('album.html', data=data, songs=songs, ad=get_ad())
+	return pjax('album.html', data=data, songs=songs)
 
 
 @app.route('/artists/<id>', methods=['GET'])
@@ -168,7 +167,7 @@ def album(id=''):
 def artist(id=''):
 	url = get_url('/artists/{}'.format(id))
 	data = requests.get(url).json()
-	return pjax('artist.html', data=data, ad=get_ad())
+	return pjax('artist.html', data=data)
 
 
 @app.route('/playlists/<id>', methods=['GET'])
@@ -177,7 +176,7 @@ def playlist(id=''):
 	url = get_url('/playlists/{}'.format(id))
 	data = requests.get(url).json()
 	songs = data['result']['tracks'] if 'result' in data and 'tracks' in data['result'] else []
-	return pjax('playlist.html', data=data, songs=songs, ad=get_ad())
+	return pjax('playlist.html', data=data, songs=songs)
 
 
 @app.route('/', methods=['GET'])
@@ -213,7 +212,21 @@ def explore_playlist(cat='全部'):
 def people(id=''):
 	url = get_url('/people/{}'.format(id))
 	people = requests.get(url).json()['people']
-	return pjax('people.html', people=people, ad=get_ad())
+	return pjax('people.html', people=people)
+
+
+"""
+Data API
+"""
+
+@app.route('/lyrics/<sid>', methods=['GET'])
+def lyrics(sid=''):
+	url = get_url('/lyrics/{}'.format(sid))
+	data = requests.get(url).json()
+	lyrics = {'lyrics': []}
+	if 'lrc' in data and 'lyric' in data['lrc']:
+		lyrics['lyrics'] = [re.sub('\[.*\]', '', line) for line in re.split('\n', data['lrc']['lyric'])]
+	return jsonify(**lyrics)
 
 
 """
@@ -236,8 +249,8 @@ def player_playlist():
 	if data['ret'] == 1 and request.method in ('POST', 'PUT'):
 		sid = request.form['sid'] if request.method == 'POST' else json.loads(request.form['sids'])[0]
 		url = get_url('/people/{}/player'.format(session['id']))
-		ret = requests.request('PUT', url, headers=get_headers(), data={'status':'playing', 'sid':sid}).json()
-		app.logger.info('update player song {}'.format('success' if 'ret' in ret and ret['ret'] == 1 else 'failed'))
+		data = requests.request('PUT', url, headers=get_headers(), data={'status':'playing', 'sid':sid}).json()
+		app.logger.info('update player song {}'.format('success' if 'ret' in data and data['ret'] == 1 else 'failed'))
 	return jsonify(**data)
 
 
@@ -337,10 +350,6 @@ def parse_int(s, default=0):
 		return int(s)
 	except ValueError:
 		return default
-
-
-def get_ad():
-	return random.randint(0, 5)
 
 
 def get_url(resource):
