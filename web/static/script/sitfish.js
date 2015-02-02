@@ -5,16 +5,41 @@ $(function() {
 	loadSongs();
 	autoReload();
 	pjaxListener(autoReload);
-	// connectWebSocket();
+	toggleListener();
+	menuListener();
+	connectWebSocket();
 });
-
-
-
-/* Helpers */
 
 function registHelpers() {
 	Handlebars.registerHelper("formatTime", millisecondsToTime);
 }
+
+function loadSongs() {
+	$.get('/player', function(data) {
+		refreshSongs(data);
+	});
+}
+
+function autoReload() {
+	refreshNav();
+	addSongListener();
+	replaceSongListener();
+	friendRequestListener();
+}
+
+function pjaxListener(callback) {
+	$.pjax.defaults.timeout = false
+	$(document).pjax('a[data-pjax]');
+	$(document).on('pjax:complete', function() {
+		callback();
+	});
+	$(document).on('submit', 'form[data-pjax]', function(event) {
+		$.pjax.submit(event)
+	});
+}
+
+
+/* Helpers */
 
 function millisecondsToTime(milli) {
 	function addZero(n) {
@@ -26,16 +51,7 @@ function millisecondsToTime(milli) {
 }
 
 
-
-/* Listeners */
-
-function autoReload() {
-	refreshNav();
-	menuListener();
-	addSongListener();
-	replaceSongListener();
-	connectRequestListener();
-}
+/* Auto Reload */
 
 function refreshNav() {
 	cur = $(location).attr('pathname');
@@ -46,6 +62,64 @@ function refreshNav() {
 		$('.nav-main>li:nth(0)').addClass('active');
 	}
 	$('.navbar input[name=s]').val('');
+}
+
+function addSongListener() {
+	$('.add-song').click(function() {
+		var span = $(this).find('span:first');
+		data = { 'sid': span.attr('song-id') };
+		$.post('/player/playlist', data, (function(sid) {
+			return function(data) {
+				if (data['ret'] == 1) {
+					refreshSongs(data);
+					sendPlayerSync();
+				}
+			}
+		})(span.attr('song-id')));
+	});
+}
+
+function replaceSongListener() {
+	$('.replace-song').click(function() {
+		sids = [];
+		$('.add-song').each(function() {
+			var span = $(this).find('span:first');
+			sids.push(span.attr('song-id'));
+		});
+		$.ajax({
+			type: "PUT",
+			url: "/player/playlist",
+			data: {'sids': JSON.stringify(sids)}
+		}).done(function(data) {
+			if (data['ret'] == 1) {
+				refreshSongs(data);
+				sendPlayerSync();
+			}
+		});
+	});
+}
+
+function friendRequestListener() {
+	$('.friendRequestButton').click(function() {
+		sendFriendRequest($(this).attr('data-pid'));
+	});
+}
+
+
+/* Page load listeners */
+
+function toggleListener() {
+	$('a[href="#play"]').click(function() {
+		$.ajax({
+			type: 'PUT',
+			url: '/player',
+			data: {'status': $('div.sm2-bar-ui').hasClass('playing') ? 'paused' : 'playing', 'sid': $('li.selected').children('a').first().attr('song-id')}
+		}).done(function(data) {
+			if (data.ret == 1) {
+				sendPlayerToggle(data.player.status);
+			}
+		});
+	});
 }
 
 function menuListener() {
@@ -76,26 +150,8 @@ function isDescendant(parent, child) {
 	return false;
 }
 
-function pjaxListener(callback) {
-	$.pjax.defaults.timeout = false
-	$(document).pjax('a[data-pjax]');
-	$(document).on('pjax:complete', function() {
-		callback();
-	});
-	$(document).on('submit', 'form[data-pjax]', function(event) {
-		$.pjax.submit(event)
-	});
-}
-
-
 
 /* Player related */
-
-function loadSongs() {
-	$.get('/player', function(data) {
-		refreshSongs(data);
-	});
-}
 
 function refreshSongs(data) {
 	var song = data['player']['song'];
@@ -103,59 +159,45 @@ function refreshSongs(data) {
 	if (playlist.length > 0) {
 		var template = Handlebars.compile($("#player-playlist-template").html());
 		$('#player-playlist').html(template({'playlist': playlist}));
-		$('#song-name').html(song['name']);
-		addLyric(song['id']);
 		$('#song-img').attr('src', song['img']);
 		$('div.sm2-playlist-target').html('<ul class="sm2-playlist-bd"><li>' + song['name'] + ' - ' + song['artist']['name'] + '</li></ul>');
 		$('#player-playlist>li:first').addClass('selected');
+		addLyric(song['id']);
+		if (data.player.status == 'playing') {
+			globalPlayLink($('span[song-id=' + data.player.song.id + ']').prev().get(0));
+		}
 	} else {
 		$('#player-playlist').html('<li><a href="javascript:void(0);"></a></li>');
 		$('#song-img').attr('src', $('#data-logo-img').attr('value'));
 		$('div.sm2-playlist-target').html('<ul class="sm2-playlist-bd"><li></li></ul>');
+		addLyric('xxx');
 	}
 	$('#song-num').html(playlist.length);
-	deleteSongListener();
 	clearSongListener();
+	deleteSongListener();
+	changeSongListener();
 }
 
 function addLyric(sid) {
 	$.get('/lyrics/' + sid, function(data) {
 		var template = Handlebars.compile($("#song-lyrics-template").html());
+		$('#song-name').html(data['name']);
 		$('#song-lyrics').html(template({'lyrics': data['lyrics']}));
 	});
 }
 
-function addSongListener() {
-	$('.add-song').click(function() {
-		var span = $(this).find('span:first');
-		data = { 'sid': span.attr('song-id') };
-		$.post('/player/playlist', data, (function(sid) {
-			return function(data) {
-				if (data['ret'] == 1) {
-					refreshSongs(data);
-					globalPlayLink($('span[song-id=' + sid + ']').prev().get(0));
-				}
-			}
-		})(span.attr('song-id')));
-	});
-}
-
-function replaceSongListener() {
-	$('.replace-song').click(function() {
-		sids = [];
-		$('.add-song').each(function() {
-			var span = $(this).find('span:first');
-			sids.push(span.attr('song-id'));
-		});
+function clearSongListener() {
+	$('.clear-song').click(function() {
+		if ($('div.sm2-bar-ui').hasClass('playing')) {
+			startStopSong();
+		}
 		$.ajax({
-			type: "PUT",
-			url: "/player/playlist",
-			data: {'sids': JSON.stringify(sids)}
+			type: "DELETE",
+			url: "/player/playlist"
 		}).done(function(data) {
 			if (data['ret'] == 1) {
 				refreshSongs(data);
-				globalPlayLink($('li.selected a').get(0));
-			} else {
+				sendPlayerSync();
 			}
 		});
 	});
@@ -165,9 +207,7 @@ function deleteSongListener() {
 	$('.delete-song').click(function() {
 		if ($('div.sm2-bar-ui').hasClass('playing')) {
 			if ($('li.selected span').attr('song-id') == $(this).attr('song-id')) {
-				var evt = $.Event('click');
-				evt.target = $('a.sm2-inline-button').get(0);
-				globalActions.play(evt);
+				startStopSong();
 			}
 		}
 		$.ajax({
@@ -176,41 +216,36 @@ function deleteSongListener() {
 		}).done(function(data) {
 			if (data['ret'] == 1) {
 				refreshSongs(data);
-			} else {
+				sendPlayerSync();
 			}
 		});
 	});
 }
 
-function clearSongListener() {
-	$('.clear-song').click(function() {
-		if ($('div.sm2-bar-ui').hasClass('playing')) {
-			var evt = $.Event('click');
-			evt.target = $('a.sm2-inline-button').get(0);
-			globalActions.play(evt);
+function changeSongListener() {
+	$('a[song-id]').click(function() {
+		skipPlayerSong($(this).attr('song-id'));
+	});
+}
+
+function skipPlayerSong(sid) {
+	$.ajax({
+		type: 'PUT',
+		url: '/player',
+		data: {'status': 'playing', 'sid': sid}
+	}).done(function(data) {
+		if (data['ret'] == 1) {
+			refreshSongs(data);
+			sendPlayerSync();
 		}
-		$.ajax({
-			type: "DELETE",
-			url: "/player/playlist"
-		}).done(function(data) {
-			if (data['ret'] == 1) {
-				refreshSongs(data);
-			} else {
-			}
-		});
 	});
 }
 
-
-
-/* Friend related */
-
-function connectRequestListener() {
-	$('.connectRequestButton').click(function() {
-		sendMsg($(this).attr('data-pid'), 1);
-	});
+function startStopSong() {
+	var evt = $.Event('click');
+	evt.target = $('a.sm2-inline-button').get(0);
+	globalActions.play(evt);
 }
-
 
 
 /* WebSocket related */
@@ -220,21 +255,44 @@ var ws;
 function connectWebSocket() {
 	ws = new WebSocket('ws://' + $('#data-ws-host').attr('value') + ':' + $('#data-ws-port').attr('value'));
 	ws.onopen = function () {
-		ws.send(JSON.stringify({'from':$('#data-pid').attr('value')}));
+		ws.send(JSON.stringify({'from':$('#data-mine-id').attr('value')}));
 	};
 	ws.onmessage = function (e) {
 		var msg = $.parseJSON(e.data);
-		if (msg.content === 1) {
+		console.log(msg);
+		if (msg.type === 'player_sync') {
+			loadSongs();
+		} else if (msg.type === 'player_toggle') {
+			var status = $('div.sm2-bar-ui').hasClass('playing') ? 'playing' : 'paused';
+			if (status != msg.status) {
+				startStopSong();
+			}
+		} else if (msg.type === 'friend_request') {
 			$('#connectRequestModal').modal();
 		}
 	};
 }
 
-function sendMsg(to, content) {
+function sendPlayerSync() {
 	ws.send(JSON.stringify({
-		'from': $('#data-pid').attr('value'),
-		'to': to,
-		'content': content
+		'from': $('#data-mine-id').attr('value'),
+		'type': 'player_sync'
+	}));
+}
+
+function sendPlayerToggle(status) {
+	ws.send(JSON.stringify({
+		'from': $('#data-mine-id').attr('value'),
+		'type': 'player_toggle',
+		'status': status
+	}));
+}
+
+function sendFriendRequest(to) {
+	ws.send(JSON.stringify({
+		'from': $('#data-mine-id').attr('value'),
+		'type': 'friend_request',
+		'to': to
 	}));
 }
 

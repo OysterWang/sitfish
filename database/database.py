@@ -216,5 +216,7 @@ class Notification(Document):
 
 
 if __name__ == '__main__':
+	# People.objects(id='wuzang').first().update(set__friend=People.objects(id='langke').first())
+	# People.objects(id='langke').first().update(set__friend=People.objects(id='wuzang').first())
 	pass
 

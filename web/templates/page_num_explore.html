@@ -6,15 +6,15 @@
 			{% if curPage == 1 %}
 				<li class="disabled"><a data-pjax="#main" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
 			{% else %}
-				<li><a data-pjax="#main" href="/explore/playlist/cat/{{cat}}?offset={{(curPage-2)*limit}}&limit={{limit}}" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
+				<li><a data-pjax="#main" href="/explore/playlists/{{cat}}?offset={{(curPage-2)*limit}}&limit={{limit}}" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
 			{% endif %}
 
 			{% for i in range(pageNum) %}
-			<li {% if curPage==i+1 %}class="active"{% endif %}><a data-pjax="#main" href="/explore/playlist/cat/{{cat}}?offset={{(i)*limit}}&limit={{limit}}">{{i+1}}</a></li>
+			<li {% if curPage==i+1 %}class="active"{% endif %}><a data-pjax="#main" href="/explore/playlists/{{cat}}?offset={{(i)*limit}}&limit={{limit}}">{{i+1}}</a></li>
 			{% endfor %}
 
 			{% if curPage < pageNum %}
-				<li><a data-pjax="#main" href="/explore/playlist/cat/{{cat}}?offset={{curPage*limit}}&limit={{limit}}" aria-label="Previous"><span aria-hidden="true">&raquo;</span></a></li>
+				<li><a data-pjax="#main" href="/explore/playlists/{{cat}}?offset={{curPage*limit}}&limit={{limit}}" aria-label="Previous"><span aria-hidden="true">&raquo;</span></a></li>
 			{% else %}
 				<li class="disabled"><a data-pjax="#main" aria-label="Previous"><span aria-hidden="true">&raquo;</span></a></li>
 			{% endif %}

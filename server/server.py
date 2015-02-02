@@ -1,6 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import sys
+sys.path.append('../database')
+from database import *
+from mongoengine.errors import *
+
 import re
 import json
 import codecs
@@ -15,11 +20,9 @@ from flask import request
 from flask import redirect
 from flask import Response
 from flask import render_template
-from database import *
 from functools import wraps
 from flask.ext.mail import Mail
 from flask.ext.mail import Message
-from mongoengine.errors import *
 
 
 config = configparser.ConfigParser()
@@ -65,11 +68,11 @@ Music lib related
 
 @app.route('/v1/search', methods=['GET'])
 def search():
+	data = {}
 	s = request.args.get('s', default='')
 	t = request.args.get('t', default='')
 	offset = parse_int(request.args.get('offset', default=''), default=app.config['OFFSET'])
 	limit = parse_int(request.args.get('limit', default=''), default=app.config['LIMIT'])
-	data = {}
 	if t == '0':
 		data = {'count': People.objects(id__contains=s).count(), 'people': []}
 		for people in People.objects(id__contains=s).skip(offset).limit(limit):
@@ -77,7 +80,10 @@ def search():
 	else:
 		url = 'http://music.163.com/api/search/pc'
 		payload = {'s': s, 'type': t, 'offset': offset, 'total': 'true', 'limit': limit}
-		data = requests.post(url, data=payload, headers=app.config['HEADERS']).json()
+		resp = requests.post(url, data=payload, headers=app.config['HEADERS'])
+		if resp.status_code == 200:
+			data = resp.json()
+		data['status_code'] = resp.status_code
 	return jsonify(**data)
 
 
@@ -88,39 +94,60 @@ def songs(ids=''):
 
 
 def get_songs(ids=[]):
+	data = {}
 	url = 'http://music.163.com/api/song/detail?ids={}'.format(ids)
-	return requests.get(url, headers=app.config['HEADERS']).json()
+	resp = requests.get(url, headers=app.config['HEADERS'])
+	if resp.status_code == 200:
+		data = resp.json()
+	data['status_code'] = resp.status_code
+	return data
 
 
 # TYPE - 10
 @app.route('/v1/albums/<id>', methods=['GET'])
 def albums(id=''):
+	data = {}
 	url = 'http://music.163.com/api/album/{}'.format(id)
-	data = requests.get(url, headers=app.config['HEADERS']).json()
+	resp = requests.get(url, headers=app.config['HEADERS'])
+	if resp.status_code == 200:
+		data = resp.json()
+	data['status_code'] = resp.status_code
 	return jsonify(**data)
 
 
 # TYPE - 100
 @app.route('/v1/artists/<id>', methods=['GET'])
 def artists(id=''):
+	data = {}
 	url = 'http://music.163.com/api/artist/albums/{}?limit={:d}'.format(id, app.config['LIMIT'])
-	data = requests.get(url, headers=app.config['HEADERS']).json()
+	resp = requests.get(url, headers=app.config['HEADERS'])
+	if resp.status_code == 200:
+		data = resp.json()
+	data['status_code'] = resp.status_code
 	return jsonify(**data)
 
 
 # TYPE - 1000
 @app.route('/v1/playlists/<id>', methods=['GET'])
 def playlists(id=''):
+	data = {}
 	url = 'http://music.163.com/api/playlist/detail?id={}'.format(id)
-	data = requests.get(url, headers=app.config['HEADERS']).json()
+	resp = requests.get(url, headers=app.config['HEADERS'])
+	if resp.status_code == 200:
+		data = resp.json()
+	data['status_code'] = resp.status_code
 	return jsonify(**data)
 
 
 # TYPE - 1006
 @app.route('/v1/lyrics/<id>', methods=['GET'])
 def lyrics(id=''):
+	data = {}
 	url = 'http://music.163.com/api/song/lyric?id={}&lv=-1&kv=-1&tv=-1'.format(id)
-	data = requests.get(url, headers=app.config['HEADERS']).json()
+	resp = requests.get(url, headers=app.config['HEADERS'])
+	if (resp.status_code == 200):
+		data = resp.json()
+	data['status_code'] = resp.status_code
 	return jsonify(**data)
 
 
@@ -134,7 +161,10 @@ def toplists(id=''):
 		ids = re.findall(r'/song\?id=(\d+)', str(table))
 		ids = sorted(set(ids),key=ids.index)
 		url = 'http://music.163.com/api/song/detail?ids=[{}]'.format(','.join(ids))
-		data = requests.get(url, headers=app.config['HEADERS']).json()
+		resp = requests.get(url, headers=app.config['HEADERS'])
+		if resp.status_code == 200:
+			data = resp.json()
+		data['status_code'] = resp.status_code
 	return jsonify(**data)
 
 
@@ -145,9 +175,9 @@ Explore related
 @app.route('/v1/explore/playlists', methods=['GET'])
 @app.route('/v1/explore/playlists/<cat>', methods=['GET'])
 def explore_playlists_cat(cat='全部'):
+	data = {'count': 0, 'playlists': []}
 	offset = parse_int(request.args.get('offset', default=''), default=app.config['OFFSET'])
 	limit = parse_int(request.args.get('limit', default=''), default=35)
-	data = {'count': 0, 'playlists': []}
 	url = 'http://music.163.com/discover/playlist/?cat={}&offset={:d}&limit={:d}'.format(cat, offset, limit)
 	soup = BeautifulSoup(requests.get(url).content)
 	pages = soup.findAll('a', class_='zpgi')

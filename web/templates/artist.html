@@ -14,8 +14,8 @@
 				{% for album in data.hotAlbums %}
 				<li style="display:inline-block; margin:0; padding:0;">
 					<div style="width:162px; height:170px; margin-bottom:30px;">
-						<a href="/album/{{album.id}}" data-pjax="#main" title="{{album.name}}"><img width="120" height="120" src="{{album['picUrl']}}" style="border:1px solid #d3d3d3;"></a>
-						<a href="/album/{{album.id}}" data-pjax="#main" title="{{album.name}}" style="display:block; margin-top:10px;">{{ album['name']|truncate(9, True) }}</a>
+						<a href="/albums/{{album.id}}" data-pjax="#main" title="{{album.name}}"><img width="120" height="120" src="{{album['picUrl']}}" style="border:1px solid #d3d3d3;"></a>
+						<a href="/albums/{{album.id}}" data-pjax="#main" title="{{album.name}}" style="display:block; margin-top:10px;">{{ album['name']|truncate(9, True) }}</a>
 						<small>{{album.publishTime|date_format_filter}}</small>
 					</div>
 				</li>

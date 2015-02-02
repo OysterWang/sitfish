@@ -1,6 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import sys
+sys.path.append('../database')
+from database import *
+from mongoengine.errors import *
+
 import json
 import codecs
 import datetime
@@ -12,8 +17,16 @@ from autobahn.asyncio.websocket import WebSocketServerProtocol
 config = configparser.ConfigParser()
 config.readfp(codecs.open("../config/config.ini", "r", "utf-8"))
 
-clients = {}
 
+"""
+Messgae Type:
+ - player_sync
+ - player_toggle
+ - friend_request
+"""
+
+
+clients = {}
 
 class PostmanProtocol(WebSocketServerProtocol):
 
@@ -33,18 +46,37 @@ class PostmanProtocol(WebSocketServerProtocol):
 			log("text message received: {}".format(msg))
 			try:
 				msg = json.loads(msg)
-				if 'from' in msg and msg['from'] not in clients:
+				if msg['from'] not in clients:
 					self.cid = msg['from']
 					clients[self.cid] = self
 					log("{} connected".format(self.cid))
-				if 'to' in msg and 'content' in msg and msg['to'] in clients:
-					clients[msg['to']].sendMessage(payload, isBinary)
+				if msg['type'] in ('player_sync', 'player_toggle'):
+					sendMessage(msg['from'], payload, isBinary)
+				elif msg['type'] in ('friend_request', ):
+					sendTo(msg['from'], msg['to'], payload, isBinary)
 			except:
 				pass
 
 	def onClose(self, wasClean, code, reason):
 		clients.pop(self.cid)
 		log("websocket connection {} closed: {}".format(self.cid, reason))
+
+
+def sendMessage(source, payload, isBinary):
+	people = People.objects(id=source).first()
+	if people and 'friend' in people and people.friend.id in clients:
+		clients[people.friend.id].sendMessage(payload, isBinary)
+		log('sendMessage from {}: {}'.format(source, payload))
+	else:
+		log('sendMessage from {} failed'.format(source))
+
+
+def sendTo(source, dest, payload, isBinary):
+	if dest in clients:
+		clients[dest].sendMessage(payload, isBinary)
+		log('sendTo {}->{}: {}'.format(source, dest, payload))
+	else:
+		log('sendTo {}->{} failed'.format(source, dest))
 
 
 def log(message):

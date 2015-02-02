@@ -221,23 +221,32 @@ Data API
 
 @app.route('/lyrics/<sid>', methods=['GET'])
 def lyrics(sid=''):
-	url = get_url('/lyrics/{}'.format(sid))
-	data = requests.get(url).json()
-	lyrics = {'lyrics': []}
-	if 'lrc' in data and 'lyric' in data['lrc']:
-		lyrics['lyrics'] = [re.sub('\[.*\]', '', line) for line in re.split('\n', data['lrc']['lyric'])]
-	return jsonify(**lyrics)
+	data = {'name': '', 'lyrics': []}
+	resp = requests.get(get_url('/songs/{}'.format(sid)))
+	if resp.status_code == 200:
+		json = resp.json()
+		data['name'] = json['songs'][0]['name'] if 'songs' in json else ''
+	resp = requests.get(get_url('/lyrics/{}'.format(sid)))
+	if resp.status_code == 200:
+		json = resp.json()
+		data['lyrics'] = [re.sub('\[.*\]', '', line) for line in re.split('\n', json['lrc']['lyric'])] if 'lrc' in json else []
+	data['status_code'] = resp.status_code
+	return jsonify(**data)
 
 
 """
 Play and sync related
 """
 
-@app.route('/player', methods=['GET'])
+@app.route('/player', methods=['GET', 'PUT'])
 @login_required
 def player():
+	data = {}
 	url = get_url('/people/{}/player'.format(session['id']))
-	data = requests.get(url, headers=get_headers()).json()
+	if request.method == 'GET':
+		data = requests.get(url, headers=get_headers()).json()
+	else:
+		data = requests.request('PUT', url, headers=get_headers(), data={'status':request.form['status'], 'sid':request.form['sid']}).json()
 	return jsonify(**data)
 
 

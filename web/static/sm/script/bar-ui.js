@@ -1275,7 +1275,8 @@ var globalActions;
 
           // don't play the same item again
 	      if (item && playlistController.data.selectedIndex !== lastIndex) {
-	        playLink(item.getElementsByTagName('a')[0]);
+	        // playLink(item.getElementsByTagName('a')[0]); Long update
+	        skipPlayerSong(item.getElementsByTagName('a')[0].getAttribute('song-id'));
 	      }
 
 	    },
@@ -1290,7 +1291,8 @@ var globalActions;
 
           // don't play the same item again
 	      if (item && playlistController.data.selectedIndex !== lastIndex) {
-	        playLink(item.getElementsByTagName('a')[0]);
+	        // playLink(item.getElementsByTagName('a')[0]); Long update
+	        skipPlayerSong(item.getElementsByTagName('a')[0].getAttribute('song-id'));
 	      }
 
 	    },
