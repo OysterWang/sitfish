@@ -65,7 +65,7 @@
 					if ($.trim(cur.val()).length == 0) {
 						clear(parent);
 					} else {
-						$.get('/api/v1/people/' + cur.val(), function(data) {
+						$.get('/check/' + cur.val(), function(data) {
 							if (data['ret'] == 1) {
 								error(parent);
 								parent.children('.help-block:eq(0)').removeClass('sr-only');
@@ -101,7 +101,7 @@
 							return regex.test(email);
 						}
 						if (isEmail(cur.val())) {
-							$.get('/api/v1/people/' + cur.val(), function(data) {
+							$.get('/check/' + cur.val(), function(data) {
 								if (data['ret'] == 1) {
 									error(parent);
 									parent.children('.help-block:eq(0)').removeClass('sr-only');

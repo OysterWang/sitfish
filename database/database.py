@@ -190,33 +190,25 @@ class People(Document):
 
 
 """
-Notification
+Request
 """
 
-class Notification(Document):
+class Request(Document):
 
-	nfrom = StringField(required=True)
-	nto = StringField(required=True)
-	ntype = StringField(required=True)
-	content = StringField(required=True)
+	source = StringField(required=True)
+	dest = StringField(required=True)
 	time = DateTimeField(default=datetime.datetime.now())
-	read = BooleanField(default=False)
 
 	def json(self):
 		json = {
-			'from': self.nfrom,
-			'to': self.nto,
-			'type': self.ntype,
-			'content': self.content,
-			'time': self.time.strftime('%Y-%m-%d %H:%M:%S'),
-			'read': self.read
+			'source': self.source,
+			'dest': self.dest,
+			'time': self.time.strftime('%Y-%m-%d %H:%M:%S')
 		}
 		return json
 
 
 
 if __name__ == '__main__':
-	# People.objects(id='wuzang').first().update(set__friend=People.objects(id='langke').first())
-	# People.objects(id='langke').first().update(set__friend=People.objects(id='wuzang').first())
 	pass
 

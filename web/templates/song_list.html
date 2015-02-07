@@ -24,7 +24,7 @@
 			</td>
 			<td><a title="{{ song['name'] }}" href="/songs/{{ song['id'] }}" data-pjax="#main">{{ song['name']|truncate(30, True) }}</a></td>
 			<td width="80">{{ song['bMusic']['playTime']|time_format_filter }}</td>
-			<td width="140"><a title="{{ song['artists'][0]['name'] }}" href="/artist/{{ song['artists'][0]['id'] }}" data-pjax="#main">{{ song['artists'][0]['name']|truncate(8, True) }}</a></td>
+			<td width="140"><a title="{{ song['artists'][0]['name'] }}" href="/artists/{{ song['artists'][0]['id'] }}" data-pjax="#main">{{ song['artists'][0]['name']|truncate(8, True) }}</a></td>
 		</tr>
 	{% endfor %}
 	</tbody>

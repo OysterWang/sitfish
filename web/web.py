@@ -31,6 +31,15 @@ app.config['JSON_AS_ASCII'] = False
 
 
 """
+Session permanent
+"""
+
+@app.before_request
+def make_session_permanent():
+    session.permanent = True
+
+
+"""
 Renders
 """
 
@@ -215,6 +224,22 @@ def people(id=''):
 	return pjax('people.html', people=people)
 
 
+@app.route('/notice', methods=['GET'])
+@login_required
+def notice():
+	url = get_url('/people/{}/requests'.format(session['id']))
+	data = requests.get(url, headers=get_headers()).json()
+	reqs = data['receive']
+	id_name_dict = {}
+	for req in reqs:
+		if req['source'] not in id_name_dict:
+			json = requests.get(get_url('/people/{}'.format(req['source']))).json()
+			if json['ret'] == 1:
+				id_name_dict[req['source']] = json['people']['name']
+		req['source_name'] = id_name_dict[req['source']] if req['source'] in id_name_dict else ''
+	return pjax('notice.html', reqs=reqs)
+
+
 """
 Data API
 """
@@ -271,10 +296,47 @@ def player_playlist_sid(sid=''):
 	return jsonify(**data)
 
 
-@app.route('/notice', methods=['GET'])
+"""
+Friends related
+"""
+
+@app.route('/requests', methods=['GET', 'POST', 'DELETE'])
 @login_required
-def notice():
-	return pjax('notice.html')
+def requests_api():
+	data = {}
+	url = get_url('/people/{}/requests'.format(session['id']))
+	if request.method == 'GET':
+		data = requests.get(url, headers=get_headers()).json()
+	elif request.method == 'POST':
+		data = requests.post(url, headers=get_headers(), data={'id': request.form['id']}).json()
+	else:
+		data = requests.request('DELETE', url, headers=get_headers(), data={'id': request.form['id']}).json()
+	return jsonify(**data)
+
+
+@app.route('/connect/<id>', methods=['GET'])
+@login_required
+def connect(id=''):
+	url = get_url('/people/{}/connect/{}'.format(session['id'], id))
+	data = requests.get(url, headers=get_headers()).json()
+	return jsonify(**data)
+
+
+@app.route('/disconnect/<id>', methods=['GET'])
+@login_required
+def disconnect(id=''):
+	url = get_url('/people/{}/disconnect/{}'.format(session['id'], id))
+	data = requests.get(url, headers=get_headers()).json()
+	return jsonify(**data)
+
+
+@app.route('/sign-out', methods=['GET'])
+@login_required
+def sign_out():
+	url = get_url('/people/{}/sign-out'.format(session['id']))
+	data = requests.get(url, headers=get_headers()).json()
+	session.clear()
+	return redirect('/')
 
 
 """
@@ -287,7 +349,7 @@ def sign_up():
 		return render_template('sign_up.html', **base_params)
 	else:
 		url = get_url('/people')
-		payload = {'id': request.form['pid'], 'name': request.form['name'], 'email': request.form['email'], 'password': request.form['password']}
+		payload = {'id': request.form['id'], 'name': request.form['name'], 'email': request.form['email'], 'password': request.form['password']}
 		data = requests.post(url, data=payload).json()
 		if data['ret'] == 1:
 			return render_template('tips.html', tips='{}，恭喜，注册成功！我们已向{}发送了一封邮件，请尽快登录并激活当前账户。'.format(payload['name'], payload['email']), **base_params)
@@ -324,10 +386,11 @@ def sign_in():
 			return render_template('sign_in.html', ret=data['ret'], username=payload['username'], password=payload['password'], **base_params)
 
 
-@app.route('/sign-out', methods=['GET'])
-def sign_out():
-	session.clear()
-	return redirect('/')
+@app.route('/check/<id>', methods=['GET'])
+def check(id=''):
+	url = get_url('/people/{}'.format(id))
+	data = requests.get(url).json()
+	return jsonify(**data)
 
 
 """
@@ -363,27 +426,6 @@ def parse_int(s, default=0):
 
 def get_url(resource):
 	return 'http://{}/{}{}'.format(config['SERVER']['HOST'], config['WEB']['VERSION'], resource)
-
-
-"""
-Deprecated
-"""
-
-@app.route('/api_deprecated/<path:path>', methods=['GET', 'POST'])
-def api(path=''):
-	if request.method == 'GET':
-		url = 'http://{}/{}?{}'.format(config['SERVER']['HOST'], path, '&'.join(['{}={}'.format(key, request.args[key]) for key in request.args]))
-		data = requests.get(url).json()
-		return jsonify(**data)
-	else:
-		url = 'http://{}/{}?{}'.format(config['SERVER']['HOST'], path, '&'.join(['{}={}'.format(key, request.args[key]) for key in request.args]))
-		post_data = {}
-		post_data.update(request.form)
-		if 'pid' in session and 'access_token' in session:
-			post_data['pid'] = session['pid']
-			post_data['access_token'] = session['access_token']
-		data = requests.post(url, data=post_data).json()
-		return jsonify(**data)
 
 
 

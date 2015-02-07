@@ -27,34 +27,6 @@
 				{% include "player.html" %}
 			</div>
 		</nav>
-		<!-- Modal -->
-		<div class="modal fade" id="connectRequestModal" tabindex="-1" role="dialog" aria-labelledby="connectRequestLabel" aria-hidden="true" style="padding-top:200px;">
-			<div class="modal-backdrop fade in" style="height: 961px;"></div>
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal-header" style="border:none; padding:30px 0px 30px 30px;">
-						<h4 class="modal-title" id="connectRequestLabel">武藏（wuzang）请求与你连接</h4>
-					</div>
-					<div class="modal-footer" style="border:none;">
-						<button type="button" class="btn btn-default" data-dismiss="modal">拒绝</button>
-						<button type="button" class="btn btn-info">同意</button>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="modal fade" id="messageModal" tabindex="-1" role="dialog" aria-labelledby="messageLabel" aria-hidden="true" style="padding-top:200px;">
-			<div class="modal-backdrop fade in" style="height: 961px;"></div>
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal-header" style="border:none; padding:30px 0px 30px 30px;">
-						<h4 class="modal-title" id="messageLabel">消息已发出！</h4>
-					</div>
-					<div class="modal-footer" style="border:none;">
-						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-					</div>
-				</div>
-			</div>
-		</div>
 		<!-- Data -->
 		<data id="data-mine-id" value="{{mine.id}}"></data>
 		<data id="data-ws-host" value="{{ws_host}}"></data>

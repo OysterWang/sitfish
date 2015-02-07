@@ -369,6 +369,81 @@ def people_id_player_playlist_sid(id='', sid=''):
 	return jsonify(**data)
 
 
+@app.route('/v1/people/<id>/requests', methods=['GET', 'POST', 'DELETE'])
+@access_token_required
+def requests_api(id=''):
+	data = {'ret': 0}
+	if request.method == 'GET':
+		data['send'] = [req.json() for req in Request.objects(source=id)]
+		data['receive'] = [req.json() for req in Request.objects(dest=id)]
+		data['ret'] = 1
+	elif request.method == 'POST':
+		Request.objects(source=id, dest=request.form['id']).update_one(set__source=id, set__dest=request.form['id'], set__time=datetime.datetime.now(), upsert=True)
+		data['ret'] = 1
+	else:
+		req = Request.objects(source=request.form['id'], dest=id).first()
+		if req:
+			req.delete()
+		data['ret'] = 1
+	return jsonify(**data)
+
+
+@app.route('/v1/people/<id>/connect/<cid>', methods=['GET'])
+@access_token_required
+def connect(id='', cid=''):
+	data = {'ret': 0}
+	req = Request.objects(source=cid, dest=id).first()
+	if req:
+		req.delete()
+		req = Request.objects(source=id, dest=cid).first()
+		if req:
+			req.delete()
+		master = People.objects(id=id).first()
+		client = People.objects(id=cid).first()
+		if master and client and master.id != client.id:
+			def connected(master, client):
+				return 'friend' in master and master.friend.id == client.id
+			if not connected(master, client):
+				if 'friend' in master:
+					master.friend.update(unset__friend='')
+					master.update(set__player=Player(master.player.status, master.player.song, master.player.playlist).save())
+				if 'friend' in client:
+					client.friend.update(unset__friend='')
+				else:
+					client.player.delete()
+				master.update(set__friend=client.id)
+				master = People.objects(id=id).first()
+				client.update(set__friend=master.id)
+				client.update(set__player=master.player)
+				data['ret'] = 1
+	return jsonify(**data)
+
+
+@app.route('/v1/people/<id>/disconnect/<cid>', methods=['GET'])
+@access_token_required
+def disconnect(id='', cid=''):
+	data = {'ret': 0}
+	master = People.objects(id=id).first()
+	client = People.objects(id=cid).first()
+	if master and client and 'friend' in master and master.friend.id == client.id:
+		master.friend.update(unset__friend='')
+		master.update(unset__friend='')
+		master.update(set__player=Player(master.player.status, master.player.song, master.player.playlist).save())
+		data['ret'] = 1
+	return jsonify(**data)
+
+
+@app.route('/v1/people/<id>/sign-out', methods=['GET'])
+@access_token_required
+def sign_out(id=''):
+	data = {'ret': 0}
+	people = People.objects(id=id).first()
+	if people:
+		people.update(set__tokens=[])
+		data['ret'] = 1
+	return jsonify(**data)
+
+
 """
 Utilities
 """

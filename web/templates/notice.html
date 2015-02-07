@@ -4,11 +4,11 @@
 		<div class="row" style="padding:0px 50px 0px 50px;">
 			<h2 style="padding-bottom:10px; border-bottom:2px solid #CD3333;">我的提醒</h2>
 			<ul style="list-style-type:none; padding:0;">
-				{% for i in range(3) %}
+				{% for req in reqs %}
 				<li style="padding:15px 0px 15px 0px; border-bottom:1px solid #F0F0F0;">
-					<span>武藏(wuzang) 请求与你连接</span>
-					<button class="btn btn-xs btn-default" style="float:right;">同意</button>
-					<button class="btn btn-xs btn-default" style="float:right; margin-right:5px;">拒绝</button>
+					<span>{{req.source_name}}({{req.source}})请求与你连接</span>
+					<button id="req-agree" data-pid="{{req.source}}" class="btn btn-xs btn-default" style="float:right;">同意</button>
+					<button id="req-decline" data-pid="{{req.source}}" class="btn btn-xs btn-default" style="float:right; margin-right:5px;">拒绝</button>
 				</li>
 				{% endfor %}
 			</ul>

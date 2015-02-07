@@ -62,6 +62,14 @@ function refreshNav() {
 		$('.nav-main>li:nth(0)').addClass('active');
 	}
 	$('.navbar input[name=s]').val('');
+	refreshNotice();
+}
+
+function refreshNotice() {
+	$.get('/requests', function(data) {
+		var num = data.receive.length;
+		$('#notice').html(num > 0 ? num : '');
+	});
 }
 
 function addSongListener() {
@@ -91,7 +99,7 @@ function replaceSongListener() {
 			url: "/player/playlist",
 			data: {'sids': JSON.stringify(sids)}
 		}).done(function(data) {
-			if (data['ret'] == 1) {
+			if (data.ret == 1) {
 				refreshSongs(data);
 				sendPlayerSync();
 			}
@@ -101,7 +109,27 @@ function replaceSongListener() {
 
 function friendRequestListener() {
 	$('.friendRequestButton').click(function() {
-		sendFriendRequest($(this).attr('data-pid'));
+		var fid = $(this).attr('data-pid');
+		$.post('/requests', {'id': fid}, function() {
+			sendFriendRequest(fid);
+		});
+	});
+	$('#req-agree').click(function() {
+		$.get('/connect/' + $(this).attr('data-pid'), function(data) {
+			if (data.ret == 1) {
+				sendPlayerSync();
+			}
+			$.pjax({url: '/notice', container: '#main'})
+		});
+	});
+	$('#req-decline').click(function() {
+		$.ajax({
+			type: 'DELETE',
+			url: '/requests',
+			data: {'id': $(this).attr('data-pid')}
+		}).done(function(data) {
+			$.pjax({url: '/notice', container: '#main'})
+		});
 	});
 }
 
@@ -268,7 +296,12 @@ function connectWebSocket() {
 				startStopSong();
 			}
 		} else if (msg.type === 'friend_request') {
-			$('#connectRequestModal').modal();
+			$.get('/requests', function(data) {
+				refreshNotice();
+				if ($(location).attr('pathname') == '/notice') {
+					$.pjax({url: '/notice', container: '#main'})
+				}
+			});
 		}
 	};
 }

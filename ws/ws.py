@@ -39,11 +39,9 @@ class PostmanProtocol(WebSocketServerProtocol):
 		log("websocket connection open")
 
 	def onMessage(self, payload, isBinary):
-		if isBinary:
-			log("binary message received: {} bytes".format(len(payload)))
-		else:
+		log("recv: {}".format(payload))
+		if not isBinary:
 			msg = payload.decode('utf-8')
-			log("text message received: {}".format(msg))
 			try:
 				msg = json.loads(msg)
 				if msg['from'] not in clients:
@@ -66,17 +64,17 @@ def sendMessage(source, payload, isBinary):
 	people = People.objects(id=source).first()
 	if people and 'friend' in people and people.friend.id in clients:
 		clients[people.friend.id].sendMessage(payload, isBinary)
-		log('sendMessage from {}: {}'.format(source, payload))
+		log('send: {}'.format(payload))
 	else:
-		log('sendMessage from {} failed'.format(source))
+		log('send: {} failed'.format(payload))
 
 
 def sendTo(source, dest, payload, isBinary):
-	if dest in clients:
+	if source != dest and dest in clients:
 		clients[dest].sendMessage(payload, isBinary)
-		log('sendTo {}->{}: {}'.format(source, dest, payload))
+		log('send: {}'.format(payload))
 	else:
-		log('sendTo {}->{} failed'.format(source, dest))
+		log('send: {} failed'.format(payload))
 
 
 def log(message):

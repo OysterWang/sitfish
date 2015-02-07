@@ -39,6 +39,10 @@
 						<li><a href="#people-id-player">/people/&lt;id&gt;/player</a></li>
 						<li><a href="#people-id-player-playlist">/people/&lt;id&gt;/player/playlist</a></li>
 						<li><a href="#people-id-player-playlist-sid">/people/&lt;id&gt;/player/playlist/&lt;sid&gt;</a></li>
+						<li><a href="#people-id-requests">/people/&lt;id&gt;/requests</a></li>
+						<li><a href="#people-id-connect">/people/&lt;id&gt;/connect/&lt;cid&gt;</a></li>
+						<li><a href="#people-id-disconnect">/people/&lt;id&gt;/disconnect/&lt;cid&gt;</a></li>
+						<li><a href="#people-id-sign-out">/people/&lt;id&gt;/sign-out</a></li>
 					</ul>
 				</div>
 				<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
@@ -745,6 +749,213 @@
 						<h4 class="child-header">Examples</h4>
 						<ul>
 							<li><i>curl -X DELETE http://api.sitfish.com/v1/people/wuzang/player/playlist/189192 -H "Authorization: Bearer {{access_token}}" -v</i></li>
+						</ul>
+						<br><br>
+					</section>
+					<section id="people-id-requests" class="anchor">
+						<h1 class="page-header">/people/&lt;id&gt;/requests</h1>
+						<h4>1. Definition</h4>
+						<p><b>GET</b> http://{{ host }}/{{ version }}/people/&lt;id&gt;/requests</p>
+						<p><i>Request to establish connecting with sb.</i></p>
+						<p><b><i>An access token is required.</i></b></p>
+						<h4 class="child-header">Return</h4>
+						<table class="table table-condensed">
+							<tbody>
+								<tr>
+									<td width="200">send</td>
+									<td>All the sent requests.</td>
+								</tr>
+								<tr>
+									<td>receive</td>
+									<td>All the received requests.</td>
+								</tr>
+							</tbody>
+						</table>
+						<h4 class="child-header">Examples</h4>
+						<ul>
+							<li><i>curl -X GET http://api.sitfish.com/v1/people/wuzang/requests -H "Authorization: Bearer {{access_token}}" -v</i></li>
+						</ul>
+						<br>
+						<h4>2. Definition</h4>
+						<p><b>POST</b> http://{{ host }}/{{ version }}/people/&lt;id&gt;/requests</p>
+						<p><i>Request to establish connecting with sb.</i></p>
+						<p><b><i>An access token is required.</i></b></p>
+						<h4 class="child-header">Arguments</h4>
+						<table class="table table-condensed">
+							<tbody>
+								<tr>
+									<td width="200">id</td>
+									<td>The receiver of this request.</td>
+								</tr>
+							</tbody>
+						</table>
+						<h4 class="child-header">Return</h4>
+						<table class="table table-condensed">
+							<tbody>
+								<tr>
+									<td width="200">ret</td>
+									<td>
+										<table>
+											<tr>
+												<td>0</td>
+												<td width="15"></td>
+												<td>fail</td>
+											</tr>
+											<tr>
+												<td>1</td>
+												<td></td>
+												<td>success</td>
+											</tr>
+										</table>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<h4 class="child-header">Examples</h4>
+						<ul>
+							<li><i>curl -X POST http://api.sitfish.com/v1/people/wuzang/requests -H "Authorization: Bearer {{access_token}}" -d "id=langke" -v</i></li>
+						</ul>
+						<br>
+						<h4>3. Definition</h4>
+						<p><b>DELETE</b> http://{{ host }}/{{ version }}/people/&lt;id&gt;/requests</p>
+						<p><i>Decline the request from sb.</i></p>
+						<p><b><i>An access token is required.</i></b></p>
+						<h4 class="child-header">Arguments</h4>
+						<table class="table table-condensed">
+							<tbody>
+								<tr>
+									<td width="200">id</td>
+									<td>The sender of this request.</td>
+								</tr>
+							</tbody>
+						</table>
+						<h4 class="child-header">Return</h4>
+						<table class="table table-condensed">
+							<tbody>
+								<tr>
+									<td width="200">ret</td>
+									<td>
+										<table>
+											<tr>
+												<td>0</td>
+												<td width="15"></td>
+												<td>fail</td>
+											</tr>
+											<tr>
+												<td>1</td>
+												<td></td>
+												<td>success</td>
+											</tr>
+										</table>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<h4 class="child-header">Examples</h4>
+						<ul>
+							<li><i>curl -X DELETE http://api.sitfish.com/v1/people/wuzang/requests -H "Authorization: Bearer {{access_token}}" -d "id=langke" -v</i></li>
+						</ul>
+						<br><br>
+					</section>
+					<section id="people-id-connect" class="anchor">
+						<h1 class="page-header">/people/&lt;id&gt;/connect/&lt;cid&gt;</h1>
+						<h4>Definition</h4>
+						<p><b>GET</b> http://{{ host }}/{{ version }}/people/&lt;id&gt;/connect/&lt;cid&gt;</p>
+						<p><i>Connect to sb.</i></p>
+						<p><b><i>An access token is required.</i></b></p>
+						<h4 class="child-header">Return</h4>
+						<table class="table table-condensed">
+							<tbody>
+								<tr>
+									<td width="200">ret</td>
+									<td>
+										<table>
+											<tr>
+												<td>0</td>
+												<td width="15"></td>
+												<td>fail</td>
+											</tr>
+											<tr>
+												<td>1</td>
+												<td></td>
+												<td>success</td>
+											</tr>
+										</table>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<h4 class="child-header">Examples</h4>
+						<ul>
+							<li><i>curl -X GET http://api.sitfish.com/v1/people/wuzang/connect/langke -H "Authorization: Bearer {{access_token}}" -v</i></li>
+						</ul>
+						<br><br>
+					</section>
+					<section id="people-id-disconnect" class="anchor">
+						<h1 class="page-header">/people/&lt;id&gt;/disconnect/&lt;cid&gt;</h1>
+						<h4>Definition</h4>
+						<p><b>GET</b> http://{{ host }}/{{ version }}/people/&lt;id&gt;/disconnect/&lt;cid&gt;</p>
+						<p><i>Disconnect to sb.</i></p>
+						<p><b><i>An access token is required.</i></b></p>
+						<h4 class="child-header">Return</h4>
+						<table class="table table-condensed">
+							<tbody>
+								<tr>
+									<td width="200">ret</td>
+									<td>
+										<table>
+											<tr>
+												<td>0</td>
+												<td width="15"></td>
+												<td>fail</td>
+											</tr>
+											<tr>
+												<td>1</td>
+												<td></td>
+												<td>success</td>
+											</tr>
+										</table>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<h4 class="child-header">Examples</h4>
+						<ul>
+							<li><i>curl -X GET http://api.sitfish.com/v1/people/wuzang/disconnect/langke -H "Authorization: Bearer {{access_token}}" -v</i></li>
+						</ul>
+						<br><br>
+					</section>
+					<section id="people-id-sign-out" class="anchor">
+						<h1 class="page-header">/people/&lt;id&gt;/sign-out</h1>
+						<h4>Definition</h4>
+						<p><b>GET</b> http://{{ host }}/{{ version }}/people/&lt;id&gt;/connect/&lt;cid&gt;</p>
+						<p><i>User sign out.</i></p>
+						<p><b><i>An access token is required.</i></b></p>
+						<h4 class="child-header">Return</h4>
+						<table class="table table-condensed">
+							<tbody>
+								<tr>
+									<td width="200">ret</td>
+									<td>
+										<table>
+											<tr>
+												<td>0</td>
+												<td width="15"></td>
+												<td>fail</td>
+											</tr>
+											<tr>
+												<td>1</td>
+												<td></td>
+												<td>success</td>
+											</tr>
+										</table>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<h4 class="child-header">Examples</h4>
+						<ul>
+							<li><i>curl -X GET http://api.sitfish.com/v1/people/wuzang/sign-out -H "Authorization: Bearer {{access_token}}" -v</i></li>
 						</ul>
 						<br><br>
 					</section>
