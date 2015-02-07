@@ -378,8 +378,9 @@ def requests_api(id=''):
 		data['receive'] = [req.json() for req in Request.objects(dest=id)]
 		data['ret'] = 1
 	elif request.method == 'POST':
-		Request.objects(source=id, dest=request.form['id']).update_one(set__source=id, set__dest=request.form['id'], set__time=datetime.datetime.now(), upsert=True)
-		data['ret'] = 1
+		if id != request.form['id']:
+			Request.objects(source=id, dest=request.form['id']).update_one(set__source=id, set__dest=request.form['id'], set__time=datetime.datetime.now(), upsert=True)
+			data['ret'] = 1
 	else:
 		req = Request.objects(source=request.form['id'], dest=id).first()
 		if req:
@@ -419,13 +420,12 @@ def connect(id='', cid=''):
 	return jsonify(**data)
 
 
-@app.route('/v1/people/<id>/disconnect/<cid>', methods=['GET'])
+@app.route('/v1/people/<id>/disconnect', methods=['GET'])
 @access_token_required
-def disconnect(id='', cid=''):
+def disconnect(id=''):
 	data = {'ret': 0}
 	master = People.objects(id=id).first()
-	client = People.objects(id=cid).first()
-	if master and client and 'friend' in master and master.friend.id == client.id:
+	if master and master.friend:
 		master.friend.update(unset__friend='')
 		master.update(unset__friend='')
 		master.update(set__player=Player(master.player.status, master.player.song, master.player.playlist).save())

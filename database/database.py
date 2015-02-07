@@ -104,7 +104,7 @@ class Player(Document):
 	def json(self):
 		json = {
 			'status': self.status,
-			'song': self.song.json() if self.song else {},
+			'song': self.song.json() if isinstance(self.song, Song) else {},
 			'playlist': [s.json() for s in self.playlist]
 		}
 		return json
@@ -210,5 +210,6 @@ class Request(Document):
 
 
 if __name__ == '__main__':
-	pass
+	people = People.objects(id='wuzang').first()
+	print(people.detail())
 

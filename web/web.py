@@ -47,7 +47,7 @@ def get_headers():
 	return {'Authorization': 'Bearer {}'.format(session['access_token'])}
 
 
-def mine():
+def detail():
 	return requests.get(get_url('/people/{}/detail'.format(session['id'])), headers=get_headers()).json()
 
 
@@ -60,7 +60,7 @@ def pjax(template, **params):
 		}
 		return render_template(template, **params)
 	else:
-		params['mine'] = mine()['people']
+		params['mine'] = detail()['people']
 		return render_template("base.html", template=template, **params)
 
 
@@ -263,6 +263,12 @@ def lyrics(sid=''):
 Play and sync related
 """
 
+@app.route('/mine', methods=['GET'])
+@login_required
+def mine():
+	return jsonify(**detail())
+
+
 @app.route('/player', methods=['GET', 'PUT'])
 @login_required
 def player():
@@ -322,10 +328,10 @@ def connect(id=''):
 	return jsonify(**data)
 
 
-@app.route('/disconnect/<id>', methods=['GET'])
+@app.route('/disconnect', methods=['GET'])
 @login_required
 def disconnect(id=''):
-	url = get_url('/people/{}/disconnect/{}'.format(session['id'], id))
+	url = get_url('/people/{}/disconnect'.format(session['id']))
 	data = requests.get(url, headers=get_headers()).json()
 	return jsonify(**data)
 

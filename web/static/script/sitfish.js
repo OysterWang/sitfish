@@ -62,14 +62,8 @@ function refreshNav() {
 		$('.nav-main>li:nth(0)').addClass('active');
 	}
 	$('.navbar input[name=s]').val('');
-	refreshNotice();
-}
-
-function refreshNotice() {
-	$.get('/requests', function(data) {
-		var num = data.receive.length;
-		$('#notice').html(num > 0 ? num : '');
-	});
+	refreshFriend();
+	refreshNoticeNum();
 }
 
 function addSongListener() {
@@ -119,7 +113,7 @@ function friendRequestListener() {
 			if (data.ret == 1) {
 				sendPlayerSync();
 			}
-			$.pjax({url: '/notice', container: '#main'})
+			refreshNoticePage();
 		});
 	});
 	$('#req-decline').click(function() {
@@ -128,9 +122,46 @@ function friendRequestListener() {
 			url: '/requests',
 			data: {'id': $(this).attr('data-pid')}
 		}).done(function(data) {
-			$.pjax({url: '/notice', container: '#main'})
+			refreshNoticePage();
 		});
 	});
+	$('#disconnect').click(function() {
+		$.get('/disconnect', function(data) {
+			if (data.ret == 1) {
+				$('#friend').attr('href', '/search?s=&t=0');
+				$('#friend').html('<span class="glyphicon glyphicon-heart"></span>添加好友');
+			}
+		});
+	});
+}
+
+
+/* Request related */
+
+function refreshFriend() {
+	$.get('/mine', function(data) {
+		if (data.ret == 1) {
+			if (data.people.friend.id != '') {
+				var friend = $('#friend');
+				friend.attr('href', '/people/' + data.people.friend.id);
+				friend.html('<span class="glyphicon glyphicon-heart"></span>' + data.people.friend.name);
+			} else {
+				friend.attr('href', 'javascript:void(0)');
+				friend.html('<span class="glyphicon glyphicon-heart"></span>' + 添加好友);
+			}
+		}
+	});
+}
+
+function refreshNoticeNum() {
+	$.get('/requests', function(data) {
+		var num = data.receive.length;
+		$('#notice').html(num > 0 ? num : '');
+	});
+}
+
+function refreshNoticePage() {
+	$.pjax({url: '/notice', container: '#main'});
 }
 
 
@@ -289,6 +320,7 @@ function connectWebSocket() {
 		var msg = $.parseJSON(e.data);
 		console.log(msg);
 		if (msg.type === 'player_sync') {
+			refreshFriend();
 			loadSongs();
 		} else if (msg.type === 'player_toggle') {
 			var status = $('div.sm2-bar-ui').hasClass('playing') ? 'playing' : 'paused';
@@ -296,12 +328,10 @@ function connectWebSocket() {
 				startStopSong();
 			}
 		} else if (msg.type === 'friend_request') {
-			$.get('/requests', function(data) {
-				refreshNotice();
-				if ($(location).attr('pathname') == '/notice') {
-					$.pjax({url: '/notice', container: '#main'})
-				}
-			});
+			refreshNoticeNum();
+			if ($(location).attr('pathname') == '/notice') {
+				refreshNoticePage();
+			}
 		}
 	};
 }

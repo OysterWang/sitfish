@@ -41,7 +41,7 @@
 						<li><a href="#people-id-player-playlist-sid">/people/&lt;id&gt;/player/playlist/&lt;sid&gt;</a></li>
 						<li><a href="#people-id-requests">/people/&lt;id&gt;/requests</a></li>
 						<li><a href="#people-id-connect">/people/&lt;id&gt;/connect/&lt;cid&gt;</a></li>
-						<li><a href="#people-id-disconnect">/people/&lt;id&gt;/disconnect/&lt;cid&gt;</a></li>
+						<li><a href="#people-id-disconnect">/people/&lt;id&gt;/disconnect</a></li>
 						<li><a href="#people-id-sign-out">/people/&lt;id&gt;/sign-out</a></li>
 					</ul>
 				</div>
@@ -892,9 +892,9 @@
 						<br><br>
 					</section>
 					<section id="people-id-disconnect" class="anchor">
-						<h1 class="page-header">/people/&lt;id&gt;/disconnect/&lt;cid&gt;</h1>
+						<h1 class="page-header">/people/&lt;id&gt;/disconnect</h1>
 						<h4>Definition</h4>
-						<p><b>GET</b> http://{{ host }}/{{ version }}/people/&lt;id&gt;/disconnect/&lt;cid&gt;</p>
+						<p><b>GET</b> http://{{ host }}/{{ version }}/people/&lt;id&gt;/disconnect</p>
 						<p><i>Disconnect to sb.</i></p>
 						<p><b><i>An access token is required.</i></b></p>
 						<h4 class="child-header">Return</h4>
@@ -921,7 +921,7 @@
 						</table>
 						<h4 class="child-header">Examples</h4>
 						<ul>
-							<li><i>curl -X GET http://api.sitfish.com/v1/people/wuzang/disconnect/langke -H "Authorization: Bearer {{access_token}}" -v</i></li>
+							<li><i>curl -X GET http://api.sitfish.com/v1/people/wuzang/disconnect -H "Authorization: Bearer {{access_token}}" -v</i></li>
 						</ul>
 						<br><br>
 					</section>
